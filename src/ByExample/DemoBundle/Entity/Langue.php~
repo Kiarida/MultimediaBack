@@ -1,0 +1,46 @@
+<?php
+
+namespace ByExample\DemoBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Langue
+ *
+ * @ORM\Table(name="langue")
+ * @ORM\Entity
+ */
+class Langue
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="langue", type="string", length=25, nullable=false)
+     */
+    private $langue;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Video", mappedBy="idlangue")
+     */
+    private $idvideo;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idvideo = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+}

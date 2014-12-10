@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Ecoute" table="ecoute">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="date" type="date" column="date" nullable="false"/>
+    <field name="typeecoute" type="string" column="typeEcoute" length="1" nullable="false"/>
+    <many-to-one field="iditem" target-entity="Item">
+      <join-columns>
+        <join-column name="idItem" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="idsession" target-entity="Session" mapped-by="idecoute"/>
+  </entity>
+</doctrine-mapping>

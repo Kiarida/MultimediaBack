@@ -1,0 +1,70 @@
+<?php
+
+namespace ByExample\DemoBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Musique
+ *
+ * @ORM\Table(name="musique")
+ * @ORM\Entity
+ */
+class Musique
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="tempo", type="integer", nullable=false)
+     */
+    private $tempo;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="mode", type="integer", nullable=false)
+     */
+    private $mode;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="loudness", type="integer", nullable=false)
+     */
+    private $loudness;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="energy", type="integer", nullable=false)
+     */
+    private $energy;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="hotttness", type="integer", nullable=false)
+     */
+    private $hotttness;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="danceability", type="integer", nullable=false)
+     */
+    private $danceability;
+
+    /**
+     * @var \Item
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Item")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     * })
+     */
+    private $iditem;
+
+
+}

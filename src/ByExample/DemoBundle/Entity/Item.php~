@@ -1,0 +1,144 @@
+<?php
+
+namespace ByExample\DemoBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Item
+ *
+ * @ORM\Table(name="item")
+ * @ORM\Entity
+ */
+class Item
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="url", type="string", length=50, nullable=false)
+     */
+    private $url;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="titre", type="string", length=25, nullable=false)
+     */
+    private $titre;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="note", type="integer", nullable=false)
+     */
+    private $note;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="duree", type="decimal", nullable=false)
+     */
+    private $duree;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="typeItem", type="boolean", nullable=false)
+     */
+    private $typeitem;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="nbVues", type="integer", nullable=false)
+     */
+    private $nbvues;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="date", nullable=false)
+     */
+    private $date;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Artiste", inversedBy="iditem")
+     * @ORM\JoinTable(name="itemartiste",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idArtiste", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $idartiste;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="iditem")
+     * @ORM\JoinTable(name="itemgenre",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idGenre", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $idgenre;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Item", inversedBy="iditem")
+     * @ORM\JoinTable(name="itemitem",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idAlbum", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $idalbum;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Playlist", mappedBy="iditem")
+     */
+    private $idplaylist;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Tag", mappedBy="iditem")
+     */
+    private $idtag;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idartiste = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->idgenre = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->idalbum = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->idplaylist = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->idtag = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+}

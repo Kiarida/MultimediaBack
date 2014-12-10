@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Session" table="session">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="datedebut" type="date" column="dateDebut" nullable="false"/>
+    <field name="datefin" type="date" column="dateFin" nullable="true"/>
+    <many-to-one field="idutilisateur" target-entity="Utilisateur">
+      <join-columns>
+        <join-column name="idUtilisateur" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="idtag" target-entity="Tag" mapped-by="idsession"/>
+    <many-to-many field="idplaylist" target-entity="Playlist" mapped-by="idsession"/>
+    <many-to-many field="idecoute" target-entity="Ecoute" inversed-by="idsession">
+      <join-table name="sessionecoute">
+        <join-columns>
+          <join-column name="idSession" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idEcoute" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

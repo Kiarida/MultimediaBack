@@ -1,0 +1,28 @@
+<?php
+
+namespace ByExample\DemoBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Artistevideo
+ *
+ * @ORM\Table(name="artistevideo")
+ * @ORM\Entity
+ */
+class Artistevideo
+{
+    /**
+     * @var \Artiste
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Artiste")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idArtiste", referencedColumnName="id")
+     * })
+     */
+    private $idartiste;
+
+
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Playlist" table="playlist">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="nom" type="string" column="nom" length="25" nullable="false"/>
+    <field name="datecreation" type="date" column="dateCreation" nullable="false"/>
+    <many-to-one field="idutilisateur" target-entity="Utilisateur">
+      <join-columns>
+        <join-column name="idUtilisateur" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="idtag" target-entity="Tag" mapped-by="idplaylist"/>
+    <many-to-many field="idsession" target-entity="Session" inversed-by="idplaylist">
+      <join-table name="sessionplaylist">
+        <join-columns>
+          <join-column name="idPlaylist" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idSession" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="iditem" target-entity="Item" inversed-by="idplaylist">
+      <join-table name="itemplaylist">
+        <join-columns>
+          <join-column name="idPlaylist" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idItem" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

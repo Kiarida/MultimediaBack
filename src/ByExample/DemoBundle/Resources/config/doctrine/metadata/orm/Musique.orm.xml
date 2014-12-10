@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Musique" table="musique">
+    <field name="tempo" type="integer" column="tempo" nullable="false"/>
+    <field name="mode" type="integer" column="mode" nullable="false"/>
+    <field name="loudness" type="integer" column="loudness" nullable="false"/>
+    <field name="energy" type="integer" column="energy" nullable="false"/>
+    <field name="hotttness" type="integer" column="hotttness" nullable="false"/>
+    <field name="danceability" type="integer" column="danceability" nullable="false"/>
+    <one-to-one field="iditem" target-entity="Item">
+      <join-columns>
+        <join-column name="idItem" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

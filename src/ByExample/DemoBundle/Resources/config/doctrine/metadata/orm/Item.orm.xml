@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Item" table="item">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="url" type="string" column="url" length="50" nullable="false"/>
+    <field name="titre" type="string" column="titre" length="25" nullable="false"/>
+    <field name="note" type="integer" column="note" nullable="false"/>
+    <field name="duree" type="decimal" column="duree" nullable="false"/>
+    <field name="typeitem" type="boolean" column="typeItem" nullable="false"/>
+    <field name="nbvues" type="integer" column="nbVues" nullable="false"/>
+    <field name="date" type="date" column="date" nullable="false"/>
+    <many-to-many field="idtag" target-entity="Tag" mapped-by="iditem"/>
+    <many-to-many field="idplaylist" target-entity="Playlist" mapped-by="iditem"/>
+    <many-to-many field="idalbum" target-entity="Item" inversed-by="iditem">
+      <join-table name="itemitem">
+        <join-columns>
+          <join-column name="idItem" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idAlbum" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="idgenre" target-entity="Genre" inversed-by="iditem">
+      <join-table name="itemgenre">
+        <join-columns>
+          <join-column name="idItem" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idGenre" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="idartiste" target-entity="Artiste" inversed-by="iditem">
+      <join-table name="itemartiste">
+        <join-columns>
+          <join-column name="idItem" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idArtiste" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

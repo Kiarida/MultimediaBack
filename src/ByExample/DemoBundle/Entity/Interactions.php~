@@ -1,0 +1,52 @@
+<?php
+
+namespace ByExample\DemoBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Interactions
+ *
+ * @ORM\Table(name="interactions")
+ * @ORM\Entity
+ */
+class Interactions
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateHeure", type="datetime", nullable=false)
+     */
+    private $dateheure;
+
+    /**
+     * @var \Typeinteraction
+     *
+     * @ORM\ManyToOne(targetEntity="Typeinteraction")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idTypeInteraction", referencedColumnName="id")
+     * })
+     */
+    private $idtypeinteraction;
+
+    /**
+     * @var \Ecoute
+     *
+     * @ORM\ManyToOne(targetEntity="Ecoute")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idEcoute", referencedColumnName="id")
+     * })
+     */
+    private $idecoute;
+
+
+}

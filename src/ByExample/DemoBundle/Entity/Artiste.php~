@@ -1,0 +1,61 @@
+<?php
+
+namespace ByExample\DemoBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Artiste
+ *
+ * @ORM\Table(name="artiste")
+ * @ORM\Entity
+ */
+class Artiste
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nom", type="string", length=25, nullable=false)
+     */
+    private $nom;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="note", type="integer", nullable=false)
+     */
+    private $note;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste")
+     */
+    private $iditem;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Tag", mappedBy="idartiste")
+     */
+    private $idtag;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->iditem = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->idtag = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+}

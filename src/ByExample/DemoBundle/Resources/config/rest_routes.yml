@@ -6,3 +6,7 @@ byexample_demo_userrolrest:
     resource: ByExample\DemoBundle\Controller\UserRoleRestController
     type: rest
     parent: byexample_demo_userrest
+
+byexample_genres:
+	resource: ByExample\DemoBundle\Controller\GenreRestController
+    type: rest

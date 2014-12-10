@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Note" table="note">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="note" type="integer" column="note" nullable="false"/>
+    <field name="date" type="date" column="date" nullable="false"/>
+    <many-to-one field="iditem" target-entity="Item">
+      <join-columns>
+        <join-column name="idItem" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idartiste" target-entity="Artiste">
+      <join-columns>
+        <join-column name="idArtiste" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idutilisateur" target-entity="Utilisateur">
+      <join-columns>
+        <join-column name="idUtilisateur" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
