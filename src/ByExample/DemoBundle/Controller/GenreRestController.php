@@ -6,4 +6,10 @@ use FOS\RestBundle\View\View AS FOSView;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+
+class GenreRestController extends Controller
+{
+
+}
+
 ?>

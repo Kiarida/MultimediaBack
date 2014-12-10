@@ -656,11 +656,11 @@ class appDevDebugProjectContainer extends \JMS\DebuggingBundle\DependencyInjecti
      * This service is shared.
      * This method always returns the same instance of the service.
      *
-     * @return \EntityManager54884abfdc870_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager A EntityManager54884abfdc870_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager instance.
+     * @return \EntityManager54885d8e7321d_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager A EntityManager54885d8e7321d_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager instance.
      */
     protected function getDoctrine_Orm_DefaultEntityManagerService()
     {
-        require_once (__DIR__.'/jms_diextra/doctrine/EntityManager_54884abfdc870.php');
+        require_once (__DIR__.'/jms_diextra/doctrine/EntityManager_54885d8e7321d.php');
 
         $a = $this->get('annotation_reader');
 
@@ -701,7 +701,7 @@ class appDevDebugProjectContainer extends \JMS\DebuggingBundle\DependencyInjecti
         $i = call_user_func(array('Doctrine\\ORM\\EntityManager', 'create'), $this->get('doctrine.dbal.default_connection'), $h);
         $this->get('doctrine.orm.default_manager_configurator')->configure($i);
 
-        return $this->services['doctrine.orm.default_entity_manager'] = new \EntityManager54884abfdc870_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager($i, $this);
+        return $this->services['doctrine.orm.default_entity_manager'] = new \EntityManager54885d8e7321d_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager($i, $this);
     }
 
     /**
@@ -3093,7 +3093,7 @@ class appDevDebugProjectContainer extends \JMS\DebuggingBundle\DependencyInjecti
         $l = new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler($k, array());
         $l->setProviderKey('wsse_secured');
 
-        return $this->services['security.firewall.map.context.wsse_secured'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => new \Symfony\Component\Security\Http\Firewall\ChannelListener($j, new \Symfony\Component\Security\Http\EntryPoint\RetryAuthenticationEntryPoint(80, 443), $a), 1 => new \Mopa\Bundle\WSSEAuthenticationBundle\Security\Firewall\WsseListener($c, $d, $this->get('security.authentication.session_strategy'), $k, 'wsse_secured', $l, new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler($this->get('http_kernel'), $k, array(), $a), array(), $a, $this->get('event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE)), 2 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($c, '54884abfcea8a', $a), 3 => new \Symfony\Component\Security\Http\Firewall\AccessListener($c, $this->get('security.access.decision_manager'), $j, $d)), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($c, $this->get('security.authentication.trust_resolver'), $k, 'wsse_secured', NULL, NULL, NULL, $a));
+        return $this->services['security.firewall.map.context.wsse_secured'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => new \Symfony\Component\Security\Http\Firewall\ChannelListener($j, new \Symfony\Component\Security\Http\EntryPoint\RetryAuthenticationEntryPoint(80, 443), $a), 1 => new \Mopa\Bundle\WSSEAuthenticationBundle\Security\Firewall\WsseListener($c, $d, $this->get('security.authentication.session_strategy'), $k, 'wsse_secured', $l, new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler($this->get('http_kernel'), $k, array(), $a), array(), $a, $this->get('event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE)), 2 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($c, '54885d8e65b03', $a), 3 => new \Symfony\Component\Security\Http\Firewall\AccessListener($c, $this->get('security.access.decision_manager'), $j, $d)), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($c, $this->get('security.authentication.trust_resolver'), $k, 'wsse_secured', NULL, NULL, NULL, $a));
     }
 
     /**
@@ -4666,7 +4666,7 @@ class appDevDebugProjectContainer extends \JMS\DebuggingBundle\DependencyInjecti
      */
     protected function getSecurity_Authentication_ManagerService()
     {
-        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Mopa\Bundle\WSSEAuthenticationBundle\Security\Authentication\Provider\WsseAuthenticationProvider('wsse_secured', NULL, 300, new \FOS\UserBundle\Security\EmailUserProvider($this->get('fos_user.user_manager')), $this->get('security.user_checker')), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('54884abfcea8a')), true);
+        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Mopa\Bundle\WSSEAuthenticationBundle\Security\Authentication\Provider\WsseAuthenticationProvider('wsse_secured', NULL, 300, new \FOS\UserBundle\Security\EmailUserProvider($this->get('fos_user.user_manager')), $this->get('security.user_checker')), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('54885d8e65b03')), true);
 
         $instance->setEventDispatcher($this->get('event_dispatcher'));
 
@@ -4897,7 +4897,7 @@ class appDevDebugProjectContainer extends \JMS\DebuggingBundle\DependencyInjecti
             'kernel.root_dir' => dirname(dirname(__DIR__)),
             'kernel.environment' => 'dev',
             'kernel.debug' => true,
-            'kernel.name' => 'app',
+            'kernel.name' => 'ap_',
             'kernel.cache_dir' => __DIR__,
             'kernel.logs_dir' => (dirname(dirname(__DIR__)).'/logs'),
             'kernel.bundles' => array(
@@ -5430,8 +5430,8 @@ class appDevDebugProjectContainer extends \JMS\DebuggingBundle\DependencyInjecti
             'jms_di_extra.cache_warmer.controller_file_blacklist' => array(
 
             ),
-            'jms_di_extra.doctrine_integration.entity_manager.file' => (__DIR__.'/jms_diextra/doctrine/EntityManager_54884abfdc870.php'),
-            'jms_di_extra.doctrine_integration.entity_manager.class' => 'EntityManager54884abfdc870_546a8d27f194334ee012bfe64f629947b07e4919\\__CG__\\Doctrine\\ORM\\EntityManager',
+            'jms_di_extra.doctrine_integration.entity_manager.file' => (__DIR__.'/jms_diextra/doctrine/EntityManager_54885d8e7321d.php'),
+            'jms_di_extra.doctrine_integration.entity_manager.class' => 'EntityManager54885d8e7321d_546a8d27f194334ee012bfe64f629947b07e4919\\__CG__\\Doctrine\\ORM\\EntityManager',
             'security.secured_services' => array(
 
             ),
