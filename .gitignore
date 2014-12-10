@@ -1,8 +1,9 @@
 /web/bundles/
 /app/config/parameters.yml
-/var/bootstrap.php.cache
-/var/cache/*
-/var/logs/*
+/app/bootstrap.php.cache
+/app/cache/*
+/app/logs/*
+
 !var/cache/.gitkeep
 !var/logs/.gitkeep
 /vendor/
@@ -14,7 +15,9 @@
 
 /nbproject
 /.idea
-
+.DS_Store
+/.DS_Store
+/app/.DS_Store
 /web/attachments
 /build/api
 /build/coverage
