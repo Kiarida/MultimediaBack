@@ -10,9 +10,9 @@ namespace ByExample\DemoBundle\Controller;
 class UserRoleRestController__JMSInjector
 {
     public static function inject($container) {
-        require_once '/Applications/MAMP/htdocs/FOSRestBundleByExample-master/app/cache/dev/jms_diextra/proxies/ByExample-DemoBundle-Controller-UserRoleRestController.php';
+        require_once 'D:/Programmes/wamp/www/MultimediaBack/app/cache/dev/jms_diextra/proxies/ByExample-DemoBundle-Controller-UserRoleRestController.php';
         $b = new \JMS\AopBundle\Aop\InterceptorLoader($container, array('ByExample\\DemoBundle\\Controller\\UserRoleRestController' => array('getRolesAction' => array(0 => 'security.access.method_interceptor'), 'postRolesAction' => array(0 => 'security.access.method_interceptor'), 'deleteRoleAction' => array(0 => 'security.access.method_interceptor'))));
-        $instance = new \EnhancedProxya0301330_4828730ea97f44e5d33f42ad46418158bf1ded0f\__CG__\ByExample\DemoBundle\Controller\UserRoleRestController();
+        $instance = new \EnhancedProxy278f1024_4828730ea97f44e5d33f42ad46418158bf1ded0f\__CG__\ByExample\DemoBundle\Controller\UserRoleRestController();
         $instance->__CGInterception__setLoader($b);
         return $instance;
     }

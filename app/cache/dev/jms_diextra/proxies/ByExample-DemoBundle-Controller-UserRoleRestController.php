@@ -1,6 +1,6 @@
 <?php
 
-namespace EnhancedProxya0301330_4828730ea97f44e5d33f42ad46418158bf1ded0f\__CG__\ByExample\DemoBundle\Controller;
+namespace EnhancedProxy278f1024_4828730ea97f44e5d33f42ad46418158bf1ded0f\__CG__\ByExample\DemoBundle\Controller;
 
 /**
  * CG library enhanced proxy class.

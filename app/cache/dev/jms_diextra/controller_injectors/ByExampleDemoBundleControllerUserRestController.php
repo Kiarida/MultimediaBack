@@ -10,9 +10,9 @@ namespace ByExample\DemoBundle\Controller;
 class UserRestController__JMSInjector
 {
     public static function inject($container) {
-        require_once '/Applications/MAMP/htdocs/FOSRestBundleByExample-master/app/cache/dev/jms_diextra/proxies/ByExample-DemoBundle-Controller-UserRestController.php';
+        require_once 'D:/Programmes/wamp/www/MultimediaBack/app/cache/dev/jms_diextra/proxies/ByExample-DemoBundle-Controller-UserRestController.php';
         $a = new \JMS\AopBundle\Aop\InterceptorLoader($container, array('ByExample\\DemoBundle\\Controller\\UserRestController' => array('getUsersAction' => array(0 => 'security.access.method_interceptor'), 'getUserAction' => array(0 => 'security.access.method_interceptor'), 'postUsersAction' => array(0 => 'security.access.method_interceptor'), 'putUserAction' => array(0 => 'security.access.method_interceptor'), 'deleteUserAction' => array(0 => 'security.access.method_interceptor'))));
-        $instance = new \EnhancedProxya0301330_541efc166f8577e5ebfce132290480d81073446f\__CG__\ByExample\DemoBundle\Controller\UserRestController();
+        $instance = new \EnhancedProxy278f1024_541efc166f8577e5ebfce132290480d81073446f\__CG__\ByExample\DemoBundle\Controller\UserRestController();
         $instance->__CGInterception__setLoader($a);
         return $instance;
     }
