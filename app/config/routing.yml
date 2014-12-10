@@ -30,7 +30,7 @@ byexample_demo_securityrest:
     resource: ByExample\DemoBundle\Controller\SecurityController
     type: rest
 
-byexample_demo_rest:
+byexample_demo_userrest:
     resource: "@ByExampleDemoBundle/Resources/config/rest_routes.yml"
     type: rest
     prefix: /api
