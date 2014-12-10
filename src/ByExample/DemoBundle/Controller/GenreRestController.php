@@ -31,18 +31,20 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 class GenreRestController extends Controller
 {
 	/**
-   * @return FOSView
      * @Method({"GET"})
      * @ApiDoc()
    */
   public function getGenreAction($id){
-  
+  $view = FOSView::create();
 		
     $genre = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->find($id);
-    if(!is_object($genre)){
-      throw $this->createNotFoundException();
-    }
-    return $genre;
+    if ($genre) {
+            $view->setStatusCode(200)->setData($genre);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
   }
 
 /**
