@@ -23,3 +23,6 @@
 /build/phpdox
 /build/doc
 vendor
+cache
+cache
+logs
