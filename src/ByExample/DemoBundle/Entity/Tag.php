@@ -31,13 +31,13 @@ class Tag
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idtag")
+     * @ORM\ManyToMany(targetEntity="NoteTagItem", mappedBy="idtag")
     * @ORM\JoinTable(name="notetagitem",
      *   joinColumns={
      *     @ORM\JoinColumn(name="idTag", referencedColumnName="id")
      *   },
      *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     *     @ORM\JoinColumn(name="idItem", referencedColumnName="idItem")
      *   }
      * )
      */
