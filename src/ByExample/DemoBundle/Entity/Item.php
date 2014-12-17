@@ -125,7 +125,15 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Tag", mappedBy="iditem")
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="iditem")
+     * @ORM\JoinTable(name="notetagitem",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idTag", referencedColumnName="id")
+     *   }
+     * )
      */
     private $idtag;
 
@@ -448,10 +456,10 @@ class Item
     /**
      * Add idtag
      *
-     * @param \ByExample\DemoBundle\Entity\Tag $idtag
+     * @param \ByExample\DemoBundle\Entity\NoteTagItem $idtag
      * @return Item
      */
-    public function addIdtag(\ByExample\DemoBundle\Entity\Tag $idtag)
+    public function addIdtag(\ByExample\DemoBundle\Entity\NoteTagItem $idtag)
     {
         $this->idtag[] = $idtag;
     
@@ -461,9 +469,9 @@ class Item
     /**
      * Remove idtag
      *
-     * @param \ByExample\DemoBundle\Entity\Tag $idtag
+     * @param \ByExample\DemoBundle\Entity\NoteTagItem $idtag
      */
-    public function removeIdtag(\ByExample\DemoBundle\Entity\Tag $idtag)
+    public function removeIdtag(\ByExample\DemoBundle\Entity\NoteTagItem $idtag)
     {
         $this->idtag->removeElement($idtag);
     }
