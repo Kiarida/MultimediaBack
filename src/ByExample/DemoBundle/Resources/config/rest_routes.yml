@@ -10,3 +10,7 @@ byexample_demo_userrolrest:
 byexample_genres:
     resource: ByExample\DemoBundle\Controller\GenreRestController
     type: rest
+
+byexample_items:
+    resource: ByExample\DemoBundle\Controller\ItemRestController
+    type: rest
