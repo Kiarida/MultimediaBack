@@ -54,8 +54,16 @@ class GenreRestController extends Controller
 
 
   public function getGenresAction(){
+  $view = FOSView::create();
 	$genres = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->findAll();
-	return array('genres' => $genres);
+	if ($genres) {
+            $view->setStatusCode(200)->setData($genres);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+  
  }
   
 
