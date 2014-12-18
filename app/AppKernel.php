@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\BuzzBundle\SensioBuzzBundle(),
             new Mopa\Bundle\WSSEAuthenticationBundle\MopaWSSEAuthenticationBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
             new ByExample\DemoBundle\ByExampleDemoBundle()
         );
 

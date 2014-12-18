@@ -1,4 +1,6 @@
-<?php namespace ByExample\DemoBundle\Controller;
+<?php 
+
+namespace ByExample\DemoBundle\Controller;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;

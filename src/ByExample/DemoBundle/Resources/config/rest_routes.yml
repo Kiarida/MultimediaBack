@@ -1,0 +1,3 @@
+#byexample_demo_userrolrest:
+#  resource: ByExample\DemoBundle\Controller\UserRoleRestController
+#   type: rest

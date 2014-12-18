@@ -15,6 +15,7 @@ namespace ByExample\DemoBundle\Controller;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;                  // @ApiDoc(resource=true, description="Filter",filters={{"name"="a-filter", "dataType"="string", "pattern"="(foo|bar) ASC|DESC"}})
 use FOS\RestBundle\Controller\Annotations\NamePrefix;       // NamePrefix Route annotation class @NamePrefix("bdk_core_user_userrest_")
 use FOS\RestBundle\View\RouteRedirectView;                  // Route based redirect implementation
+use FOS\RestBundle\Controller\Annotations\Prefix;
 use FOS\RestBundle\View\View AS FOSView;                    // Default View implementation.
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,9 @@ use Symfony\Component\Validator\ConstraintViolation;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Controller\Annotations\RequestParam;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
 
 /**
  * Controller that provides Restful sercies over the resource Users.
@@ -33,37 +37,22 @@ class UserRestController extends Controller
 {
 
     /**
-     * Returns the overall user list.
+     * Returns an user by id
+     *
+     * @param string $id
      *
      * @return FOSView
      * @Secure(roles="ROLE_USER")
      * @ApiDoc()
+     * @Get("/api/users/{id}")
      */
-    public function getUsersAction()
+    public function getUserAction($id)
     {
         $view = FOSView::create();
         $userManager = $this->container->get('fos_user.user_manager');
-        $data = $userManager->findUsers();
-        if ($data) {
-            $view->setStatusCode(200)->setData($data);
-        }
-        return $view;
-    }
-
-    /**
-     * Returns an user by username/email.
-     *
-     * @param string $slug Username or Email
-     *
-     * @return FOSView
-     * @Secure(roles="ROLE_USER")
-     * @ApiDoc()
-     */
-    public function getUserAction($slug)
-    {
-        $view = FOSView::create();
-        $userManager = $this->container->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsernameOrEmail($slug);
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleDemoBundle:User');
+        $user = $repo->findBy(array("id" => $id));
 
         if ($user) {
             $view->setStatusCode(200)->setData($user);
@@ -86,7 +75,6 @@ class UserRestController extends Controller
      * @RequestParam(name="role", requirements="\d+", default="", description="Role.")
      *
      * @return FOSView
-     * @Secure(roles="ROLE_USER")
      * @ApiDoc()
      */
     public function postUsersAction(ParamFetcher $paramFetcher)
@@ -105,7 +93,7 @@ class UserRestController extends Controller
         $errors = $validator->validate($user, array('Registration'));
         if (count($errors) == 0) {
             $userManager->updateUser($user);
-            $param = array("slug" => $user->getUsername());
+            $param = array("id" => $user->getId());
             $view = RouteRedirectView::create("byexample_demo_userrest_get_user", $param);
         } else {
             $view = $this->get_errors_view($errors);
@@ -114,20 +102,21 @@ class UserRestController extends Controller
     }
 
     /**
-     * Update an user by username/email.
+     * Update an user by id
      *
-     * @param string $slug Username or Email
+     * @param string $id
      *
      * @return FOSView
      * @Secure(roles="ROLE_USER")
+    * @Put("/api/users/{id}")
      * @ApiDoc()
      */
-    public function putUserAction($slug)
+    public function putUserAction($id)
     {
         $request = $this->getRequest();
         $userManager = $this->container->get('fos_user.user_manager');
 
-        $user = $userManager->findUserByUsernameOrEmail($slug);
+        $user = $userManager->findUserByUsernameOrEmail($id);
         if (!$user) {
             $view = FOSView::create();
             $view->setStatusCode(204);
@@ -165,7 +154,7 @@ class UserRestController extends Controller
      * @Secure(roles="ROLE_USER")
      * @ApiDoc()
      */
-    public function deleteUserAction($slug)
+    /*public function deleteUserAction($slug)
     {
         $view = FOSView::create();
         $userManager = $this->container->get('fos_user.user_manager');
@@ -177,7 +166,7 @@ class UserRestController extends Controller
             $view->setStatusCode(204)->setData("No data available.");
         }
         return $view;
-    }
+    }*/
 
     /**
      * Get the validation errors
