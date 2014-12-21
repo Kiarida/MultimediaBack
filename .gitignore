@@ -25,15 +25,10 @@
 /build/pdepend
 /build/phpdox
 /build/doc
-<<<<<<< HEAD
-vendor
-cache
-cache
-logs
-=======
 cache
 logs
 vendor
 logs
 /composer.lock
->>>>>>> routing
+.DS_Store
+*.php~
