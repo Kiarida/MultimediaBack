@@ -1,3 +1,7 @@
-#byexample_demo_userrolrest:
-#  resource: ByExample\DemoBundle\Controller\UserRoleRestController
-#   type: rest
+byexample_genres:
+    resource: ByExample\DemoBundle\Controller\GenreRestController
+    type: rest
+
+byexample_items:
+    resource: ByExample\DemoBundle\Controller\ItemRestController
+    type: rest

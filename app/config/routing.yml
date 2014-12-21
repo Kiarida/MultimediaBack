@@ -32,6 +32,9 @@ byexample_demo_securityrest:
 
 byexample_demo_userrest:
     resource: ByExample\DemoBundle\Controller\UserRestController
+
+restroutes:
+    resource: "@ByExampleDemoBundle/Resources/config/rest_routes.yml"
     type: rest
 
 #byexample_demo_rest:
