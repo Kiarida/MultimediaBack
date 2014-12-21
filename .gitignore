@@ -30,3 +30,5 @@ logs
 vendor
 logs
 /composer.lock
+.DS_Store
+*.php~
