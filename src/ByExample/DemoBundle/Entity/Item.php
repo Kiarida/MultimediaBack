@@ -122,20 +122,6 @@ class Item
      */
     private $idplaylist;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="NoteTagItem", inversedBy="iditem")
-     * @ORM\JoinTable(name="notetagitem",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idTag", referencedColumnName="idTag")
-     *   }
-     * )
-     */
-    private $idtag;
 
     /**
      * Constructor

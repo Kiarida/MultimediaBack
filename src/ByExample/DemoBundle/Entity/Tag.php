@@ -28,20 +28,6 @@ class Tag
      */
     private $libelle;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="NoteTagItem", mappedBy="idtag")
-    * @ORM\JoinTable(name="notetagitem",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="idTag", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idItem", referencedColumnName="idItem")
-     *   }
-     * )
-     */
-    private $iditem;
 
     /**
      * @var \Doctrine\Common\Collections\Collection

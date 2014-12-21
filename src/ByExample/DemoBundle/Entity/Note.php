@@ -55,15 +55,6 @@ class Note
      */
     private $idartiste;
 
-    /**
-     * @var \Item
-     *
-     * @ORM\ManyToOne(targetEntity="Item")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idItem", referencedColumnName="id")
-     * })
-     */
-    private $iditem;
 
 
 
