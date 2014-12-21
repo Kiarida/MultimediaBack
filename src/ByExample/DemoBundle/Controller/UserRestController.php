@@ -64,6 +64,21 @@ class UserRestController extends Controller
     }
 
     /**
+     * Test if a user has the connected rights
+     *
+     * @return FOSView
+     * @Secure(roles="ROLE_USER")
+     * @ApiDoc()
+     * @Get("/api/users/connected")
+     */
+    public function getConnectedUserAction()
+    {
+        $view = FOSView::create();
+        $view->setStatusCode(200)->setData(array("connected"));
+        return $view;
+    }
+
+    /**
      * Creates a new User entity.
      * Using param_fetcher_listener: force
      *
