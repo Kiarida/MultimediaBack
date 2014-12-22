@@ -439,36 +439,4 @@ class Item
         return $this->idplaylist;
     }
 
-    /**
-     * Add idtag
-     *
-     * @param \ByExample\DemoBundle\Entity\NoteTagItem $idtag
-     * @return Item
-     */
-    public function addIdtag(\ByExample\DemoBundle\Entity\NoteTagItem $idtag)
-    {
-        $this->idtag[] = $idtag;
-    
-        return $this;
-    }
-
-    /**
-     * Remove idtag
-     *
-     * @param \ByExample\DemoBundle\Entity\NoteTagItem $idtag
-     */
-    public function removeIdtag(\ByExample\DemoBundle\Entity\NoteTagItem $idtag)
-    {
-        $this->idtag->removeElement($idtag);
-    }
-
-    /**
-     * Get idtag
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getIdtag()
-    {
-        return $this->idtag;
-    }
 }

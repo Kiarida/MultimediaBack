@@ -26,6 +26,7 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
+use ByExample\DemoBundle\Entity\Utilisateur;
 
 /**
  * Controller that provides Restful sercies over the resource Users.
@@ -69,7 +70,7 @@ class UserRestController extends Controller
      * @return FOSView
      * @Secure(roles="ROLE_USER")
      * @ApiDoc()
-     * @Get("/api/users/connected")
+     * @Get("/api/connected")
      */
     public function getConnectedUserAction()
     {
@@ -91,6 +92,7 @@ class UserRestController extends Controller
      *
      * @return FOSView
      * @ApiDoc()
+     * @Post("/users")
      */
     public function postUsersAction(ParamFetcher $paramFetcher)
     {
@@ -109,7 +111,16 @@ class UserRestController extends Controller
         if (count($errors) == 0) {
             $userManager->updateUser($user);
             $param = array("id" => $user->getId());
-            $view = RouteRedirectView::create("byexample_demo_userrest_get_user", $param);
+            $utilisateur = new Utilisateur();
+            $utilisateur->setId($user->getId());
+            $utilisateur->setDateinscription(new \DateTime());
+            $utilisateur->setBirthdate(new \DateTime($request->get('birthyear')."/".$request->get('birthmonth')."/".$request->get('birthday')));
+            $utilisateur->setGenre($request->get('genre'));
+            $utilisateur->setPays($request->get('country'));
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($utilisateur);
+            $em->flush();
+            $view = RouteRedirectView::create("byexample_demo_userrest_getuser", $param);
         } else {
             $view = $this->get_errors_view($errors);
         }

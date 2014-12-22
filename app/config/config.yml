@@ -110,8 +110,10 @@ fos_rest:
             json: true
             xml: true
             rss: false
+            html: false
     format_listener:
-        prefer_extension: true
+        rules:
+             - { path: '^/', priorities: ['json', 'xml'], prefer_extension: true }
     body_listener:
         decoders:
             json: fos_rest.decoder.json

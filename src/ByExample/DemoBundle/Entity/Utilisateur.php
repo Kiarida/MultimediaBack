@@ -12,12 +12,16 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Utilisateur
 {
+
+    const GENRE_MALE = 1;
+    const GENRE_FEMALE = 0;
+
+
     /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -31,14 +35,14 @@ class Utilisateur
     /**
      * @var integer
      *
-     * @ORM\Column(name="age", type="integer", nullable=false)
+     * @ORM\Column(name="birthdate", type="date", nullable=false)
      */
-    private $age;
+    private $birthdate;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="genre", type="string", length=1, nullable=false)
+     * @ORM\Column(name="genre", type="boolean", length=1, nullable=false)
      */
     private $genre;
 
@@ -84,6 +88,17 @@ class Utilisateur
     }
 
     /**
+     * Set id
+     * @param integer $id
+     * @return Utilisateur
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
      * Set dateinscription
      *
      * @param \DateTime $dateinscription
@@ -109,12 +124,12 @@ class Utilisateur
     /**
      * Set age
      *
-     * @param integer $age
+     * @param \DateTime $age
      * @return Utilisateur
      */
-    public function setAge($age)
+    public function setBirthdate($age)
     {
-        $this->age = $age;
+        $this->birthdate = $age;
     
         return $this;
     }
@@ -122,11 +137,11 @@ class Utilisateur
     /**
      * Get age
      *
-     * @return integer 
+     * @return \DateTime 
      */
-    public function getAge()
+    public function getBirthdate()
     {
-        return $this->age;
+        return $this->birthdate;
     }
 
     /**
