@@ -47,4 +47,60 @@ class ItemRestController extends Controller
 
         return $view;
   }
+
+  /**
+  * @Route("/items/search/{key}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemsSearchAction($key){
+  $view = FOSView::create();
+    $key = "%".$key."%";
+  $em =$this->getDoctrine()->getManager();
+  $query = $em->createQuery('SELECT i FROM ByExampleDemoBundle:Item i WHERE i.titre LIKE :key')->setParameter('key', $key);
+$items = $query->getResult();
+
+  /* $item = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Item')->findByTitre($key);
+  */ 
+    if ($items) {
+            $view->setStatusCode(200)->setData($items);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+  }
+
+/**
+  * @Route("/items/popular/")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemsPopularAction(){
+
+    $view = FOSView::create();
+    $days = $this->container->getParameter('popular_parameter_days');
+    $limit = $this->container->getParameter('popular_limit');
+
+ $em =$this->getDoctrine()->getManager();
+  $query = $em->createQuery(
+    'SELECT COUNT(i.id) as views, i.titre 
+    FROM ByExampleDemoBundle:Item i, ByExampleDemoBundle:Ecoute e
+    WHERE e.iditem = i.id
+    AND (e.date > :before)
+    GROUP BY i.id
+    ORDER BY views DESC'
+    )->setParameter('before', new \DateTime('-'.$days.' days'))->setMaxResults($limit);
+$items = $query->getResult();
+
+  
+    if ($items) {
+            $view->setStatusCode(200)->setData($items);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+}
+
  }
