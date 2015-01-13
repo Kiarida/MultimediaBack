@@ -24,28 +24,28 @@ class Item
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=50, nullable=false)
+     * @ORM\Column(name="url", type="string", length=255, nullable=false)
      */
     private $url;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="titre", type="string", length=25, nullable=false)
+     * @ORM\Column(name="titre", type="string", length=255, nullable=false)
      */
     private $titre;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="note", type="integer", nullable=false)
+     * @ORM\Column(name="note", type="decimal", precision=5, scale=2, nullable=false)
      */
     private $note;
 
     /**
-     * @var string
+     * @var decimal
      *
-     * @ORM\Column(name="duree", type="decimal", nullable=false)
+     * @ORM\Column(name="duree", type="decimal", precision=6, scale=3, nullable=false)
      */
     private $duree;
 
