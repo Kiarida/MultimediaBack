@@ -131,4 +131,91 @@ $items = $query->getResult();
         return $view;
 }
 
+/**
+  * @Route("/items/genre/{id}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemGenreAction($id){
+
+    $view = FOSView::create();
+
+ $em =$this->getDoctrine()->getManager();
+
+ $max = $em->createQuery(
+    'SELECT MAX(i.id) FROM ByExampleDemoBundle:Item i
+            JOIN i.idgenre g
+            WHERE g.id= :id
+            ')
+ ->setParameter('id', $id)
+ ->getSingleScalarResult();
+
+
+  $query = $em->createQuery(
+    'SELECT i.titre
+    FROM ByExampleDemoBundle:Item i
+    JOIN i.idgenre g
+            WHERE g.id= :id
+    AND i.id >= :rand
+    ORDER BY i.id ASC'
+    )
+  ->setParameter('id', $id)
+  ->setParameter('rand',rand(0,$max))
+  ->setMaxResults(1) ;
+
+  $item = $query->getSingleResult();
+
+  
+    if ($item) {
+            $view->setStatusCode(200)->setData($item);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+}
+
+/**
+  * @Route("/items/artiste/{id}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemArtisteAction($id){
+
+    $view = FOSView::create();
+
+ $em =$this->getDoctrine()->getManager();
+
+ $max = $em->createQuery(
+    'SELECT MAX(i.id) FROM ByExampleDemoBundle:Item i
+            JOIN i.idartiste a
+            WHERE a.id= :id
+            ')
+ ->setParameter('id', $id)
+ ->getSingleScalarResult();
+
+
+  $query = $em->createQuery(
+    'SELECT i.titre
+    FROM ByExampleDemoBundle:Item i
+    JOIN i.idartiste a
+            WHERE a.id= :id
+    AND i.id >= :rand
+    ORDER BY i.id ASC'
+    )
+  ->setParameter('id', $id)
+  ->setParameter('rand',rand(0,$max))
+  ->setMaxResults(1) ;
+
+  $item = $query->getResult();
+
+  
+    if ($item) {
+            $view->setStatusCode(200)->setData($item);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+}
  }
