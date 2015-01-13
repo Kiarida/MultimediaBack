@@ -24,7 +24,7 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 
 /**
  * 
- * @Route("/items")
+ * @Route("/api/items")
  *@NamePrefix("byexample_items_")
  */
 
