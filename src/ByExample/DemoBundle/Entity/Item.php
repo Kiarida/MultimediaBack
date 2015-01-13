@@ -124,6 +124,13 @@ class Item
 
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="item")
+     * 
+     */
+    private $idnotetagitem;
+    /**
      * Constructor
      */
     public function __construct()

@@ -103,4 +103,32 @@ $items = $query->getResult();
         return $view;
 }
 
+/**
+  * @Route("/items/{id}/tags/")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemTagsAction($id){
+
+    $view = FOSView::create();
+
+ $em =$this->getDoctrine()->getManager();
+  $query = $em->createQuery(
+    'SELECT t.libelle, nt.note
+    FROM ByExampleDemoBundle:Tag t, ByExampleDemoBundle:NoteTagItem nt
+    WHERE t.id = nt.idtag
+    AND nt.iditem= :id'
+    )->setParameter('id', $id);
+$items = $query->getResult();
+
+  
+    if ($items) {
+            $view->setStatusCode(200)->setData($items);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+}
+
  }
