@@ -126,7 +126,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="item")
+     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem")
      * 
      */
     private $idnotetagitem;

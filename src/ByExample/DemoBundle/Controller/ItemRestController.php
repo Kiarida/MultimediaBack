@@ -152,7 +152,7 @@ $items = $query->getResult();
 
 
   $query = $em->createQuery(
-    'SELECT i.titre
+    'SELECT i
     FROM ByExampleDemoBundle:Item i
     JOIN i.idgenre g
             WHERE g.id= :id
@@ -196,7 +196,7 @@ $items = $query->getResult();
 
 
   $query = $em->createQuery(
-    'SELECT i.titre
+    'SELECT i
     FROM ByExampleDemoBundle:Item i
     JOIN i.idartiste a
             WHERE a.id= :id

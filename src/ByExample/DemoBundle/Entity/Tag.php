@@ -47,7 +47,7 @@ class Tag
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="tag")
+     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="idtag")
      * 
      */
     private $idnotetagitem;
