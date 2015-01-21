@@ -71,6 +71,13 @@ class Item
     private $date;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="urlCover", type="string", length=255, nullable=true)
+     */
+    private $urlCover;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Artiste", inversedBy="iditem")
@@ -312,6 +319,30 @@ class Item
     public function getDate()
     {
         return $this->date;
+    }
+
+
+    /**
+     * Set url cover
+     *
+     * @param string $url
+     * @return Item
+     */
+    public function setUrlCover($url)
+    {
+        $this->urlCover = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url cover
+     *
+     * @return string 
+     */
+    public function getUrlCover()
+    {
+        return $this->urlCover;
     }
 
     /**
