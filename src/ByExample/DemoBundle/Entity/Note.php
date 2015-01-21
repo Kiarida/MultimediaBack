@@ -36,6 +36,14 @@ class Note
     private $date;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=255, nullable=false)
+     */
+    private $type;
+
+
+    /**
      * @var \Utilisateur
      *
      * @ORM\ManyToOne(targetEntity="Utilisateur")
@@ -55,7 +63,15 @@ class Note
      */
     private $idartiste;
 
-
+ /**
+     * @var \Item
+     *
+     * @ORM\ManyToOne(targetEntity="Item")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     * })
+     */
+    private $iditem;
 
 
     /**
@@ -112,6 +128,29 @@ class Note
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return Note
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
