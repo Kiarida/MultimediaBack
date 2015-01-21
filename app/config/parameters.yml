@@ -1,10 +1,10 @@
 parameters:
     database_driver:   pdo_mysql
     database_host:     localhost
-    database_port:     8889
-    database_name:     fosrestbyexample
+    database_port:     null
+    database_name:     projetindus
     database_user:     root
-    database_password: jojoadmin
+    database_password: root
 
     mailer_transport:  smtp
     mailer_host:       localhost
@@ -13,4 +13,7 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    popular_parameter_days:  14
+    popular_limit:     20
 

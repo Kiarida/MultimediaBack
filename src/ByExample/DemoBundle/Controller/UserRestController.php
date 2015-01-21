@@ -11,7 +11,7 @@
  */
 
 namespace ByExample\DemoBundle\Controller;
-
+use FOS\RestBundle\Controller\Annotations\Route;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;                  // @ApiDoc(resource=true, description="Filter",filters={{"name"="a-filter", "dataType"="string", "pattern"="(foo|bar) ASC|DESC"}})
 use FOS\RestBundle\Controller\Annotations\NamePrefix;       // NamePrefix Route annotation class @NamePrefix("bdk_core_user_userrest_")
 use FOS\RestBundle\View\RouteRedirectView;                  // Route based redirect implementation
@@ -217,4 +217,5 @@ class UserRestController extends Controller
         return $view;
     }
 
+    
 }

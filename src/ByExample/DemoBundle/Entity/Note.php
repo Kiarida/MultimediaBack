@@ -22,9 +22,9 @@ class Note
     private $id;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="note", type="integer", nullable=false)
+     * @ORM\Column(name="note", type="decimal", precision=5, scale=2, nullable=false)
      */
     private $note;
 

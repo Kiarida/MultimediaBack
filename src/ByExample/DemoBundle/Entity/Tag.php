@@ -47,6 +47,14 @@ class Tag
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
+     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="idtag")
+     * 
+     */
+    private $idnotetagitem;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
      * @ORM\ManyToMany(targetEntity="Playlist", inversedBy="idtag")
      * @ORM\JoinTable(name="tagplaylist",
      *   joinColumns={

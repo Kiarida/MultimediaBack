@@ -29,16 +29,16 @@ class Artiste
     private $nom;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="note", type="integer", nullable=false)
+     * @ORM\Column(name="note", type="decimal", precision=5, scale=2, nullable=false)
      */
     private $note;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste")
+     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste", fetch="LAZY")
      */
     private $iditem;
 
