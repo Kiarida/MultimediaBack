@@ -3,7 +3,7 @@
 namespace ByExample\DemoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use ByExemple\DemoBundle\Entity\Item;
+use ByExample\DemoBundle\Entity\Item;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
@@ -40,9 +40,11 @@ class ItemRestController extends Controller
   */
   public function getItemAction($id){
   $view = FOSView::create();
-	
+
     $item = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Item')->find($id);
-	
+/*  $itemT = new Item();
+  $itemT->setId($item->getId());*/
+
     if ($item) {
             $view->setStatusCode(200)->setData($item);
         } else {

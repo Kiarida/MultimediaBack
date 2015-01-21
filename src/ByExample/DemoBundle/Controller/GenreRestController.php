@@ -31,22 +31,6 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 
 class GenreRestController extends Controller
 {
-	/**
-     * @Method({"GET"})
-     * @ApiDoc()
-   */
-/*  public function getGenreAction($id){
-  $view = FOSView::create();
-		
-    $genre = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->find($id);
-    if ($genre) {
-            $view->setStatusCode(200)->setData($genre);
-        } else {
-            $view->setStatusCode(404);
-        }
-
-        return $view;
-  }*/
 
   /**
   * Renvoie la liste de tous les genres

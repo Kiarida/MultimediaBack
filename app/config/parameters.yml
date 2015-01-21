@@ -17,3 +17,5 @@ parameters:
     popular_parameter_days:  14
     popular_limit:     20
 
+    artistes_return:     10
+
