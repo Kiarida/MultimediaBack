@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 namespace ByExample\DemoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use ByExemple\DemoBundle\Entity\Genre;
+use ByExemple\DemoBundle\Entity\Artiste;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
@@ -24,22 +24,23 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 
 /**
  * 
- * @Route("/genres")
- *@NamePrefix("byexample_genres_")
+ * @Route("/artistes")
+ *@NamePrefix("byexample_artistes_")
  */
 
-class GenreRestController extends Controller
+class ArtisteRestController extends Controller
 {
 	/**
      * @Method({"GET"})
      * @ApiDoc()
    */
-  public function getGenreAction($id){
+  public function getArtisteAction($id){
   $view = FOSView::create();
 		
-    $genre = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->find($id);
-    if ($genre) {
-            $view->setStatusCode(200)->setData($genre);
+    //$artiste = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->find($id);
+  $artiste = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->find($id);
+    if ($artiste) {
+            $view->setStatusCode(200)->setData($artiste);
         } else {
             $view->setStatusCode(404);
         }
@@ -47,15 +48,18 @@ class GenreRestController extends Controller
         return $view;
   }
 
-  /**
+/**
    * @return FOSView
-   * @Method({"GET"})
+     * @Method({"GET"})
+     * @ApiDoc()
    */
-  public function getGenresAction(){
+
+
+  public function getArtistesAction(){
   $view = FOSView::create();
-	$genres = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->findAll();
-	if ($genres) {
-            $view->setStatusCode(200)->setData($genres);
+	$artistes = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->findAll();
+	if ($artistes) {
+            $view->setStatusCode(200)->setData($artistes);
         } else {
             $view->setStatusCode(404);
         }
@@ -63,16 +67,33 @@ class GenreRestController extends Controller
         return $view;
   
  }
+
+/**
+* @Route("/artistes/search/{keyword}")
+* @return FOSView
+     * @Method({"GET"})
+     * @ApiDoc()
+   */
+
+  public function getArtistesSearchAction($keyword){
+  $view = FOSView::create();
   
+  $word="%".$keyword."%";
+  $em = $this->getDoctrine()->getManager();
+  $query = $em->createQuery(
+      'SELECT p
+      FROM ByExampleDemoBundle:Artiste p
+      WHERE p.nom LIKE :nom'
+  )->setParameter('nom', $word);
+  $artistes = $query->getResult();
+  if ($artistes) {
+            $view->setStatusCode(200)->setData($artistes);
+        } else {
+            $view->setStatusCode(404);
+        }
 
- /**
- *@return FOSView
-     * @Method({"POST"})
-     */
-
- public function postGenresAction(){
-  echo "hop";
+        return $view;
+  
  }
-
 
 }

@@ -1,6 +1,8 @@
-/web/bundles/
+/web/bundles/*
 /app/config/parameters.yml
 /app/bootstrap.php.cache
+app/config/parameters.yml
+app/SymfonyRequirements.php
 /app/cache/*
 /app/logs/*
 
@@ -25,7 +27,10 @@
 /build/pdepend
 /build/phpdox
 /build/doc
-vendor
-cache
 cache
 logs
+vendor
+logs
+/composer.lock
+.DS_Store
+*.php~

@@ -4,7 +4,7 @@ security:
             id: fos_user.user_provider.username_email
 
     encoders:
-        FOS\UserBundle\Model\UserInterface: plaintext #sha512
+        FOS\UserBundle\Model\UserInterface:  sha512
 
     firewalls:
 #        fos_secured:
@@ -20,7 +20,7 @@ security:
             stateless:    true
             wsse:
                 nonce_dir: null
-                lifetime: 300
+                lifetime: 604800
                 provider: fos_userbundle
             anonymous:    true
 
@@ -29,7 +29,9 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login_api, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+
 
     role_hierarchy:
         ROLE_WEBUSER:      ROLE_USER

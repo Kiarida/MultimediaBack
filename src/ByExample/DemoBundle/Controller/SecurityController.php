@@ -57,17 +57,24 @@ class SecurityController extends Controller
         $user = $um->findUserByUsernameOrEmail($username);
 
         if (!$user instanceof User) {
-            throw new AccessDeniedException("Wrong user");
+            return $view->setStatusCode(400)->setData(array("status"=>"error", "message"=>"Wrong username"));
         }
+        $encoder = $this->get('security.encoder_factory')->getEncoder($user);
+        if(!$encoder->isPasswordValid($user->getPassword(),$password,$user->getSalt())){
+            return $view->setStatusCode(400)->setData(array("status"=>"error", "message"=>"Wrong password"));
+        }
+
+        $password = $user->getPassword();
 
         $created = date('c');
         $nonce = substr(md5(uniqid('nonce_', true)), 0, 16);
         $nonceHigh = base64_encode($nonce);
-        $passwordDigest = base64_encode(sha1($nonce . $created . $password . "{".$user->getSalt()."}", true));
+        $passwordDigest = base64_encode(sha1($nonce . $created . $password, true));
         $header = "UsernameToken Username=\"{$username}\", PasswordDigest=\"{$passwordDigest}\", Nonce=\"{$nonceHigh}\", Created=\"{$created}\"";
+        $auth = 'WSSE profile="'.$username.'"';
         $view->setHeader("Authorization", 'WSSE profile="UsernameToken"');
         $view->setHeader("X-WSSE", "UsernameToken Username=\"{$username}\", PasswordDigest=\"{$passwordDigest}\", Nonce=\"{$nonceHigh}\", Created=\"{$created}\"");
-        $data = array('WSSE' => $header);
+        $data = array('WSSE' => $header, "auth" => $auth);
         $view->setStatusCode(200)->setData($data);
         return $view;
     }

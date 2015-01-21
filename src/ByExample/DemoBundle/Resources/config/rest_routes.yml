@@ -1,0 +1,20 @@
+byexample_demo_userrest:
+    type: rest
+    resource: ByExample\DemoBundle\Controller\UserRestController
+
+byexample_genres:
+    resource: ByExample\DemoBundle\Controller\GenreRestController
+    type: rest
+
+byexample_items:
+    resource: ByExample\DemoBundle\Controller\ItemRestController
+    type: rest
+
+byexample_artistes:
+    resource: ByExample\DemoBundle\Controller\ArtisteRestController
+    type: rest
+
+byexample_playlists:
+    resource: ByExample\DemoBundle\Controller\PlaylistRestController
+    parent: byexample_demo_userrest
+    type: rest

@@ -1,3 +1,14 @@
+Console 
+======================
+**Mettre a jour la base**
+php app/console doctrine:schema:update --force
+
+**clear cache**  
+php app/console cache:clear
+php app/console cache:clear --env=prod
+
+
+
 FOSRestBundleByExample
 ======================
 
