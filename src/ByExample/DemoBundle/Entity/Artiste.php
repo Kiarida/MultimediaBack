@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Artiste
  *
  * @ORM\Table(name="artiste")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ByExample\DemoBundle\Repository\ArtisteRepository")
  */
 class Artiste
 {
@@ -38,7 +38,7 @@ class Artiste
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste")
+     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste", fetch="LAZY")
      */
     private $iditem;
 
