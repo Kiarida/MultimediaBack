@@ -22,6 +22,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Controller\Annotations\RequestParam;
+use Doctrine\ORM\Query;
 
 /**
  	*@NamePrefix("byexample_items_")
@@ -35,13 +36,53 @@ class PlaylistRestController extends Controller{
 
     public function getPlaylistsAction($id, $id_playlist){
         $view = FOSView::create();
-        $playlist = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Playlist')->find($id_playlist);
-        if ($playlist) {
-            $view->setStatusCode(200)->setData($playlist);
+
+    $em = $this->getDoctrine()->getManager();
+        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+    $rsm->addScalarResult('idItem', 'idItem');
+    $rsm->addScalarResult('id', 'id');
+    $rsm->addScalarResult('nom', 'nom');
+    $rsm->addScalarResult('dateCreation', 'datecreation');
+    $q = $em->createNativeQuery(
+        'SELECT p.*, idItem FROM playlist p, itemplaylist WHERE p.id = ? AND p.idutilisateur = ?',
+        $rsm
+    )->setParameter(1, $id_playlist)->setParameter(2, $id);
+    $playlists = $q->getResult();
+    /*$em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery(
+            'SELECT p
+            FROM ByExampleDemoBundle:Playlist p
+            JOIN p.idutilisateur u
+            JOIN p.iditem i
+            WHERE u.id = :id
+            AND p.id = :idplaylist'
+           
+        )->setParameter('id', $id)->setParameter('idplaylist',$id_playlist);
+        
+        $playlists = $query->getResult();
+
+        //$playlists=$query->getResult();
+        //$playlists=array();
+        //$truc = array();
+        /*foreach ($results as $key => $value) {  
+
+            $playlists[]= $value->getIditem()->toArray();
+
+        }
+               
+
+        */
+
+
+        if ($playlists) {
+            $view->setStatusCode(200)->setData($playlists);
         } else {
             $view->setStatusCode(404);
         }
 
         return $view;
     }
+
+
+
 }
