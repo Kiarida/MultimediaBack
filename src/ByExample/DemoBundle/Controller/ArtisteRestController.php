@@ -7,6 +7,8 @@ use ByExemple\DemoBundle\Entity\Artiste;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
+use ByExample\DemoBundle\Repository\ArtisteRepository;
+
 
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Route;
@@ -31,13 +33,13 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 class ArtisteRestController extends Controller
 {
 	/**
+  * Renvoie les informations sur un artiste
      * @Method({"GET"})
      * @ApiDoc()
    */
   public function getArtisteAction($id){
   $view = FOSView::create();
 		
-    //$artiste = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->find($id);
   $artiste = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->find($id);
     if ($artiste) {
             $view->setStatusCode(200)->setData($artiste);
@@ -49,51 +51,50 @@ class ArtisteRestController extends Controller
   }
 
 /**
-   * @return FOSView
-     * @Method({"GET"})
-     * @ApiDoc()
-   */
+  * Liste de x artistes aléatoires
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
 
 
   public function getArtistesAction(){
-  $view = FOSView::create();
-	$artistes = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->findAll();
-	if ($artistes) {
-            $view->setStatusCode(200)->setData($artistes);
-        } else {
-            $view->setStatusCode(404);
-        }
+    $view = FOSView::create();
 
-        return $view;
+    $limit = $this->container->getParameter('artistes_return');
+
+  	$artistes = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->findArtistes($limit);
+  	if ($artistes) {
+              $view->setStatusCode(200)->setData($artistes);
+          } else {
+              $view->setStatusCode(404);
+          }
+
+    return $view;
   
  }
 
 /**
+* Recherche des artistes de la base en fonction du mot clé donné en paramètre
 * @Route("/artistes/search/{keyword}")
-* @return FOSView
      * @Method({"GET"})
      * @ApiDoc()
    */
 
   public function getArtistesSearchAction($keyword){
-  $view = FOSView::create();
-  
-  $word="%".$keyword."%";
-  $em = $this->getDoctrine()->getManager();
-  $query = $em->createQuery(
-      'SELECT p
-      FROM ByExampleDemoBundle:Artiste p
-      WHERE p.nom LIKE :nom'
-  )->setParameter('nom', $word);
-  $artistes = $query->getResult();
-  if ($artistes) {
-            $view->setStatusCode(200)->setData($artistes);
-        } else {
-            $view->setStatusCode(404);
-        }
+    $view = FOSView::create();
+    
+    $em = $this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Artiste');
+    $artistes = $repo->findArtistesBySearchKey($keyword);
 
-        return $view;
-  
- }
+    if ($artistes) {
+              $view->setStatusCode(200)->setData($artistes);
+          } else {
+              $view->setStatusCode(404);
+          }
+
+          return $view;
+    
+   }
 
 }
