@@ -38,7 +38,7 @@ class Artiste
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste")
+     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idartiste", fetch="LAZY")
      */
     private $iditem;
 

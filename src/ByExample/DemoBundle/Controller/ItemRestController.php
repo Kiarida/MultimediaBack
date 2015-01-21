@@ -20,8 +20,10 @@ use Symfony\Component\Validator\ConstraintViolation;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Controller\Annotations\RequestParam;
-
-
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ODM\PHPCR\Query\QueryException;
+use Doctrine\ORM\Query;
+use Doctrine\Common\Util\Debug;
 /**
  * 
  * @Route("/api/items")
@@ -142,7 +144,7 @@ $items = $query->getResult();
 
  $em =$this->getDoctrine()->getManager();
 
- $max = $em->createQuery(
+/* $max = $em->createQuery(
     'SELECT MAX(i.id) FROM ByExampleDemoBundle:Item i
             JOIN i.idgenre g
             WHERE g.id= :id
@@ -163,9 +165,30 @@ $items = $query->getResult();
   ->setParameter('rand',rand(0,$max))
   ->setMaxResults(1) ;
 
-  $item = $query->getSingleResult();
+  $item = $query->getSingleResult();*/
+ // $rsm = new ResultSetMapping();
+  $rsm = new ResultSetMapping($em);
+$rsm->addEntityResult('ByExampleDemoBundle:Item','i');
+$rsm->addScalarResult('id','id');
+$rsm->addScalarResult('url','url');
+$rsm->addScalarResult('titre','titre');
+$rsm->addScalarResult('note','note');
+$rsm->addScalarResult('duree','duree');
+$rsm->addScalarResult('typeItem','typeItem');
+$rsm->addScalarResult('nbVues','nbVues');
+$rsm->addScalarResult('date','date');
 
-  
+$rsm->addScalarResult('idArtiste','idArtiste');
+
+$em->flush();
+$em->clear();
+  $query = $em->createNativeQuery('SELECT i.*, idArtiste FROM item i, itemgenre ig, itemartiste ia
+    WHERE i.id = ig.idItem AND i.id = ia.idItem 
+    AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
+$query->setParameter(1, $id);
+
+$item = $query->getResult();
+
     if ($item) {
             $view->setStatusCode(200)->setData($item);
         } else {
@@ -186,30 +209,28 @@ $items = $query->getResult();
 
  $em =$this->getDoctrine()->getManager();
 
- $max = $em->createQuery(
-    'SELECT MAX(i.id) FROM ByExampleDemoBundle:Item i
-            JOIN i.idartiste a
-            WHERE a.id= :id
-            ')
- ->setParameter('id', $id)
- ->getSingleScalarResult();
+  $rsm = new ResultSetMapping($em);
+$rsm->addEntityResult('ByExampleDemoBundle:Item','i');
+$rsm->addScalarResult('id','id');
+$rsm->addScalarResult('url','url');
+$rsm->addScalarResult('titre','titre');
+$rsm->addScalarResult('note','note');
+$rsm->addScalarResult('duree','duree');
+$rsm->addScalarResult('typeItem','typeItem');
+$rsm->addScalarResult('nbVues','nbVues');
+$rsm->addScalarResult('date','date');
 
+$rsm->addScalarResult('idArtiste','idArtiste');
 
-  $query = $em->createQuery(
-    'SELECT i
-    FROM ByExampleDemoBundle:Item i
-    JOIN i.idartiste a
-            WHERE a.id= :id
-    AND i.id >= :rand
-    ORDER BY i.id ASC'
-    )
-  ->setParameter('id', $id)
-  ->setParameter('rand',rand(0,$max))
-  ->setMaxResults(1) ;
+$em->flush();
+$em->clear();
+  $query = $em->createNativeQuery('SELECT i.*, idArtiste FROM item i,itemartiste ia
+    WHERE i.id = ia.idItem 
+    AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
+$query->setParameter(1, $id);
 
-  $item = $query->getResult();
+$item = $query->getResult();
 
-  
     if ($item) {
             $view->setStatusCode(200)->setData($item);
         } else {
