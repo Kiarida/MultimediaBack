@@ -7,6 +7,7 @@ use ByExemple\DemoBundle\Entity\Note;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
+use ByExample\DemoBundle\Repository\NoteRepository;
 
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Route;
@@ -35,30 +36,28 @@ class NoteRestController extends Controller
 	
 
   /**
+  * Retourne la note moyenne d'un artiste
   * @Route("/note/artiste/{idArtiste}")
   * @Method({"GET"})
   * @ApiDoc()
   */
   public function getNoteArtisteAction($idArtiste){
-  $view = FOSView::create();
+    $view = FOSView::create();
 
-  $em =$this->getDoctrine()->getManager();
-  $query = $em->createQuery('SELECT a.note FROM ByExampleDemoBundle:Artiste a WHERE a.id = :idArtiste')
-  ->setParameter('idArtiste', $idArtiste);
-$items = $query->getResult();
+    $em =$this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Note');
+    $note = $repo-> findNoteByArtiste($idArtiste);
+      if ($note) {
+              $view->setStatusCode(200)->setData($note);
+          } else {
+              $view->setStatusCode(404);
+          }
 
-  /* $item = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Item')->findByTitre($key);
-  */ 
-    if ($items) {
-            $view->setStatusCode(200)->setData($items);
-        } else {
-            $view->setStatusCode(404);
-        }
-
-        return $view;
-  }
+    return $view;
+    }
 
   /**
+  * Retourne la note moyenne d'un item
   * @Route("/note/item/{idItem}")
   * @Method({"GET"})
   * @ApiDoc()
@@ -67,19 +66,15 @@ $items = $query->getResult();
   $view = FOSView::create();
 
   $em =$this->getDoctrine()->getManager();
-  $query = $em->createQuery('SELECT i.note FROM ByExampleDemoBundle:Item i WHERE i.id = :idItem')
-  ->setParameter('idItem', $idItem);
-$items = $query->getResult();
-
-  /* $item = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Item')->findByTitre($key);
-  */ 
-    if ($items) {
-            $view->setStatusCode(200)->setData($items);
+  $repo = $em->getRepository('ByExampleDemoBundle:Note');
+  $note = $repo-> findNoteByItem($idItem);
+      if ($note) {
+            $view->setStatusCode(200)->setData($note);
         } else {
             $view->setStatusCode(404);
         }
 
-        return $view;
+  return $view;
   }
 
  }

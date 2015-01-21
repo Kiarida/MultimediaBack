@@ -7,6 +7,7 @@ use ByExemple\DemoBundle\Entity\Genre;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
+use ByExample\DemoBundle\Repository\GenreRepository;
 
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Route;
@@ -34,7 +35,7 @@ class GenreRestController extends Controller
      * @Method({"GET"})
      * @ApiDoc()
    */
-  public function getGenreAction($id){
+/*  public function getGenreAction($id){
   $view = FOSView::create();
 		
     $genre = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->find($id);
@@ -45,34 +46,23 @@ class GenreRestController extends Controller
         }
 
         return $view;
-  }
+  }*/
 
   /**
-   * @return FOSView
-   * @Method({"GET"})
-   */
+  * Renvoie la liste de tous les genres
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
   public function getGenresAction(){
-  $view = FOSView::create();
-	$genres = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->findAll();
-	if ($genres) {
-            $view->setStatusCode(200)->setData($genres);
-        } else {
-            $view->setStatusCode(404);
-        }
+    $view = FOSView::create();
+  	$genres = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->findAll();
+  	if ($genres) {
+      $view->setStatusCode(200)->setData($genres);
+    } else {
+      $view->setStatusCode(404);
+    }
 
-        return $view;
-  
- }
-  
-
- /**
- *@return FOSView
-     * @Method({"POST"})
-     */
-
- public function postGenresAction(){
-  echo "hop";
- }
-
+    return $view;
+  }
 
 }
