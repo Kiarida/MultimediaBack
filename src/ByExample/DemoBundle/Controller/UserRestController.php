@@ -120,7 +120,7 @@ class UserRestController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($utilisateur);
             $em->flush();
-            $view = RouteRedirectView::create("byexample_demo_userrest_getuser", $param);
+            $view = RouteRedirectView::create("byexample_demo_userrest_get_user", $param);
         } else {
             $view = $this->get_errors_view($errors);
         }

@@ -84,6 +84,7 @@ $items = $query->getResult();
     $days = $this->container->getParameter('popular_parameter_days');
     $limit = $this->container->getParameter('popular_limit');
 
+
  $em =$this->getDoctrine()->getManager();
   $query = $em->createQuery(
     'SELECT COUNT(i.id) as views, i.titre 
