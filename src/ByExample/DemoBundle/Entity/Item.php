@@ -77,8 +77,16 @@ class Item
      */
     private $urlCover;
 
+
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var string
+     *
+     * @ORM\Column(name="urlPoster", type="string", length=255, nullable=true)
+     */
+    private $urlPoster;
+
+    /**
+     * @var Artiste
      *
      * @ORM\ManyToMany(targetEntity="Artiste", inversedBy="iditem")
      * @ORM\JoinTable(name="itemartiste",
@@ -343,6 +351,29 @@ class Item
     public function getUrlCover()
     {
         return $this->urlCover;
+    }
+
+    /**
+     * Set url poster
+     *
+     * @param string $url
+     * @return Item
+     */
+    public function setUrlPoster($url)
+    {
+        $this->urlPoster = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url cover
+     *
+     * @return string 
+     */
+    public function getUrlPoster()
+    {
+        return $this->urlPoster;
     }
 
     /**
