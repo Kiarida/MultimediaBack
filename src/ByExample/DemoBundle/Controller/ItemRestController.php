@@ -3,10 +3,11 @@
 namespace ByExample\DemoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use ByExemple\DemoBundle\Entity\Item;
+use ByExample\DemoBundle\Entity\Item;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
+use ByExample\DemoBundle\Repository\ItemRepository;
 
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Route;
@@ -33,14 +34,17 @@ use Doctrine\Common\Util\Debug;
 class ItemRestController extends Controller
 {
 	/**
-     * @Method({"GET"})
-     * @ApiDoc()
-   */
+  * Renvoie le détail d'un item
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
   public function getItemAction($id){
   $view = FOSView::create();
-	
+
     $item = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Item')->find($id);
-	
+/*  $itemT = new Item();
+  $itemT->setId($item->getId());*/
+
     if ($item) {
             $view->setStatusCode(200)->setData($item);
         } else {
@@ -51,29 +55,28 @@ class ItemRestController extends Controller
   }
 
   /**
+  * Recherche des items dans la base en fonction du mot clé donné en paramètre
   * @Route("/items/search/{key}")
   * @Method({"GET"})
   * @ApiDoc()
   */
   public function getItemsSearchAction($key){
-  $view = FOSView::create();
-    $key = "%".$key."%";
-  $em =$this->getDoctrine()->getManager();
-  $query = $em->createQuery('SELECT i FROM ByExampleDemoBundle:Item i WHERE i.titre LIKE :key')->setParameter('key', $key);
-$items = $query->getResult();
+      $view = FOSView::create();
+      $em = $this->getDoctrine()->getManager();
+      $repo = $em->getRepository('ByExampleDemoBundle:Item');
+      $items = $repo->findItemsBySearchKey($key);
 
-  /* $item = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Item')->findByTitre($key);
-  */ 
-    if ($items) {
-            $view->setStatusCode(200)->setData($items);
-        } else {
-            $view->setStatusCode(404);
-        }
+        if ($items) {
+                $view->setStatusCode(200)->setData($items);
+            } else {
+                $view->setStatusCode(404);
+            }
 
-        return $view;
+      return $view;
   }
 
 /**
+  * Renvoie une liste des x musiques les plus écoutées depuis y jours 
   * @Route("/items/popular/")
   * @Method({"GET"})
   * @ApiDoc()
@@ -85,16 +88,9 @@ $items = $query->getResult();
     $limit = $this->container->getParameter('popular_limit');
 
 
- $em =$this->getDoctrine()->getManager();
-  $query = $em->createQuery(
-    'SELECT COUNT(i.id) as views, i.titre 
-    FROM ByExampleDemoBundle:Item i, ByExampleDemoBundle:Ecoute e
-    WHERE e.iditem = i.id
-    AND (e.date > :before)
-    GROUP BY i.id
-    ORDER BY views DESC'
-    )->setParameter('before', new \DateTime('-'.$days.' days'))->setMaxResults($limit);
-$items = $query->getResult();
+    $em = $this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Item');
+    $items = $repo->findItemsByPopularity($days, $limit);
 
   
     if ($items) {
@@ -103,10 +99,11 @@ $items = $query->getResult();
             $view->setStatusCode(404);
         }
 
-        return $view;
+    return $view;
 }
 
 /**
+  * Retourne tous les tags liés a l'item en paramètre
   * @Route("/items/{id}/tags/")
   * @Method({"GET"})
   * @ApiDoc()
@@ -115,16 +112,10 @@ $items = $query->getResult();
 
     $view = FOSView::create();
 
- $em =$this->getDoctrine()->getManager();
-  $query = $em->createQuery(
-    'SELECT t.libelle, nt.note
-    FROM ByExampleDemoBundle:Tag t, ByExampleDemoBundle:NoteTagItem nt
-    WHERE t.id = nt.idtag
-    AND nt.iditem= :id'
-    )->setParameter('id', $id);
-$items = $query->getResult();
+    $em =$this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Item');
+    $items = $repo-> findTagsByItem($id);
 
-  
     if ($items) {
             $view->setStatusCode(200)->setData($items);
         } else {
@@ -135,60 +126,18 @@ $items = $query->getResult();
 }
 
 /**
-  * @Route("/items/genre/{id}")
+  * Retourne un item aléatoire du genre en paramètre
+  * @Route("/items/genre/{idGenre}")
   * @Method({"GET"})
   * @ApiDoc()
   */
-  public function getItemGenreAction($id){
+  public function getItemGenreAction($idGenre){
 
     $view = FOSView::create();
 
- $em =$this->getDoctrine()->getManager();
-
-/* $max = $em->createQuery(
-    'SELECT MAX(i.id) FROM ByExampleDemoBundle:Item i
-            JOIN i.idgenre g
-            WHERE g.id= :id
-            ')
- ->setParameter('id', $id)
- ->getSingleScalarResult();
-
-
-  $query = $em->createQuery(
-    'SELECT i
-    FROM ByExampleDemoBundle:Item i
-    JOIN i.idgenre g
-            WHERE g.id= :id
-    AND i.id >= :rand
-    ORDER BY i.id ASC'
-    )
-  ->setParameter('id', $id)
-  ->setParameter('rand',rand(0,$max))
-  ->setMaxResults(1) ;
-
-  $item = $query->getSingleResult();*/
- // $rsm = new ResultSetMapping();
-  $rsm = new ResultSetMapping($em);
-$rsm->addEntityResult('ByExampleDemoBundle:Item','i');
-$rsm->addScalarResult('id','id');
-$rsm->addScalarResult('url','url');
-$rsm->addScalarResult('titre','titre');
-$rsm->addScalarResult('note','note');
-$rsm->addScalarResult('duree','duree');
-$rsm->addScalarResult('typeItem','typeItem');
-$rsm->addScalarResult('nbVues','nbVues');
-$rsm->addScalarResult('date','date');
-
-$rsm->addScalarResult('idArtiste','idArtiste');
-
-$em->flush();
-$em->clear();
-  $query = $em->createNativeQuery('SELECT i.*, idArtiste FROM item i, itemgenre ig, itemartiste ia
-    WHERE i.id = ig.idItem AND i.id = ia.idItem 
-    AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
-$query->setParameter(1, $id);
-
-$item = $query->getResult();
+    $em =$this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Item');
+    $item = $repo-> findRandomItemByGenre($idGenre);
 
     if ($item) {
             $view->setStatusCode(200)->setData($item);
@@ -196,41 +145,22 @@ $item = $query->getResult();
             $view->setStatusCode(404);
         }
 
-        return $view;
+    return $view;
 }
 
 /**
+  * Retourne un item aléatoire de l'artiste en paramètre
   * @Route("/items/artiste/{id}")
   * @Method({"GET"})
   * @ApiDoc()
   */
-  public function getItemArtisteAction($id){
+  public function getItemArtisteAction($idArtiste){
 
     $view = FOSView::create();
 
- $em =$this->getDoctrine()->getManager();
-
-  $rsm = new ResultSetMapping($em);
-$rsm->addEntityResult('ByExampleDemoBundle:Item','i');
-$rsm->addScalarResult('id','id');
-$rsm->addScalarResult('url','url');
-$rsm->addScalarResult('titre','titre');
-$rsm->addScalarResult('note','note');
-$rsm->addScalarResult('duree','duree');
-$rsm->addScalarResult('typeItem','typeItem');
-$rsm->addScalarResult('nbVues','nbVues');
-$rsm->addScalarResult('date','date');
-
-$rsm->addScalarResult('idArtiste','idArtiste');
-
-$em->flush();
-$em->clear();
-  $query = $em->createNativeQuery('SELECT i.*, idArtiste FROM item i,itemartiste ia
-    WHERE i.id = ia.idItem 
-    AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
-$query->setParameter(1, $id);
-
-$item = $query->getResult();
+    $em =$this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Item');
+    $item = $repo-> findRandomItemByArtiste($idArtiste);
 
     if ($item) {
             $view->setStatusCode(200)->setData($item);
@@ -239,5 +169,5 @@ $item = $query->getResult();
         }
 
         return $view;
-}
+  }
  }
