@@ -103,7 +103,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="iditem")
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="iditem", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="itemgenre",
      *   joinColumns={
      *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
@@ -118,7 +118,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", inversedBy="iditem")
+     * @ORM\ManyToMany(targetEntity="Item", inversedBy="iditem", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="itemitem",
      *   joinColumns={
      *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
@@ -141,7 +141,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem")
+     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem", fetch="EXTRA_LAZY")
      * 
      */
     private $idnotetagitem;
