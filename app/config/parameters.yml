@@ -1,4 +1,5 @@
 parameters:
+<<<<<<< HEAD
 
     database_driver: pdo_mysql
     database_host: localhost
@@ -15,7 +16,6 @@ parameters:
     debug_toolbar: true
     debug_redirects: false
     use_assetic_controller: true
-
 
 
     popular_parameter_days:  14
