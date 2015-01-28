@@ -43,15 +43,29 @@ class PlaylistRepository extends EntityRepository{
 	public function insertPlaylist($name, $id){
 		$newPlaylist = new Playlist();
         $newPlaylist->setNom($name);
-        $newPlaylist->setDate(new DateTime());
-        $newPlaylist->setIdutilisateur($id);
-        $this->_em->persist($newTag);
+        $newPlaylist->setDatecreation(new DateTime());
+        $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+        $utilisateur = $repository->findOneById($id);
+        $newPlaylist->setIdutilisateur($utilisateur);
+        $this->_em->persist($newPlaylist);
         $this->_em->flush();
-        $idTag = $newTag->getId();
-        $conn = $this->_em->getConnection();
-        $conn->insert("tagplaylist", array("idTag"=>$idTag, "idPlaylist"=>$id_playlist));
+        $idPlaylist = $newPlaylist->getId();
+        return $idPlaylist;
+       
 	}
 
+	public function findPlaylistByUser($id_utilisateur){
+		$query=$this->_em->createQuery('SELECT p.id FROM ByExampleDemoBundle:Playlist p WHERE p.idutilisateur =:id_utilisateur')->setParameter("id_utilisateur",$id_utilisateur);
+        $tagplaylist=$query->getResult();
+        return $tagplaylist;
+	}
+
+	public function updatePlaylist($id_playlist, $name, $id){
+		$query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Playlist p SET p.nom = :name WHERE p.id = :idp AND p.idutilisateur = :idutilisateur')
+        ->setParameter('name', $name)->setParameter('idutilisateur', $id)->setParameter('idp', $id_playlist);
+        $playlists = $query->getResult();
+        return $playlists;
+	}
 
 	public function findPlaylistByTag($tags, $id_playlist){
 		$query=$this->_em->createQuery('SELECT p.id FROM ByExampleDemoBundle:Playlist p JOIN p.idtag t WHERE p.id =:playlist AND t.id = :tag')->setParameter("playlist",$id_playlist)->setParameter("tag",$tags[0]["id"]);
