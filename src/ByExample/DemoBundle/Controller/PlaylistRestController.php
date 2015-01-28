@@ -121,20 +121,17 @@ class PlaylistRestController extends Controller{
 
     /**
     * Supprime une association entre un tag et une playlist
-    * @Delete("users/{id}/playlists/{id_playlist}/tags/{idTag}")
+    * @Delete("users/{id}/playlists/{id_playlist}/tags/{idtag}")
     * @ApiDoc()
     * @return FOSView
    */
 
-    public function deletePlaylistTagAction($id, $id_playlist, $idTag){
+    public function deletePlaylistTagAction($id, $id_playlist,$idtag){
         $view = FOSView::create();
-
-        $em = $this->getDoctrine()->getManager();
-        $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
-        $tags=$repo->findTagById($idTag, $id);
-        if($tags){
+        if($this->get('request')->getMethod() == "DELETE"){
+            $em = $this->getDoctrine()->getManager();
             $conn = $em->getConnection();
-            $conn->delete("tagplaylist", array("idTag"=>$idTag));
+            $conn->delete("tagplaylist", array("idTag"=>$idtag, "idPlaylist"=>$id_playlist));
             $view->setStatusCode(200);
         }
         return $view;
