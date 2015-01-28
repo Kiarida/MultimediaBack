@@ -27,6 +27,7 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
 use ByExample\DemoBundle\Entity\Utilisateur;
+use ByExample\DemoBundle\Repository\NoteRepository;
 
 /**
  * Controller that provides Restful sercies over the resource Users.
@@ -36,6 +37,9 @@ use ByExample\DemoBundle\Entity\Utilisateur;
  */
 class UserRestController extends Controller
 {
+
+  
+
 
     /**
      * Returns an user by id
@@ -78,6 +82,31 @@ class UserRestController extends Controller
         $view->setStatusCode(200)->setData(array("connected"));
         return $view;
     }
+
+    /**
+    * Créé ou met à jour une note sur un item
+     * @Put("users/{id}/note/item/{id_item}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function putNoteItemAction($id, $id_item){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $request = $this->getRequest();
+        $note = $request->get('note');
+        $repo=$em->getRepository('ByExampleDemoBundle:Note');
+        $notes=$repo->putNote($id_item, $note, $id);
+        
+        if ($notes == 0){
+            $view->setStatusCode(200);
+        }elseif($notes) {
+            $view->setStatusCode(201);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
 
     /**
      * Creates a new User entity.
@@ -171,6 +200,9 @@ class UserRestController extends Controller
         return $view;
     }
 
+    
+
+
     /**
      * Delete an user by username/email.
      *
@@ -217,5 +249,7 @@ class UserRestController extends Controller
         return $view;
     }
 
+
+  
     
 }
