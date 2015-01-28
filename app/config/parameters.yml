@@ -20,3 +20,4 @@ parameters:
     artistes_return:   10
 
     sessions_return :  10
+    ecoutes_return :   10

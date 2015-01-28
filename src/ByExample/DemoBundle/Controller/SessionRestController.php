@@ -29,11 +29,12 @@ use Doctrine\ORM\Query;
 
 /**
  	*@NamePrefix("byexample_items_")
+    *@Route("users/{id}/")
  **/
 class SessionRestController extends Controller{
     /**
-     * Retourne la liste de tous les items écouté lors d'une session
-     * @Get("users/{id}/sessions/{id_session}")
+     * Retourne la liste de tous les items écoutés lors d'une session
+     * @Get("sessions/{id_session}")
      * @ApiDoc()
      * @return FOSView
    */
@@ -54,7 +55,7 @@ class SessionRestController extends Controller{
 
     /**
      * Renvoie les x dernières sessions d'écoute de l'utilisateur
-     * @Get("users/{id}/sessions")
+     * @Get("sessions")
      * @ApiDoc()
      * @return FOSView
    */
@@ -77,7 +78,7 @@ class SessionRestController extends Controller{
 
         /**
      * Retourne tous les tags liés à la session en paramètre
-     * @Get("users/{id}/sessions/{id_session}/tags")
+     * @Get("sessions/{id_session}/tags")
      * @ApiDoc()
      * @return FOSView
    */
@@ -99,7 +100,7 @@ class SessionRestController extends Controller{
 
      /**
     * Ajoute un tag à une session
-    * @Post("users/{id}/sessions/{id_session}/tags")
+    * @Post("sessions/{id_session}/tags")
     * @ApiDoc()
     * @return FOSView
    */
@@ -148,7 +149,7 @@ $view = FOSView::create();
 
 /**
     * Supprime une association entre un tag et une session
-    * @Delete("users/{id}/sessions/{id_session}/tags/{idTag}")
+    * @Delete("sessions/{id_session}/tags/{idTag}")
     * @ApiDoc()
     * @return FOSView
    */
