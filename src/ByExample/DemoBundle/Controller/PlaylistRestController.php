@@ -61,8 +61,8 @@ class PlaylistRestController extends Controller{
     public function getPlaylistTagsAction($id, $id_playlist){
         $view = FOSView::create();
         $em = $this->getDoctrine()->getManager();
-        $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
-        $tags=$repo->findTagByIdPlay($id, $id_playlist);
+        $repo=$em->getRepository('ByExampleDemoBundle:Tag');
+        $tags=$repo->findTagByIdPlay($id_playlist);
         if ($tags) {
             $view->setStatusCode(200)->setData($tags);
         } else {

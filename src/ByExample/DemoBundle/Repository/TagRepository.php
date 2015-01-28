@@ -18,7 +18,7 @@ class TagRepository extends EntityRepository{
 	public function findTagByIdPlay($id_playlist){
 		$query = $this->_em->createQuery(
         'SELECT partial t.{id,libelle} FROM ByExampleDemoBundle:Tag t JOIN t.idplaylist g WHERE g.id= :id')
-        ->setParameter('id', $id_playlist);
+        ->setParameter('id', intval($id_playlist));
         $tags=$query->getResult(Query::HYDRATE_ARRAY);
         return $tags;
 	}
