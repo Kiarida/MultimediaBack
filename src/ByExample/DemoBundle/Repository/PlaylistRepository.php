@@ -5,7 +5,9 @@ namespace ByExample\DemoBundle\Repository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 use ByExample\DemoBundle\Entity\Tag;
+use ByExample\DemoBundle\Entity\Playlist;
 use Doctrine\ORM\Query;
+use \DateTime;
 /**
  * NoteRepository
  *
@@ -37,6 +39,18 @@ class PlaylistRepository extends EntityRepository{
 	    $playlists = $q->getResult();
 	    return $playlists;
 	}*/
+
+	public function insertPlaylist($name, $id){
+		$newPlaylist = new Playlist();
+        $newPlaylist->setNom($name);
+        $newPlaylist->setDate(new DateTime());
+        $newPlaylist->setIdutilisateur($id);
+        $this->_em->persist($newTag);
+        $this->_em->flush();
+        $idTag = $newTag->getId();
+        $conn = $this->_em->getConnection();
+        $conn->insert("tagplaylist", array("idTag"=>$idTag, "idPlaylist"=>$id_playlist));
+	}
 
 
 	public function findPlaylistByTag($tags, $id_playlist){

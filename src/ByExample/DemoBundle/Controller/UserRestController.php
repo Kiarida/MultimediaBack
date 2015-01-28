@@ -107,6 +107,27 @@ class UserRestController extends Controller
         return $view;
     }
 
+    /**
+    * Créé ou met à jour une note sur un item
+     * @Put("users/{id}/playlist")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function postPlaylistAction($id){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $request = $this->getRequest();
+        $name = $request->get('nomPlaylist');
+        $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
+        $idplaylist=$repo->insertPlaylist($name);
+        
+        if($idplaylist) {
+            $view->setStatusCode(201)->setData($idplaylist);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
 
     /**
      * Creates a new User entity.
