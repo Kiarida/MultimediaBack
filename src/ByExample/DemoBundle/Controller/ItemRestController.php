@@ -77,7 +77,7 @@ class ItemRestController extends Controller
 
 /**
   * Renvoie une liste des x musiques les plus écoutées depuis y jours 
-  * @Route("/items/popular/")
+  * @Route("/items/get/popular")
   * @Method({"GET"})
   * @ApiDoc()
   */
