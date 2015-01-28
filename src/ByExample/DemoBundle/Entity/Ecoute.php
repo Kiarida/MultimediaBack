@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Ecoute
  *
  * @ORM\Table(name="ecoute")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ByExample\DemoBundle\Repository\EcouteRepository")
  */
 class Ecoute
 {
@@ -24,7 +24,7 @@ class Ecoute
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="date", nullable=false)
+     * @ORM\Column(name="date", type="datetime", nullable=false)
      */
     private $date;
 

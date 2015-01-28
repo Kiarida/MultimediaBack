@@ -50,6 +50,14 @@ class Artiste
     private $idtag;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="urlCover", type="string", length=256, nullable=false)
+     */
+    private $urlCover;
+
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -101,6 +109,29 @@ class Artiste
     public function setNote($note)
     {
         $this->note = $note;
+    
+        return $this;
+    }
+
+    /**
+     * Get cover
+     *
+     * @return string 
+     */
+    public function getUrlCover()
+    {
+        return $this->urlCover;
+    }
+
+    /**
+     * Set cover
+     *
+     * @param string $url
+     * @return Artiste
+     */
+    public function setUrlCover($url)
+    {
+        $this->urlCover = $url;
     
         return $this;
     }
