@@ -5,7 +5,10 @@ namespace ByExample\DemoBundle\Repository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 use ByExample\DemoBundle\Entity\Tag;
+use ByExample\DemoBundle\Entity\Utilisateur;
+use ByExample\DemoBundle\Entity\Session;
 use Doctrine\ORM\Query;
+use \DateTime;
 
 /**
  * SessionRepository
@@ -31,6 +34,19 @@ class SessionRepository extends EntityRepository{
 	    ->setParameter("id_session",$id_session);
 	    $items=$query->getResult();
 	    return $items;
+	}
+
+	public function findCurrentSession($id_user){
+		$query=$this->_em->createQuery('SELECT s
+	    FROM ByExampleDemoBundle:Session s
+        WHERE s.idutilisateur = :id_user AND s.datefin is NULL')
+	    ->setParameter("id_user",$id_user);
+	    try {
+   	 		$session = $query->getSingleResult();
+		} catch (\Doctrine\Orm\NoResultException $e) {
+    		$session = null;
+		}
+	    return $session;
 	}
 
 	public function findSessionsByUser($id_user, $limit){
@@ -64,5 +80,19 @@ class SessionRepository extends EntityRepository{
         $conn = $this->_em->getConnection();
         $conn->insert("tagsession", array("idTag"=>$idTag, "idSession"=>$id_session));
         return $newTag;
+	}
+
+	public function addSession($id_user){
+		$session = new Session();
+		$session->setDatedebut(new DateTime());
+
+		$repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+        $utilisateur = $repository->findOneById($id_user);
+		$session->setIdutilisateur($utilisateur);
+
+		$this->_em->persist($session);
+		$this->_em->flush();
+
+		return $session;
 	}
 }

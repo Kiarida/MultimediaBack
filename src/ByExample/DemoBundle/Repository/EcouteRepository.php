@@ -4,8 +4,9 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
-use ByExample\DemoBundle\Entity\Tag;
+use ByExample\DemoBundle\Entity\Ecoute;
 use Doctrine\ORM\Query;
+use \DateTime;
 
 /**
  * EcouteRepository
@@ -27,5 +28,25 @@ class EcouteRepository extends EntityRepository{
 	    ->setMaxResults($limit);
 	    $items=$query->getResult(Query::HYDRATE_ARRAY);
 	    return $items;
+	}
+
+
+	public function addEcoute($session, $item, $typeEcoute){
+		$ecoute = new Ecoute();
+		$ecoute->setDate(new DateTime());
+
+		
+		$ecoute->setTypeecoute($typeEcoute);
+		$ecoute->setIditem($item);
+
+		$this->_em->persist($ecoute);
+		$this->_em->flush();
+
+		$idEcoute = $ecoute->getId();
+		//$idSession = $session->getId();
+        $conn = $this->_em->getConnection();
+        $conn->insert("sessionecoute", array("idEcoute"=>$idEcoute, "idSession"=>$session->getId()));
+
+	    return $idEcoute;
 	}
 }
