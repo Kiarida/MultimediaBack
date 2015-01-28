@@ -4,7 +4,7 @@ parameters:
     database_port:     8889
     database_name:     projetindus
     database_user:     root
-    database_password: jojoadmin
+    database_password: root
     mailer_transport:  smtp
     mailer_host:       localhost
     mailer_user:       ~
