@@ -150,7 +150,7 @@ class ItemRestController extends Controller
 
 /**
   * Retourne un item aléatoire de l'artiste en paramètre
-  * @Route("/items/artiste/{id}")
+  * @Route("/items/artiste/{idArtiste}")
   * @Method({"GET"})
   * @ApiDoc()
   */
