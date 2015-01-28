@@ -77,8 +77,16 @@ class Item
      */
     private $urlCover;
 
+
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var string
+     *
+     * @ORM\Column(name="urlPoster", type="string", length=255, nullable=true)
+     */
+    private $urlPoster;
+
+    /**
+     * @var Artiste
      *
      * @ORM\ManyToMany(targetEntity="Artiste", inversedBy="iditem")
      * @ORM\JoinTable(name="itemartiste",
@@ -95,7 +103,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="iditem")
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="iditem", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="itemgenre",
      *   joinColumns={
      *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
@@ -110,7 +118,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", inversedBy="iditem")
+     * @ORM\ManyToMany(targetEntity="Item", inversedBy="iditem", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="itemitem",
      *   joinColumns={
      *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
@@ -133,7 +141,7 @@ class Item
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem")
+     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem", fetch="EXTRA_LAZY")
      * 
      */
     private $idnotetagitem;
@@ -343,6 +351,29 @@ class Item
     public function getUrlCover()
     {
         return $this->urlCover;
+    }
+
+    /**
+     * Set url poster
+     *
+     * @param string $url
+     * @return Item
+     */
+    public function setUrlPoster($url)
+    {
+        $this->urlPoster = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url cover
+     *
+     * @return string 
+     */
+    public function getUrlPoster()
+    {
+        return $this->urlPoster;
     }
 
     /**

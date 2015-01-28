@@ -58,10 +58,10 @@ class Tag
      * @ORM\ManyToMany(targetEntity="Playlist", inversedBy="idtag")
      * @ORM\JoinTable(name="tagplaylist",
      *   joinColumns={
-     *     @ORM\JoinColumn(name="idTag", referencedColumnName="id")
+     *     @ORM\JoinColumn(name="idTag", referencedColumnName="id", onDelete="CASCADE")
      *   },
      *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idPlaylist", referencedColumnName="id")
+     *     @ORM\JoinColumn(name="idPlaylist", referencedColumnName="id", onDelete="CASCADE")
      *   }
      * )
      */

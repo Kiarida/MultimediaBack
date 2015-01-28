@@ -4,6 +4,7 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 /**
  * ItemRepository
@@ -16,8 +17,12 @@ class ItemRepository extends EntityRepository
 	public function findItemsBySearchKey($key)
 	{
         $key = "%".$key."%";
-		$query = $this->_em->createQuery('SELECT i FROM ByExampleDemoBundle:Item i WHERE i.titre LIKE :key')->setParameter('key', $key);
-        $items = $query->getResult();
+
+		$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover}, partial a.{id,nom}
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
+                                            WHERE i.titre LIKE :key')
+        ->setParameter('key', $key);
+        $items = $query->getResult(Query::HYDRATE_ARRAY);
         return $items;
 	}
 
