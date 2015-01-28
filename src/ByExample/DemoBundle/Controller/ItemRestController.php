@@ -77,7 +77,7 @@ class ItemRestController extends Controller
 
 /**
   * Renvoie une liste des x musiques les plus écoutées depuis y jours 
-  * @Route("/items/popular/")
+  * @Route("/items/get/popular")
   * @Method({"GET"})
   * @ApiDoc()
   */
@@ -87,9 +87,11 @@ class ItemRestController extends Controller
     $days = $this->container->getParameter('popular_parameter_days');
     $limit = $this->container->getParameter('popular_limit');
 
+
     $em = $this->getDoctrine()->getManager();
     $repo = $em->getRepository('ByExampleDemoBundle:Item');
     $items = $repo->findItemsByPopularity($days, $limit);
+
   
     if ($items) {
             $view->setStatusCode(200)->setData($items);
@@ -148,7 +150,7 @@ class ItemRestController extends Controller
 
 /**
   * Retourne un item aléatoire de l'artiste en paramètre
-  * @Route("/items/artiste/{id}")
+  * @Route("/items/artiste/{idArtiste}")
   * @Method({"GET"})
   * @ApiDoc()
   */

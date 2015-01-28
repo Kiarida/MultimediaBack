@@ -7,6 +7,9 @@ php app/console doctrine:schema:update --force
 php app/console cache:clear
 php app/console cache:clear --env=prod
 
+*** Visualize route ***
+php app/console router:debug
+
 
 
 FOSRestBundleByExample
