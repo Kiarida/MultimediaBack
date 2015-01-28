@@ -5,6 +5,7 @@ namespace ByExample\DemoBundle\Repository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 use ByExample\DemoBundle\Entity\Tag;
+use Doctrine\ORM\Query;
 /**
  * NoteRepository
  *
@@ -14,12 +15,12 @@ use ByExample\DemoBundle\Entity\Tag;
 class PlaylistRepository extends EntityRepository{
 
 	public function findPlaylistById($id, $id_playlist){
-		$query=$this->_em->createQuery('SELECT p
-	    FROM ByExampleDemoBundle:Playlist p
+		$query=$this->_em->createQuery('SELECT partial p.{id,nom,datecreation}, partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom} 
+	    FROM ByExampleDemoBundle:Playlist p left join p.iditem i LEFT JOIN i.idartiste a
 	    WHERE p.id LIKE :idplaylist 
 	    AND p.idutilisateur = :idutil')
 	    ->setParameter("idplaylist",$id_playlist)->setParameter("idutil",$id);
-	    $playlists=$query->getResult();
+	    $playlists=$query->getResult(Query::HYDRATE_ARRAY);
 	    return $playlists;
 	}
 
@@ -37,36 +38,6 @@ class PlaylistRepository extends EntityRepository{
 	    return $playlists;
 	}*/
 
-	public function findTagByIdPlay($id, $id_playlist){
-		$query = $this->_em->createQuery(
-        'SELECT t FROM ByExampleDemoBundle:Tag t JOIN t.idplaylist g WHERE g.id= :id AND g.idutilisateur = :idutil')
-        ->setParameter('id', $id_playlist)->setParameter("idutil", $id);
-        $tags=$query->getResult();
-        return $tags;
-	}
-
-	public function findTagById($idTag, $id){
-		$query=$this->_em->createQuery('SELECT t.id
-      	FROM ByExampleDemoBundle:Tag t
-      	JOIN t.idplaylist p
-      	WHERE t.id = :idtag 
-      	AND p.idutilisateur = :idutil')
-        ->setParameter("idtag",$idTag)->setParameter("idutil",$id);
-        $tags=$query->getResult();
-        return $tags;
-	}
-
-	public function findTagByLibelle($libelle, $id){
-		$query = $this->_em->createQuery(
-	    'SELECT t.id
-	    FROM ByExampleDemoBundle:Tag t
-	    JOIN t.idplaylist p
-	    WHERE t.libelle LIKE :libelle 
-	    AND p.idutilisateur = :idutil'
-	  	)->setParameter('libelle', $libelle)->setParameter('idutil',$id);
-	  	$tags = $query->getResult();
-	  	return $tags;
-	}
 
 	public function findPlaylistByTag($tags, $id_playlist){
 		$query=$this->_em->createQuery('SELECT p.id FROM ByExampleDemoBundle:Playlist p JOIN p.idtag t WHERE p.id =:playlist AND t.id = :tag')->setParameter("playlist",$id_playlist)->setParameter("tag",$tags[0]["id"]);
@@ -82,7 +53,7 @@ class PlaylistRepository extends EntityRepository{
 
 	public function insertTag($libelle, $id_playlist){
 		$newTag = new Tag();
-        $newTag->setLibelle($libelle);
+        $newTag->setLibelle(strtolower($libelle));
         $this->_em->persist($newTag);
         $this->_em->flush();
         $idTag = $newTag->getId();

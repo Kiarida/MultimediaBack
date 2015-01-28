@@ -74,41 +74,46 @@ class PlaylistRestController extends Controller{
 
     /**
     * Associe un tag a une playlist ou créé un nouveau tag
-    * @Post("users/{id}/playlists/{id_playlist}/tags/{libelle}")
+    * @Post("users/{id}/playlists/{id_playlist}/tags")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function getPlaylistTagAction($id, $id_playlist, $libelle){
+  public function getPlaylistTagAction($id, $id_playlist){
     $view = FOSView::create();  
+    if($this->get('request')->getMethod() == "POST"){
       //$word="%".$libelle."%";
-    $em = $this->getDoctrine()->getManager();
-    $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
-    $tags=$repo->findTagByLibelle($libelle, $id);
-    if ($tags) {
-        //On regarde s'il y a déjà une association
-        $tagplaylist=$repo->findPlaylistByTag($tags, $id_playlist);
-        if(!$tagplaylist){
-            //Sinon on la créé
-            $tag=$repo->insertPlaylistTag($tags,$id_playlist);
-            if($tag){
-                $view->setStatusCode(200)->setData("Tag associé");
-            } else {
-                $view->setStatusCode(402);
-            } 
-        }        
+        $libelle = $this->get('request')->request->get('libelle');
+        $em = $this->getDoctrine()->getManager();
+        $repoPlaylist=$em->getRepository('ByExampleDemoBundle:Playlist');
+        $repoTag=$em->getRepository('ByExampleDemoBundle:Tag');
+        $tags=$repoTag->findTagByLibelle($libelle);
+        if ($tags) {
+            //On regarde s'il y a déjà une association
+            $tagplaylist=$repoPlaylist->findPlaylistByTag($tags, $id_playlist);
+            if(!$tagplaylist){
+                //Sinon on la créé
+                $tag=$repoPlaylist->insertPlaylistTag($tags,$id_playlist);
+                if($tag){
+                    $view->setStatusCode(200)->setData("Tag associé");
+                } else {
+                    $view->setStatusCode(402);
+                } 
+            }        
+            else{
+                $view->setStatusCode(406);
+            }
+        }
         else{
-            $view->setStatusCode(406);
+            //Si le tag n'existe pas, on va le créer
+            $newTag=$repoPlaylist->insertTag($libelle, $id_playlist);
+            if($newTag){
+                $view->setStatusCode(200)->setData($newTag->getId());
+            } else {
+                $view->setStatusCode(408);
+            }
         }
-    }
-    else{
-        //Si le tag n'existe pas, on va le créer
-        $newTag=$repo->insertTag($libelle, $id_playlist);
-        if($newTag){
-            $view->setStatusCode(200)->setData($newTag->getId());
-        } else {
-            $view->setStatusCode(408);
-        }
+        
     }
     return $view;
  }
