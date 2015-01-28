@@ -18,7 +18,7 @@ class ItemRepository extends EntityRepository
 	{
         $key = "%".$key."%";
 
-		$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover}, partial a.{id,nom}
+		$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}
                                             FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
                                             WHERE i.titre LIKE :key')
         ->setParameter('key', $key);
