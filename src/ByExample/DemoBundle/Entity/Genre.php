@@ -36,6 +36,13 @@ class Genre
     private $iditem;
 
     /**
+    *@var string
+    *
+    *@ORM\Column(name="urlCover", type="string", length=256, nullable=false)
+    **/
+    private $urlCover;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -109,4 +116,32 @@ class Genre
     {
         return $this->iditem;
     }
+
+
+    /**
+     * Get urlCover
+     *
+     * @return string 
+     */
+    public function getUrlCover()
+    {
+        return $this->urlCover;
+    }
+
+    /**
+     * Set urlCover
+     *
+     * @param string $cover
+     * @return Genre
+     */
+    public function setUrlCover($cover)
+    {
+        $this->urlCover = $cover;
+    
+        return $this;
+    }
+
+
+
+
 }

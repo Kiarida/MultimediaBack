@@ -3,7 +3,8 @@
 namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
+use ByExample\DemoBundle\Entity\Note;
+use \DateTime;
 /**
  * NoteRepository
  *
@@ -28,5 +29,40 @@ class NoteRepository extends EntityRepository
         ->setParameter('idItem', $idItem);
         $note = $query->getResult();
         return $note;
+    }
+
+    public function putNote($idItem, $note, $idUtilisateur){
+        $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
+        $notes = $repository->findByIditem($idItem);
+        if($notes){
+            $query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.iditem = :iditem')
+        ->setParameter('iditem', $idItem)->setParameter('note', $note);
+        $notes = $query->getResult();
+        return $notes;
+        }   
+        else{
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+            $utilisateur = $repository->findOneById($idUtilisateur);
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
+            $item = $repository->findOneById($idItem);
+            $newNote = new Note();
+            $newNote->setNote($note);
+
+            $date = new DateTime();
+            $newNote->setDate($date);
+            $newNote->setIdutilisateur($utilisateur);
+            $newNote->setIditem($item);
+            $newNote->setType(0);
+            $this->_em->persist($newNote);
+            $this->_em->flush();
+            $idNote = $newNote->getId();
+            //$conn = $this->_em->getConnection();
+            
+   
+            //$conn->insert("Note", array("idUtilisateur"=>$idUtilisateur, "idItem"=>$idItem));
+            return $idNote;
+            }
+        //return $idNote;
+        //echo "hi";
     }
 }

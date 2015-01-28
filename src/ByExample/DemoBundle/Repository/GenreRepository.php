@@ -19,6 +19,7 @@ class GenreRepository extends EntityRepository
         $rsm->addEntityResult('ByExampleDemoBundle:Genre','g');
         $rsm->addScalarResult('id','id');
         $rsm->addScalarResult('libelle','libelle');
+        $rsm->addScalarResult('urlCover', 'urlCover');
 
         $this->_em->flush();
         $this->_em->clear();

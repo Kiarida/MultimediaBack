@@ -34,6 +34,7 @@ class ArtisteRepository extends EntityRepository
         $rsm->addScalarResult('id','id');
         $rsm->addScalarResult('nom','nom');
         $rsm->addScalarResult('note','note');
+        $rsm->addScalarResult('urlCover', 'urlCover');
 
         $this->_em->flush();
         $this->_em->clear();
