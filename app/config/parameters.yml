@@ -1,12 +1,11 @@
 parameters:
     database_driver:   pdo_mysql
     database_host:     localhost
-
     database_port:     null
-
+    database_name:     projetindus
     database_user:     root
-
     database_password: root
+
     mailer_transport:  smtp
     mailer_host:       localhost
     mailer_user:       ~
@@ -18,5 +17,6 @@ parameters:
     popular_parameter_days:  14
     popular_limit:     20
 
-    artistes_return:     10
+    artistes_return:   10
 
+    sessions_return :  10

@@ -4,6 +4,7 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
+use ByExample\DemoBundle\Entity\Tag;
 use Doctrine\ORM\Query;
 
 /**
@@ -23,4 +24,45 @@ class SessionRepository extends EntityRepository{
 	    return $items;
 	}
 
+	public function findTagsBySessionId($id_session){
+		$query=$this->_em->createQuery('SELECT t.id, t.libelle
+	    FROM ByExampleDemoBundle:Session s JOIN s.idtag t
+        WHERE s.id = :id_session')
+	    ->setParameter("id_session",$id_session);
+	    $items=$query->getResult();
+	    return $items;
+	}
+
+	public function findSessionsByUser($id_user, $limit){
+		$query=$this->_em->createQuery('SELECT s.id, s.datedebut, s.datefin
+	    FROM ByExampleDemoBundle:Session s
+        WHERE s.idutilisateur = :id_user ORDER BY s.id DESC')
+	    ->setParameter("id_user",$id_user);
+	    $items=$query->setMaxResults($limit)->getResult();
+	    return $items;
+	}
+
+	public function findTagSession($tags, $id_session){
+		$query=$this->_em->createQuery('SELECT s.id FROM ByExampleDemoBundle:Session s JOIN s.idtag t WHERE s.id =:session AND t.id = :tag')
+		->setParameter("session",$id_session)->setParameter("tag",$tags[0]["id"]);
+        $tagsession=$query->getResult();
+        return $tagsession;
+	}
+
+	public function insertSessionTag($tags, $id_session){
+		$conn = $this->_em->getConnection();
+        $tag = $conn->insert("tagsession", array("idTag"=>$tags[0]["id"], "idSession"=>$id_session));
+        return $tag;
+	}
+
+	public function insertTag($libelle, $id_session){
+		$newTag = new Tag();
+        $newTag->setLibelle(strtolower($libelle));
+        $this->_em->persist($newTag);
+        $this->_em->flush();
+        $idTag = $newTag->getId();
+        $conn = $this->_em->getConnection();
+        $conn->insert("tagsession", array("idTag"=>$idTag, "idSession"=>$id_session));
+        return $newTag;
+	}
 }

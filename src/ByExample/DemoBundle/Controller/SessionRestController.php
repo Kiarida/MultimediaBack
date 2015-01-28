@@ -52,44 +52,119 @@ class SessionRestController extends Controller{
         return $view;
     }
 
+    /**
+     * Renvoie les x dernières sessions d'écoute de l'utilisateur
+     * @Get("users/{id}/sessions")
+     * @ApiDoc()
+     * @return FOSView
+   */
+
+    public function getSessionsAction($id){
+        $view = FOSView::create();
+
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleDemoBundle:Session');
+        $limit = $this->container->getParameter('sessions_return');
+
+        $sessions=$repo->findSessionsByUser($id, $limit);
+        if ($sessions) {
+            $view->setStatusCode(200)->setData($sessions);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+        /**
+     * Retourne tous les tags liés à la session en paramètre
+     * @Get("users/{id}/sessions/{id_session}/tags")
+     * @ApiDoc()
+     * @return FOSView
+   */
+
+    public function getTagsBySessionAction($id_session){
+        $view = FOSView::create();
+
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleDemoBundle:Session');
+        $items=$repo->findTagsBySessionId($id_session);
+        if ($items) {
+            $view->setStatusCode(200)->setData($items);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+
      /**
-    * Associe un tag a une playlist ou créé un nouveau tag
-    * @Post("users/{id}/sessions/{id_session}/tags/{libelle}")
+    * Ajoute un tag à une session
+    * @Post("users/{id}/sessions/{id_session}/tags")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function addSessionTagAction($id, $id_session, $tag){
-    $view = FOSView::create();  
-    
-    $em = $this->getDoctrine()->getManager();
-    $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
-    $tags=$repo->findTagByLibelle($libelle, $id);
-    if ($tags) {
-        //On regarde s'il y a déjà une association
-        $tagplaylist=$repo->findPlaylistByTag($tags, $id_playlist);
-        if(!$tagplaylist){
-            //Sinon on la créé
-            $tag=$repo->insertPlaylistTag($tags,$id_playlist);
-            if($tag){
-                $view->setStatusCode(200)->setData("Tag associé");
-            } else {
-                $view->setStatusCode(402);
-            } 
-        }        
-        else{
-            $view->setStatusCode(406);
+  public function addSessionTagAction($id, $id_session){
+$view = FOSView::create();  
+    if($this->get('request')->getMethod() == "POST"){
+
+
+        $libelle = $this->get('request')->request->get('libelle');
+        $em = $this->getDoctrine()->getManager();
+
+        $repoSession=$em->getRepository('ByExampleDemoBundle:Session');
+
+        $repoTag=$em->getRepository('ByExampleDemoBundle:Tag');
+        $tag=$repoTag->findTagByLibelle($libelle);
+
+        if ($tag) {//si le tag existe deja
+            //On regarde s'il y a déjà une association
+            $tagsession=$repoSession->findTagSession($tag, $id_session);
+            if(!$tagsession){
+                //Sinon on la créé
+                $tag=$repoSession->insertSessionTag($tag,$id_session);
+                if($tag){
+                    $view->setStatusCode(200)->setData("Tag associé");
+                } else {
+                    $view->setStatusCode(402);
+                } 
+            }        
+            else{
+                $view->setStatusCode(406);
+            }
         }
-    }
-    else{
-        //Si le tag n'existe pas, on va le créer
-        $newTag=$repo->insertTag($libelle, $id_playlist);
-        if($newTag){
-            $view->setStatusCode(200)->setData($newTag->getId());
-        } else {
-            $view->setStatusCode(408);
+        else{
+            //Si le tag n'existe pas, on va le créer
+            $newTag=$repoSession->insertTag($libelle, $id_session);
+            if($newTag){
+                $view->setStatusCode(200)->setData($newTag->getId());
+            } else {
+                $view->setStatusCode(408);
+            }
         }
     }
     return $view;
- }
+}
+
+/**
+    * Supprime une association entre un tag et une session
+    * @Delete("users/{id}/sessions/{id_session}/tags/{idTag}")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+    public function deleteSessionTagAction($id_session, $idTag){
+        $view = FOSView::create();
+
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Tag');
+        $tags=$repo->findTagById($idTag);
+        if($tags){
+            $conn = $em->getConnection();
+            $conn->delete("tagsession", array("idTag"=>$idTag));
+            $view->setStatusCode(200);
+        }
+        return $view;
+    }
+
 }
