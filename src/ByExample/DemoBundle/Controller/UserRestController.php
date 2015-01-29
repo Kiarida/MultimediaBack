@@ -107,6 +107,71 @@ class UserRestController extends Controller
         return $view;
     }
 
+    /**
+    * Met à jour une playlist
+     * @Put("users/{id}/playlist/{id_playlist}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function putPlaylistAction($id, $id_playlist){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $request = $this->getRequest();
+        $name = $request->get('nomPlaylist');
+        $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
+        $idplaylist=$repo->updatePlaylist($id_playlist, $name, $id);
+        if($idplaylist) {
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+
+    /**
+    * Créé une playlist
+     * @Post("users/{id}/playlist")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function postPlaylistAction($id){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $request = $this->getRequest();
+        $name = $request->get('nomPlaylist');
+        $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
+        $idplaylist=$repo->insertPlaylist($name, $id);
+        
+        if($idplaylist) {
+            $view->setStatusCode(200)->setData($idplaylist);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+
+    /**
+    * Récupère les playlists d'un utilisateur
+     * @Get("users/{id}/playlist")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function getPlaylistAction($id){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
+        $idplaylist=$repo->findPlaylistByUser($id);
+        if($idplaylist) {
+            $view->setStatusCode(200)->setData($idplaylist);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+
 
     /**
      * Creates a new User entity.
