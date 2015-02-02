@@ -108,6 +108,27 @@ class UserRestController extends Controller
     }
 
     /**
+    * Renvoi la note d'un utilisateur pour un item
+     * @Get("users/{iduser}/note/item/{id_item}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function getNoteItemAction($iduser, $id_item){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Note');
+        $notes=$repo->getUserNoteItem($id_item,$iduser);
+        if ($notes){
+            $notes["idItem"] = intval($id_item);
+            $view->setData($notes);
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+    /**
     * Met à jour une playlist
      * @Put("users/{id}/playlist/{id_playlist}")
      * @ApiDoc()
@@ -144,7 +165,7 @@ class UserRestController extends Controller
         $idplaylist=$repo->insertPlaylist($name, $id);
         
         if($idplaylist) {
-            $view->setStatusCode(200)->setData($idplaylist);
+            $view->setStatusCode(200)->setData(array("id"=> $idplaylist));
         } else {
             $view->setStatusCode(404);
         }

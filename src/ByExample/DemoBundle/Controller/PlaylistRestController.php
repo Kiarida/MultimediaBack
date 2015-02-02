@@ -33,7 +33,7 @@ use Doctrine\ORM\Query;
 class PlaylistRestController extends Controller{
     /**
      * Retourne tous les détails d'une playlist
-     * @Get("users/{id}/playlists/{id_playlist}")
+     * @Get("users/{id}/playlist/{id_playlist}")
      * @ApiDoc()
      * @return FOSView
    */
@@ -139,7 +139,7 @@ class PlaylistRestController extends Controller{
 
      /**
      * Supprime une playlist
-    * @Delete("users/{id}/playlists/{id_playlist}")
+    * @Delete("users/{id}/playlist/{id_playlist}")
     * @ApiDoc()
     * @return FOSView
    */
@@ -157,5 +157,52 @@ class PlaylistRestController extends Controller{
         }
         return $view;
     }
+
+
+    /**
+     * Ajoute un item à une playlist
+    * @POST("users/{id}/playlist/{id_playlist}/items")
+    * @ApiDoc()
+    * @return FOSView
+   */
+    public function postPlaylistItemAction($id, $id_playlist){
+        $view = FOSView::create();  
+        if($this->get('request')->getMethod() == "POST"){
+            $iditem = $this->get('request')->request->get('iditem');
+            $em = $this->getDoctrine()->getManager();
+            $repoPlaylist=$em->getRepository('ByExampleDemoBundle:Playlist');
+            $repoItem=$em->getRepository('ByExampleDemoBundle:Item');
+            $item=$repoItem->findOneById($iditem);
+            if ($item) {
+                    if($em->getConnection()->insert("itemplaylist", array("idItem"=>$iditem, "idPlaylist"=>$id_playlist))){
+                        $view->setStatusCode(200)->setData("Success");
+                    } else {
+                        $view->setStatusCode(402);
+                    } 
+            }        
+            else{
+                $view->setStatusCode(406);
+            }
+        }
+        return $view;
+    }
+
+    /**
+     * Supprime un item à une playlist
+    * @DELETE("users/{id}/playlist/{id_playlist}/items/{iditem}")
+    * @ApiDoc()
+    * @return FOSView
+   */
+    public function deletePlaylistItemAction($id, $id_playlist, $iditem){
+        $view = FOSView::create();  
+        if($this->get('request')->getMethod() == "DELETE"){
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->delete("itemplaylist", array("idItem"=>$iditem, "idPlaylist"=>$id_playlist));
+        }
+        return $view;
+     }
+
+
+
 
 }
