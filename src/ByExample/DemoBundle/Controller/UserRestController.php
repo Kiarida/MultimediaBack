@@ -108,7 +108,7 @@ class UserRestController extends Controller
     }
 
     /**
-    * Renvoi la note d'un utilisateur pour un item
+    * Renvoie la note d'un utilisateur pour un item
      * @Get("users/{iduser}/note/item/{id_item}")
      * @ApiDoc()
     * @return FOSView
@@ -248,8 +248,7 @@ class UserRestController extends Controller
      * @param string $id
      *
      * @return FOSView
-     * @Secure(roles="ROLE_USER")
-    * @Put("/api/users/{id}")
+    * @Put("api/users/{id}")
      * @ApiDoc()
      */
     public function putUserAction($id)
@@ -257,10 +256,16 @@ class UserRestController extends Controller
         $request = $this->getRequest();
         $userManager = $this->container->get('fos_user.user_manager');
 
-        $user = $userManager->findUserByUsernameOrEmail($id);
+        //$user = $userManager->findUserByUsernameOrEmail($id);
+        $user=$userManager->findUserBy(array('id' => $id));
+       // $user= $userManager->findOneById($id);
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Utilisateur');
+        
+
         if (!$user) {
             $view = FOSView::create();
-            $view->setStatusCode(204);
+            $view->setStatusCode(201);
             return $view;
         }
 
@@ -270,20 +275,44 @@ class UserRestController extends Controller
         if ($request->get('email')) {
             $user->setEmail($request->get('email'));
         }
-        if ($request->get('plainPassword')) {
-            $user->setPlainPassword($request->get('plainPassword'));
+
+        if($request->get('newPassword') && $request->get('plainPassword')){
+
+            $encoder_service = $this->get('security.encoder_factory');
+            $encoder = $encoder_service->getEncoder($user);
+            $encoded_pass = $encoder->encodePassword($request->get('plainPassword'), $user->getSalt());
+            if($user->getPassword() == $encoded_pass){
+                $user->setPlainPassword($request->get('newPassword'));
+            }
+            else{
+                $view = FOSView::create();
+                $view->setStatusCode(403);
+                return $view;
+            }
         }
 
+        /*if ($request->get('plainPassword')) {    
+            $user->setPlainPassword($request->get('plainPassword'));
+        }*/
+
+        if($request->get('pays')){
+            $query = $em->createQuery('UPDATE ByExampleDemoBundle:Utilisateur n SET n.pays = :pays WHERE n.id = :id')
+            ->setParameter('pays', $request->get('pays'))->setParameter('id', $id);
+            $query->getResult();
+        }
+
+
         $validator = $this->get('validator');
-        $errors = $validator->validate($user, array('Registration'));
+        $errors = $validator->validate($user);
         if (count($errors) == 0) {
             $userManager->updateUser($user);
             $view = FOSView::create();
             $view->setStatusCode(204);
+
         } else {
-            $view = $this->get_errors_view($errors);
+            //$view = $this->get_errors_view($errors);
         }
-        return $view;
+        return $view->setData();
     }
 
     
