@@ -343,36 +343,28 @@ class UserRestController extends Controller
     * @return FOSView
    */
 
-  public function addNoteArtisteAction($id){
-    $view = FOSView::create();  
-    if($this->get('request')->getMethod() == "POST"){
-
-
-        $note = $this->get('request')->request->get('note');
-
+    /**
+    * Créé ou met à jour une note sur un artiste
+     * @Put("users/{id}/note/artiste/{idArtiste}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function putNoteArtisteAction($id, $idArtiste){
+        $view = FOSView::create();
         $em = $this->getDoctrine()->getManager();
-
-        $artiste = $em->getRepository('ByExampleDemoBundle:Artiste');
-       
-
-        $repoTypeInter =  $em->getRepository('ByExampleDemoBundle:Typeinteraction');
-        $ecoute=$em->getRepository('ByExampleDemoBundle:Ecoute')->find($idEcoute);
-        $typeInter=$repoTypeInter->find($idInteraction);
+        $request = $this->getRequest();
+        $note = $request->get('note');
+        $repo=$em->getRepository('ByExampleDemoBundle:Note');
+        $notes=$repo->putNoteArtiste($idArtiste, $note, $id);
         
-        if($artiste){ //si l'artiste existe
-
-            $interaction = $repoInteractions->addInteraction($typeInter, $ecoute);
-            $view->setStatusCode(200)->setData($interaction);
-            
-        }else{ //l'item n'existe pas
+        if ($notes == 0){
+            $view->setStatusCode(200);
+        }elseif($notes) {
+            $view->setStatusCode(201);
+        } else {
             $view->setStatusCode(404);
         }
-
         return $view;
-
-     
-}
-}
-  
+    }
     
 }
