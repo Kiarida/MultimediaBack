@@ -13,30 +13,12 @@ use \DateTime;
  */
 class NoteRepository extends EntityRepository
 {
-	public function findNoteByArtiste($idArtiste)
-	{
-       
-		$query = $this->_em->createQuery('SELECT a.note FROM ByExampleDemoBundle:Artiste a WHERE a.id = :idArtiste')
-        ->setParameter('idArtiste', $idArtiste);
-        $note = $query->getResult();
-        return $note;
-	}
-
-    public function findNoteByItem($idItem)
-    {
-       
-        $query = $this->_em->createQuery('SELECT i.note FROM ByExampleDemoBundle:Item i WHERE i.id = :idItem')
-        ->setParameter('idItem', $idItem);
-        $note = $query->getResult();
-        return $note;
-    }
-
-    public function putNote($idItem, $note, $idUtilisateur){
+    public function putNoteArtiste($idArtiste, $note, $idUtilisateur){
         $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
-        $notes = $repository->findByIditem($idItem);
+        $notes = $repository->findByIdartiste($idArtiste);
         if($notes){
-            $query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.iditem = :iditem')
-        ->setParameter('iditem', $idItem)->setParameter('note', $note);
+            $query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.idartiste = :idartiste')
+        ->setParameter('idartiste', $idArtiste)->setParameter('note', $note);
         $notes = $query->getResult();
         return $notes;
         }   
@@ -64,6 +46,69 @@ class NoteRepository extends EntityRepository
             }
         //return $idNote;
         //echo "hi";
+    }
+
+	public function findNoteByArtiste($idArtiste)
+	{
+       
+		$query = $this->_em->createQuery('SELECT a.note FROM ByExampleDemoBundle:Artiste a WHERE a.id = :idArtiste')
+        ->setParameter('idArtiste', $idArtiste);
+        $note = $query->getResult();
+        return $note;
+	}
+
+    public function findNoteByItem($idItem)
+    {
+       
+        $query = $this->_em->createQuery('SELECT i.note FROM ByExampleDemoBundle:Item i WHERE i.id = :idItem')
+        ->setParameter('idItem', $idItem);
+        $note = $query->getResult();
+        return $note;
+    }
+
+    public function findNoteByItemAndUser($idItem, $idUser){
+        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n 
+            WHERE n.iditem = :idItem AND n.idutilisateur=:idUser')
+        ->setParameter('idItem', $idItem)->setParameter('idUser', $idUser);
+        $note = $query->getResult();
+        return $note;
+    }
+
+    public function putNote($idItem, $note, $idUtilisateur){
+        $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
+        $note = $repository->findNoteByItemAndUser($idItem,$idUtilisateur); //on recupere la note de l'utilisateur pour l'item
+        if($note){ //si elle existe
+            $query = $this->_em->createQuery(
+                'UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.iditem = :iditem AND n.idutilisateur=:idUser')
+                ->setParameter('iditem', $idItem)
+                ->setParameter('note', $note)
+                ->setParameter('idUser', $idUtilisateur);
+            $note = $query->getResult();
+            return $note;
+        }   //si la note n'existe pas
+        else{
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+            $utilisateur = $repository->find($idUtilisateur);
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
+            $item = $repository->find($idItem);
+            $newNote = new Note();
+            $newNote->setNote($note);
+
+            $newNote->setDate(new DateTime());
+            $newNote->setIdutilisateur($utilisateur);
+            $newNote->setIditem($item);
+            $newNote->setType(0);
+            $this->_em->persist($newNote);
+            $this->_em->flush();
+            $idNote = $newNote->getId();
+
+
+            return $idNote;
+            }
+
+
+
+
     }
 
     public function getUserNoteItem($iditem, $iduser){

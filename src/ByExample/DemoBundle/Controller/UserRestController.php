@@ -336,6 +336,43 @@ class UserRestController extends Controller
     }
 
 
+    /**
+    * Permet d'enregistrer une intéraction liée à une écoute
+    * @Post("users/{id}/note/artiste/{idArtiste}")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+  public function addNoteArtisteAction($id){
+    $view = FOSView::create();  
+    if($this->get('request')->getMethod() == "POST"){
+
+
+        $note = $this->get('request')->request->get('note');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $artiste = $em->getRepository('ByExampleDemoBundle:Artiste');
+       
+
+        $repoTypeInter =  $em->getRepository('ByExampleDemoBundle:Typeinteraction');
+        $ecoute=$em->getRepository('ByExampleDemoBundle:Ecoute')->find($idEcoute);
+        $typeInter=$repoTypeInter->find($idInteraction);
+        
+        if($artiste){ //si l'artiste existe
+
+            $interaction = $repoInteractions->addInteraction($typeInter, $ecoute);
+            $view->setStatusCode(200)->setData($interaction);
+            
+        }else{ //l'item n'existe pas
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+
+     
+}
+}
   
     
 }
