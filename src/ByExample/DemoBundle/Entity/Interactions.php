@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Interactions
  *
  * @ORM\Table(name="interactions")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ByExample\DemoBundle\Repository\InteractionRepository")
  */
 class Interactions
 {

@@ -27,6 +27,7 @@ use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Controller\Annotations\RequestParam;
 use Doctrine\ORM\Query;
 
+
 /**
  	*@NamePrefix("byexample_items_")
  **/
@@ -54,4 +55,74 @@ class EcouteRestController extends Controller{
         }
         return $view;
     }
+
+    /**
+    * Créé une écoute
+    * @Post("users/{id}/ecoute")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+  public function addEcouteAction($id){
+	$view = FOSView::create();  
+    if($this->get('request')->getMethod() == "POST"){
+
+
+        $idItem = $this->get('request')->request->get('idItem');
+        $typeEcoute = $this->get('request')->request->get('typeEcoute');
+        $em = $this->getDoctrine()->getManager();
+
+        $item=$em->getRepository('ByExampleDemoBundle:Item')->find($idItem);
+        
+        if($item){ //si l'item existe
+        //trouver la session courante
+        $repoSession = $em->getRepository('ByExampleDemoBundle:Session');
+        	$session = $repoSession->findCurrentSession($id);
+        	if(!$session){//la session n'existe pas, on la créé
+
+        		$session = $repoSession->addSession($id);        	
+        	}
+        	//on ajoute l'écoute une fois la session crée
+        	$repoEcoute = $em->getRepository('ByExampleDemoBundle:Ecoute');
+        	$ecoute = $repoEcoute->addEcoute($session, $item, $typeEcoute);
+
+        	$view->setStatusCode(200)->setData($ecoute);
+        }else{ //l'item n'existe pas
+        	$view->setStatusCode(404);
+        }
+
+        return $view;
+
+        /*$repoTag=$em->getRepository('ByExampleDemoBundle:Tag');
+        $tag=$repoTag->findTagByLibelle($libelle);
+
+        if ($tag) {//si le tag existe deja
+            //On regarde s'il y a déjà une association
+            $tagsession=$repoSession->findTagSession($tag, $id_session);
+            if(!$tagsession){
+                //Sinon on la créé
+                $tag=$repoSession->insertSessionTag($tag,$id_session);
+                if($tag){
+                    $view->setStatusCode(200)->setData("Tag associé");
+                } else {
+                    $view->setStatusCode(402);
+                } 
+            }        
+            else{
+                $view->setStatusCode(406);
+            }
+        }
+        else{
+            //Si le tag n'existe pas, on va le créer
+            $newTag=$repoSession->insertTag($libelle, $id_session);
+            if($newTag){
+                $view->setStatusCode(200)->setData($newTag->getId());
+            } else {
+                $view->setStatusCode(408);
+            }
+        }
+    }
+    return $view;*/
+}
+}
 }

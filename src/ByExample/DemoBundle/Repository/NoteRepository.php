@@ -13,6 +13,49 @@ use \DateTime;
  */
 class NoteRepository extends EntityRepository
 {
+    public function putNoteArtiste($idArtiste, $note, $idUtilisateur){
+        $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
+        $noteObj = $repository->findNoteByArtisteAndUser($idArtiste,$idUtilisateur); //on recupere la note de l'utilisateur pour l'item
+        
+        if($noteObj){ //si elle existe
+            $query = $this->_em->createQuery(
+                'UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.id=:idnote')
+                ->setParameter('note', $note)
+                ->setParameter('idnote', $noteObj);
+            $note = $query->getResult();
+        }   //si la note n'existe pas
+        else{
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+            $utilisateur = $repository->find($idUtilisateur);
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Artiste');
+            $artiste = $repository->find($idArtiste);
+            $newNote = new Note();
+            $newNote->setNote($note);
+
+            $newNote->setDate(new DateTime());
+            $newNote->setIdutilisateur($utilisateur);
+            $newNote->setIdartiste($artiste);
+            $newNote->setType(1);
+            $this->_em->persist($newNote);
+            $this->_em->flush();
+            $idNote = $newNote->getId();
+        }
+        //calcul de la moyenne
+        $query = $this->_em->createQuery(
+        'SELECT AVG(n.note) as moyenne From ByExampleDemoBundle:Note n WHERE n.idartiste=:idArtiste')
+        ->setParameter('idArtiste', $idArtiste);
+        $moyenne = $query->getResult();
+
+        //update moyenne
+        $query = $this->_em->createQuery(
+                'UPDATE ByExampleDemoBundle:Artiste a SET a.note = :moyenne WHERE a.id= :idArtiste')
+                ->setParameter('moyenne', $moyenne)
+                ->setParameter('idArtiste', $idArtiste);
+            $note = $query->getResult();
+
+        return $note;
+    }
+
 	public function findNoteByArtiste($idArtiste)
 	{
        
@@ -31,43 +74,75 @@ class NoteRepository extends EntityRepository
         return $note;
     }
 
+    public function findNoteByArtisteAndUser($idArtiste, $idUser){
+        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n 
+            WHERE n.idartiste = :idArtiste AND n.idutilisateur=:idUser')
+        ->setParameter('idArtiste', $idArtiste)->setParameter('idUser', $idUser);
+        $note = $query->getResult();
+        return $note;
+    }
+
+    public function findNoteByItemAndUser($idItem, $idUser){
+        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n 
+            WHERE n.iditem = :idItem AND n.idutilisateur=:idUser')
+        ->setParameter('idItem', $idItem)->setParameter('idUser', $idUser);
+        $note = $query->getResult();
+        return $note;
+    }
+
     public function putNote($idItem, $note, $idUtilisateur){
         $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
-        $notes = $repository->findByIditem($idItem);
-        if($notes){
-            $query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.iditem = :iditem')
-        ->setParameter('iditem', $idItem)->setParameter('note', $note);
-        $notes = $query->getResult();
-        return $notes;
-        }   
+        $noteObj = $repository->findNoteByItemAndUser($idItem,$idUtilisateur); //on recupere la note de l'utilisateur pour l'item
+        
+        if($noteObj){ //si elle existe
+            $query = $this->_em->createQuery(
+                'UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.id=:idnote')
+                ->setParameter('note', $note)
+                ->setParameter('idnote', $noteObj);
+            $note = $query->getResult();
+        }   //si la note n'existe pas
         else{
             $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
-            $utilisateur = $repository->findOneById($idUtilisateur);
+            $utilisateur = $repository->find($idUtilisateur);
             $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
-            $item = $repository->findOneById($idItem);
+            $item = $repository->find($idItem);
             $newNote = new Note();
             $newNote->setNote($note);
 
-            $date = new DateTime();
-            $newNote->setDate($date);
+            $newNote->setDate(new DateTime());
             $newNote->setIdutilisateur($utilisateur);
             $newNote->setIditem($item);
             $newNote->setType(0);
             $this->_em->persist($newNote);
             $this->_em->flush();
             $idNote = $newNote->getId();
-            //$conn = $this->_em->getConnection();
-            
-   
-            //$conn->insert("Note", array("idUtilisateur"=>$idUtilisateur, "idItem"=>$idItem));
-            return $idNote;
-            }
-        //return $idNote;
-        //echo "hi";
+        }
+        //calcul de la moyenne
+        $query = $this->_em->createQuery(
+        'SELECT AVG(n.note) as moyenne From ByExampleDemoBundle:Note n WHERE n.iditem=:idItem')
+        ->setParameter('idItem', $idItem);
+        $moyenne = $query->getResult();
+
+        //update moyenne
+        $query = $this->_em->createQuery(
+                'UPDATE ByExampleDemoBundle:Item i SET i.note = :moyenne WHERE i.id= :idItem')
+                ->setParameter('moyenne', $moyenne)
+                ->setParameter('idItem', $idItem);
+            $note = $query->getResult();
+
+        return $note;
     }
+
+
 
     public function getUserNoteItem($iditem, $iduser){
         $query = $this->_em->createQuery('SELECT n.note FROM ByExampleDemoBundle:Note n WHERE n.iditem = '.$iditem.' AND n.idutilisateur ='.$iduser);
+        $note = $query->getResult();
+        return $note;
+    }
+
+    public function getUserNoteArtiste($idartiste, $iduser){
+        $query = $this->_em->createQuery('SELECT n.note FROM ByExampleDemoBundle:Note n WHERE n.idartiste = '.$idartiste.' AND n.idutilisateur ='.$iduser);
         $note = $query->getResult();
         return $note;
     }

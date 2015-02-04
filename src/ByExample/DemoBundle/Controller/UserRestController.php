@@ -365,6 +365,50 @@ class UserRestController extends Controller
     }
 
 
-  
+    /**
+    * Créé ou met à jour une note sur un artiste
+     * @Put("users/{id}/note/artiste/{idArtiste}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function putNoteArtisteAction($id, $idArtiste){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $request = $this->getRequest();
+        $note = $request->get('note');
+        $repo=$em->getRepository('ByExampleDemoBundle:Note');
+        $notes=$repo->putNoteArtiste($idArtiste, $note, $id);
+        
+        if ($notes == 0){
+            $view->setStatusCode(200);
+        }elseif($notes) {
+            $view->setStatusCode(201);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
     
+
+    /**
+    * Renvoie la note d'un utilisateur pour un artiste
+     * @Get("users/{iduser}/note/artiste/{idArtiste}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function getNoteArtisteAction($iduser, $idArtiste){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Note');
+        $notes=$repo->getUserNoteArtiste($idArtiste,$iduser);
+        if ($notes){
+            $notes["idArtiste"] = intval($idArtiste);
+            $view->setData($notes);
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
 }
