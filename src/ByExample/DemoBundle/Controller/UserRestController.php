@@ -108,7 +108,7 @@ class UserRestController extends Controller
     }
 
     /**
-    * Renvoi la note d'un utilisateur pour un item
+    * Renvoie la note d'un utilisateur pour un item
      * @Get("users/{iduser}/note/item/{id_item}")
      * @ApiDoc()
     * @return FOSView
@@ -337,13 +337,6 @@ class UserRestController extends Controller
 
 
     /**
-    * Permet d'enregistrer une intéraction liée à une écoute
-    * @Post("users/{id}/note/artiste/{idArtiste}")
-    * @ApiDoc()
-    * @return FOSView
-   */
-
-    /**
     * Créé ou met à jour une note sur un artiste
      * @Put("users/{id}/note/artiste/{idArtiste}")
      * @ApiDoc()
@@ -367,4 +360,26 @@ class UserRestController extends Controller
         return $view;
     }
     
+
+    /**
+    * Renvoie la note d'un utilisateur pour un artiste
+     * @Get("users/{iduser}/note/artiste/{idArtiste}")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function getNoteArtisteAction($iduser, $idArtiste){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Note');
+        $notes=$repo->getUserNoteArtiste($idArtiste,$iduser);
+        if ($notes){
+            $notes["idArtiste"] = intval($idArtiste);
+            $view->setData($notes);
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
 }

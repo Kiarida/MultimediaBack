@@ -140,4 +140,10 @@ class NoteRepository extends EntityRepository
         $note = $query->getResult();
         return $note;
     }
+
+    public function getUserNoteArtiste($idartiste, $iduser){
+        $query = $this->_em->createQuery('SELECT n.note FROM ByExampleDemoBundle:Note n WHERE n.idartiste = '.$idartiste.' AND n.idutilisateur ='.$iduser);
+        $note = $query->getResult();
+        return $note;
+    }
 }
