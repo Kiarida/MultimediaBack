@@ -104,7 +104,7 @@ class ItemRestController extends Controller
 
 /**
   * Retourne tous les tags liés a l'item en paramètre
-  * @Route("/items/{id}/tags/")
+  * @Route("/items/{id}/tags")
   * @Method({"GET"})
   * @ApiDoc()
   */
