@@ -49,4 +49,28 @@ class EcouteRepository extends EntityRepository{
 
 	    return $idEcoute;
 	}
+
+	public function findLastEcouteByUser($id_user){
+		$query=$this->_em->createQuery('SELECT e
+	    FROM ByExampleDemoBundle:Ecoute e
+	    LEFT  JOIN e.idsession s
+        WHERE s.idutilisateur = :user
+        ORDER BY e.id DESC')
+	    ->setParameter("user",$id_user)
+	    ->setMaxResults(1);
+	    $items=$query->getResult(Query::HYDRATE_OBJECT);
+	    return $items[0];
+	}
+
+	public function findLastEcouteBySession($id_session){
+		$query=$this->_em->createQuery('SELECT e
+	    FROM ByExampleDemoBundle:Ecoute e
+	    LEFT  JOIN e.idsession s
+        WHERE s.id = :session
+        ORDER BY e.id DESC')
+	    ->setParameter("session",$id_session)
+	    ->setMaxResults(1);
+	    $items=$query->getResult(Query::HYDRATE_OBJECT);
+	    return $items[0];
+	}
 }

@@ -44,15 +44,13 @@ class InteractionRestController extends Controller{
 	$view = FOSView::create();  
     if($this->get('request')->getMethod() == "POST"){
 
-
-        $idEcoute = $this->get('request')->request->get('idEcoute');
         $idInteraction = $this->get('request')->request->get('idInteraction');
 
         $em = $this->getDoctrine()->getManager();
 
         $repoInteractions = $em->getRepository('ByExampleDemoBundle:Interactions');
         $repoTypeInter =  $em->getRepository('ByExampleDemoBundle:Typeinteraction');
-        $ecoute=$em->getRepository('ByExampleDemoBundle:Ecoute')->find($idEcoute);
+        $ecoute=$em->getRepository('ByExampleDemoBundle:Ecoute')->findLastEcouteByUser($id);
         $typeInter=$repoTypeInter->find($idInteraction);
         
         if($ecoute && $typeInter){ //si les deux existent

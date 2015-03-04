@@ -95,4 +95,35 @@ class SessionRepository extends EntityRepository{
 
 		return $session;
 	}
+
+	public function getExpiredSession(){
+		$res = array();
+		$currentDate = new \DateTime();
+		$repo = $this->_em->getRepository('ByExampleDemoBundle:Session');
+		$sessions = $repo->findBy(array("datefin"=>null));
+		foreach($sessions as $session){
+			$ecoute = $this->_em->getRepository('ByExampleDemoBundle:Ecoute')->findLastEcouteBySession($session->getId());
+			$dateecoute = $ecoute->getDate();
+			if($currentDate->getTimestamp() - $dateecoute->getTimestamp() > (30*60));
+				$res[] = $session;
+		}
+		return $res;
+	}
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

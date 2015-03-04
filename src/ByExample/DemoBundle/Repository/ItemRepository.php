@@ -67,6 +67,9 @@ class ItemRepository extends EntityRepository
         $rsm->addScalarResult('duree','duree');
         $rsm->addScalarResult('typeItem','typeItem');
         $rsm->addScalarResult('nbVues','nbVues');
+        $rsm->addScalarResult('urlCover','urlCover');
+        $rsm->addScalarResult('urlPoster','urlPoster');
+
         $rsm->addScalarResult('date','date');
 
         $rsm->addScalarResult('idArtiste','idArtiste');
