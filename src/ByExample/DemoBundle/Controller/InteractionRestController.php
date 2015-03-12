@@ -45,7 +45,7 @@ class InteractionRestController extends Controller{
     if($this->get('request')->getMethod() == "POST"){
 
         $idInteraction = $this->get('request')->request->get('idInteraction');
-
+        
         $em = $this->getDoctrine()->getManager();
 
         $repoInteractions = $em->getRepository('ByExampleDemoBundle:Interactions');
@@ -57,7 +57,7 @@ class InteractionRestController extends Controller{
         	$interaction = $repoInteractions->addInteraction($typeInter, $ecoute);
         	$view->setStatusCode(200)->setData($interaction);
         }else{ //l'item n'existe pas
-        	$view->setStatusCode(404);
+        	$view->setStatusCode(404)->setData($problem);
         }
 
         return $view;

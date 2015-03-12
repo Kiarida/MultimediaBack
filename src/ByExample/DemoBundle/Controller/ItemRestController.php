@@ -170,4 +170,26 @@ class ItemRestController extends Controller
 
         return $view;
   }
+
+  /**
+  * Retourne un item depuis Spotify
+  * @Route("/items/spotify/{idTrack}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemSpotifyAction($idTrack){
+     $view = FOSView::create();
+     $ch = curl_init();
+     curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/tracks/1zHlj4dQ8ZAtrayhuDDmkY");
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     $item=curl_exec($ch);
+     if ($item) {
+            $view->setStatusCode(200)->setData($item);
+        } else {
+            $view->setStatusCode(407);
+        }
+
+        return $view;
+
+  }
  }
