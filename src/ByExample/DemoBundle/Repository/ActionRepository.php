@@ -60,7 +60,7 @@ class ActionRepository extends EntityRepository{
         AND a.idutilisateur = :utilisateur
         ')
         ->setParameter('item', $idItem)
-        ->setParameter('utilisateur', $idUtilisateur)
+        ->setParameter('utilisateur', $idUtilisateur);
         $types = $query->getResult();
         return $types;
 	}

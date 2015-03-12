@@ -66,7 +66,7 @@ class ActionRestController extends Controller{
             }
         	
         }else{ //l'item n'existe pas
-        	$view->setStatusCode(404)->setData($problem);
+        	$view->setStatusCode(404);
         }
 
         return $view;
@@ -77,39 +77,32 @@ class ActionRestController extends Controller{
 
 
 
-         /**
+    /**
     * Permet de récupérer les actions sur un item
-    * @Get("users/{id}/typeactions")
+    * @Get("users/{id}/actions/{iditem}")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function getTypesActionsAction($id){
+  public function getActionsAction($id, $iditem){
     $view = FOSView::create();  
     if($this->get('request')->getMethod() == "GET"){
-        //$idAction = $this->get('request')->request->get('idAction');
-        $idItem = $this->get('request')->request->get('idItem');
+
         $em = $this->getDoctrine()->getManager();
         $repoAct = $em->getRepository('ByExampleDemoBundle:Actions');
-        //$repoTypeAct =  $em->getRepository('ByExampleDemoBundle:Typeaction');
-        $repoItem = $em->getRepository('ByExampleDemoBundle:Item');
-        $item = $repoItem->find($idItem);
-        //$typeAct=$repoTypeAct->find($idAction);
-        $types = $repoAct->getTypesActions($idItem, $id);
-        if($types && $item){ //si les deux existent
 
-
+        $types = $repoAct->getTypesActions($iditem, $id);
+        if($types){ //s'il y a une action sur l'item
             $view->setStatusCode(200)->setData($types);
             
-            
-        }else{ //l'item n'existe pas
-            $view->setStatusCode(404)->setData($problem);
+        }else{ 
+            $view->setStatusCode(404);
         }
 
         return $view;
 
      
-        }
     }
+}
 
 }
