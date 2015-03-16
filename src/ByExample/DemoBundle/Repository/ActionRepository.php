@@ -21,7 +21,7 @@ class ActionRepository extends EntityRepository{
 		$action->setIditem($item);
 		$action->setIdtypeactions($typeAction);
 		$repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
-        $utilisateur = $repository->findOneById($idUtilisateur);
+                $utilisateur = $repository->findOneById($idUtilisateur);
 		$action->setIdutilisateur($utilisateur);
 
 
@@ -36,33 +36,33 @@ class ActionRepository extends EntityRepository{
 
 	public function findAction($typeAction, $idItem, $idUtilisateur){
 		
-        $query = $this->_em->createQuery(
-        'SELECT a.id
-        FROM ByExampleDemoBundle:Actions a 
-        WHERE a.iditem = :item
-        AND a.idutilisateur = :utilisateur
-        AND a.idtypeaction = :action
-        ')
-        ->setParameter('item', $idItem)
-        ->setParameter('utilisateur', $idUtilisateur)
-        ->setParameter('action', $typeAction);
-        $action = $query->getResult();
-        return $action;
+                $query = $this->_em->createQuery(
+                'SELECT a.id
+                FROM ByExampleDemoBundle:Actions a 
+                WHERE a.iditem = :item
+                AND a.idutilisateur = :utilisateur
+                AND a.idtypeaction = :action
+                ')
+                ->setParameter('item', $idItem)
+                ->setParameter('utilisateur', $idUtilisateur)
+                ->setParameter('action', $typeAction);
+                $action = $query->getResult();
+                return $action[0]["id"];
 	}
 
 
 
 	public function getTypesActions($idItem, $idUtilisateur){
 		$query = $this->_em->createQuery(
-        'SELECT a.idtypeaction
-        FROM ByExampleDemoBundle:Actions a 
-        WHERE a.iditem = :item
-        AND a.idutilisateur = :utilisateur
-        ')
-        ->setParameter('item', $idItem)
-        ->setParameter('utilisateur', $idUtilisateur);
-        $types = $query->getResult();
-        return $types;
+                'SELECT IDENTITY(a.idtypeaction)
+                FROM ByExampleDemoBundle:Actions a 
+                WHERE a.iditem = :item
+                AND a.idutilisateur = :utilisateur
+                ')
+                ->setParameter('item', $idItem)
+                ->setParameter('utilisateur', $idUtilisateur);
+                $types = $query->getResult();
+                return $types;
 	}
 
 

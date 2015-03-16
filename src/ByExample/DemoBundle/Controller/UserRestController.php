@@ -26,8 +26,10 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
+use FOS\RestBundle\Controller\Annotations\Delete;
 use ByExample\DemoBundle\Entity\Utilisateur;
 use ByExample\DemoBundle\Repository\NoteRepository;
+use ByExample\DemoBundle\Repository\UtilisateurRepository;
 
 /**
  * Controller that provides Restful sercies over the resource Users.
@@ -410,5 +412,53 @@ class UserRestController extends Controller
         }
         return $view;
     }
+
+
+
+    /**
+    * Ajoute un ami
+     * @Post("users/{id}/friend")
+     * @ApiDoc()
+    * @return FOSView
+   */
+    public function postFriendAction($id){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $request = $this->getRequest();
+        $friend = $request->get('idFriend');
+        $repo=$em->getRepository('ByExampleDemoBundle:Utilisateur');
+        $utilisateur=$repo->find($friend);
+        $existingFriend = $repo->searchFriend($id, $friend);
+        //On va ajouter l'utilisateur ami seulement s'il existe et qu'ils ne sont pas déjà amis
+        if($friend && !$existingFriend) {
+            $repo->addFriend($id, $friend);
+        } else if($existingFriend){
+            $view->setStatusCode(202);
+        } else{
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+     /**
+    * Supprime l'association "ami" entre deux utilisateurs
+    * @Delete("users/{id}/friend/{idfriend}")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+    public function deleteFriendAction($id, $idfriend){
+        $view = FOSView::create();
+        if($this->get('request')->getMethod() == "DELETE"){
+            $em = $this->getDoctrine()->getManager();
+            $conn = $em->getConnection();
+            $conn->delete("utilisateuramis", array("idUtilisateur"=>$id, "idUtilisateurAmi"=>$idfriend));
+            $view->setStatusCode(200);
+        }
+        return $view;
+    }
+
+
+
 
 }

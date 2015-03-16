@@ -57,7 +57,7 @@ class ActionRestController extends Controller{
             //Si l'action existe déjà pour l'item et l'utilisateur, on la supprime
             if($action){
                 $conn = $em->getConnection();
-                $conn->delete("actions", array("id"=>$idAction));
+                $conn->delete("actions", array("id"=>$action));
                 $view->setStatusCode(200);
             }
             else{
