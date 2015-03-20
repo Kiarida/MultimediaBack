@@ -192,4 +192,59 @@ class ItemRestController extends Controller
         return $view;
 
   }
+
+
+  /**
+  * Retourne les pistes d'un album donné
+  * @Route("/items/albums/{idArtiste}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getAlbumByArtisteAction($idArtiste){
+
+    $view = FOSView::create();
+
+    $em =$this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Item');
+    $albums = $repo->findAlbumByArtist($idArtiste);
+    $biography = $albums;
+    $i = 0;
+    foreach ($albums as  $album) {
+        $biography[$i]["tracks"] = [];
+        $biography[$i]["tracks"] = $repo->findItemByAlbum($album['id']);
+        $i++;
+    }
+    if ($biography) {
+            $view->setStatusCode(200)->setData($biography);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+  }
+
+/**
+  * Retourne les pistes d'un album donné
+  * @Route("/items/album/{idAlbum}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getItemByAlbumAction($idAlbum){
+
+    $view = FOSView::create();
+
+    $em =$this->getDoctrine()->getManager();
+    $repo = $em->getRepository('ByExampleDemoBundle:Item');
+    $item = $repo->findItemByAlbum($idAlbum);
+    //$item = $repo->findItemByAlbum($idAlbum);
+
+    if ($item) {
+            $view->setStatusCode(200)->setData($item);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $view;
+  }
+
  }

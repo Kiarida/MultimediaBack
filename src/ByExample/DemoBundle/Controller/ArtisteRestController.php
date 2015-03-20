@@ -40,7 +40,7 @@ class ArtisteRestController extends Controller
   public function getArtisteAction($id){
   $view = FOSView::create();
 		
-  $artiste = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->find($id);
+  $artiste = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Artiste')->findArtist($id);
     if ($artiste) {
             $view->setStatusCode(200)->setData($artiste);
         } else {

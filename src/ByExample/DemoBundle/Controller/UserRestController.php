@@ -31,6 +31,7 @@ use ByExample\DemoBundle\Entity\Utilisateur;
 use ByExample\DemoBundle\Repository\NoteRepository;
 use ByExample\DemoBundle\Repository\UtilisateurRepository;
 
+
 /**
  * Controller that provides Restful sercies over the resource Users.
  *
@@ -404,11 +405,24 @@ class UserRestController extends Controller
         $repo=$em->getRepository('ByExampleDemoBundle:Note');
         $notes=$repo->getUserNoteArtiste($idArtiste,$iduser);
         if ($notes){
+             $noteMoy=$repo->findNoteByArtiste($idArtiste);
+            if($noteMoy){
+                $notes["noteMoyenne"] = $noteMoy;
+            }
             $notes["idArtiste"] = intval($idArtiste);
             $view->setData($notes);
             $view->setStatusCode(200);
         } else {
-            $view->setStatusCode(404);
+            $noteMoy=$repo->findNoteByArtiste($idArtiste);
+            if($noteMoy){
+                $notes["noteMoyenne"] = $noteMoy;
+                $notes["idArtiste"] = intval($idArtiste);
+                 $view->setData($notes);
+                $view->setStatusCode(200);
+            }
+            else{
+                $view->setStatusCode(404);
+            }
         }
         return $view;
     }
@@ -417,32 +431,40 @@ class UserRestController extends Controller
 
     /**
     * Ajoute un ami
-     * @Post("users/{id}/friend")
+     * @Post("users/{id}/friends")
      * @ApiDoc()
     * @return FOSView
    */
     public function postFriendAction($id){
         $view = FOSView::create();
         $em = $this->getDoctrine()->getManager();
-        $request = $this->getRequest();
-        $friend = $request->get('idFriend');
-        $repo=$em->getRepository('ByExampleDemoBundle:Utilisateur');
-        $utilisateur=$repo->find($friend);
-        $existingFriend = $repo->searchFriend($id, $friend);
-        //On va ajouter l'utilisateur ami seulement s'il existe et qu'ils ne sont pas déjà amis
-        if($friend && !$existingFriend) {
-            $repo->addFriend($id, $friend);
-        } else if($existingFriend){
-            $view->setStatusCode(202);
-        } else{
-            $view->setStatusCode(404);
+        if($this->get('request')->getMethod() == "POST"){
+            $request = $this->getRequest();
+            $friend = $request->get('userFriend');
+            $repo=$em->getRepository('ByExampleDemoBundle:User');
+            $utilisateur=$repo->findByUsername($friend);
+            $repoUs=$em->getRepository('ByExampleDemoBundle:Utilisateur');
+            if($utilisateur){
+                $existingFriend = $repoUs->searchFriend($id, $utilisateur[0]->getId());
+                //On va ajouter l'utilisateur ami seulement s'il existe et qu'ils ne sont pas déjà amis
+                if($friend && !$existingFriend) {
+                    $repoUs->addFriend($id, $utilisateur[0]->getId());
+                } else if($existingFriend){
+                    $view->setStatusCode(202);
+                } else{
+                    $view->setStatusCode(404);
+                }
+            }
+            else{
+                $view->setStatusCode(404);
+            }
         }
         return $view;
     }
 
      /**
     * Supprime l'association "ami" entre deux utilisateurs
-    * @Delete("users/{id}/friend/{idfriend}")
+    * @Delete("users/{id}/friends/{idfriend}")
     * @ApiDoc()
     * @return FOSView
    */
@@ -458,6 +480,47 @@ class UserRestController extends Controller
         return $view;
     }
 
+    /**
+    * Récupère la liste des amis d'un utilisateur
+    * @Get("users/{id}/friends")
+    * @ApiDoc()
+    * @return FOSView
+   */
+    public function getFriendsAction($id){
+        $view = FOSView::create();
+        if($this->get('request')->getMethod() == "GET"){
+            $em = $this->getDoctrine()->getManager();
+            $repo=$em->getRepository('ByExampleDemoBundle:Utilisateur');
+            $friends=$repo->findFriends($id);
+            if($friends){
+                $view->setStatusCode(200)->setData($friends);
+            }else{
+                $view->setStatusCode(404);
+            }
+        }
+        return $view;
+
+    }
+
+    /**
+    * Récupère un item en fonction d'un utilisateur et d'une action
+    * @Get("users/{id}/action/{id_action}/items")
+    * @ApiDoc()
+    * @return FOSView
+   */
+    public function getItemByActionAction($id, $id_action){
+        $view = FOSView::create();
+        $em = $this->getDoctrine()->getManager();
+        $repo=$em->getRepository('ByExampleDemoBundle:Item');
+        $items=$repo->findItemByAction($id, $id_action);
+        if($items){
+            $view->setStatusCode(200)->setData($items);
+        }else{
+            $view->setStatusCode(404);
+        }
+        return $view;
+
+    }
 
 
 

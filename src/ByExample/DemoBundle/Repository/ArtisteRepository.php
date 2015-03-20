@@ -4,6 +4,7 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 /**
  * ArtisteRepository
@@ -25,6 +26,20 @@ class ArtisteRepository extends EntityRepository
         
         return $artistes;
     }
+
+    public function findArtist($idartiste){
+        $rsm = new ResultSetMapping($em);
+        $rsm->addEntityResult('ByExampleDemoBundle:Artiste','p');
+        $rsm->addScalarResult('id','id');
+        $rsm->addScalarResult('nom','nom');
+        $rsm->addScalarResult('note','note');
+        $rsm->addScalarResult('urlCover', 'urlCover');
+        $query=$this->_em->createNativeQuery('SELECT p.* FROM artiste p WHERE p.id = :idartiste', $rsm)->setParameter("idartiste",$idartiste);
+        $artist=$query->getResult(Query::HYDRATE_OBJECT);
+        return $artist;
+    }
+
+
 
      public function findArtistes($limit)
     {

@@ -60,6 +60,8 @@ class ItemRepository extends EntityRepository
 
         $rsm = new ResultSetMapping($em);
         $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
+        $rsm->addEntityResult('ByExampleDemoBundle:Artiste','y');
+        $rsm->addScalarResult('nom','nom');
         $rsm->addScalarResult('id','id');
         $rsm->addScalarResult('url','url');
         $rsm->addScalarResult('titre','titre');
@@ -77,8 +79,9 @@ class ItemRepository extends EntityRepository
         $this->_em->flush();
         $this->_em->clear();
 
-        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste FROM item i, itemgenre ig, itemartiste ia
+        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i, itemgenre ig, artiste y,itemartiste ia
         WHERE i.id = ig.idItem AND i.id = ia.idItem 
+        AND y.id = ia.idArtiste
         AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idGenre);
 
@@ -91,6 +94,8 @@ class ItemRepository extends EntityRepository
 
         $rsm = new ResultSetMapping($em);
         $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
+        $rsm->addEntityResult('ByExampleDemoBundle:Artiste','y');
+        $rsm->addScalarResult('nom','nom');
         $rsm->addScalarResult('id','id');
         $rsm->addScalarResult('url','url');
         $rsm->addScalarResult('titre','titre');
@@ -105,12 +110,80 @@ class ItemRepository extends EntityRepository
         $this->_em->flush();
         $this->_em->clear();
 
-        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste FROM item i,itemartiste ia
+        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i,artiste y,itemartiste ia
         WHERE i.id = ia.idItem 
+        AND y.id = ia.idArtiste
         AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idArtiste);
 
         $item = $query->getResult();
         return $item;
     }
+
+    public function findItemByAction($id, $id_action){
+
+        $rsm = new ResultSetMapping($em);
+        $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
+        $rsm->addEntityResult('ByExampleDemoBundle:Actions','a');
+        $rsm->addEntityResult('ByExampleDemoBundle:Artiste','b');
+        $rsm->addScalarResult('nom','nom');
+        $rsm->addScalarResult('idUtilisateur','idUtilisateur');
+        $rsm->addScalarResult('idArtiste','idArtiste');
+        $rsm->addScalarResult('id','id');
+        $rsm->addScalarResult('url','url');
+        $rsm->addScalarResult('titre','titre');
+        $rsm->addScalarResult('note','note');
+        $rsm->addScalarResult('duree','duree');
+        $rsm->addScalarResult('typeItem','typeItem');
+        $rsm->addScalarResult('nbVues','nbVues');
+        $rsm->addScalarResult('date','date');
+        $this->_em->flush();
+        $this->_em->clear();
+        $query = $this->_em->createNativeQuery('SELECT i.*, z.idArtiste, a.idUtilisateur, b.nom FROM item i,actions a, artiste b, itemartiste z
+        WHERE a.idTypeAction = ?
+        AND z.idItem = i.id AND b.id = z.idArtiste
+        AND i.id = a.idItem AND a.idUtilisateur = ?', $rsm);
+        $query->setParameter(1, $id_action);
+        $query->setParameter(2, $id);
+        $items = $query->getResult();
+        return $items;
+    }
+
+    public function findItemByAlbum($idalbum){
+         $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
+        $items = $query->getResult(Query::HYDRATE_ARRAY);
+        return $items;
+    }
+
+    public function findAlbumByArtist($idArtiste){
+        /*$rsm = new ResultSetMapping($em);
+        $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
+        $rsm->addJoinedEntityResult('ByExampleDemoBundle:Item','c', 'i', 'idItem');
+       //$rsm->addFieldResult('c', 'item_id', 'id');
+        $rsm->addFieldResult('i','id','id');
+        $rsm->addScalarResult('url','url');
+        $rsm->addScalarResult('titre','titre');
+        $rsm->addScalarResult('note','note');
+        $rsm->addScalarResult('duree','duree');
+        $rsm->addScalarResult('typeItem','typeItem');
+        $rsm->addScalarResult('nbVues','nbVues');
+        $rsm->addScalarResult('date','date');*/
+
+
+        //$query = $this->_em->createQuery('SELECT b,i FROM ByExampleDemoBundle:Item i JOIN i.idartiste a JOIN i.idalbum b WHERE a.id = :idartiste')->setParameter('idartiste', $idArtiste);
+        //$items = $query->getResult(Query::HYDRATE_ARRAY);
+        //$query = $this->_em->createQuery('SELECT i FROM ByExampleDemoBundle:Item i JOIN i.idalbum b');
+        //$query=$this->_em->createNativeQuery('SELECT i.*, c.id FROM item i, itemitem b JOIN item c WHERE b.idAlbum=i.id AND b.idItem = c.id', $rsm);
+        $query = $this->_em->createQuery('SELECT DISTINCT i FROM ByExampleDemoBundle:Item i, ByExampleDemoBundle:Item z JOIN z.idalbum b JOIN b.idartiste j WHERE b = i.id AND j.id = :idartiste')->setParameter('idartiste', $idArtiste);
+        
+        
+        $albums =  $query->getResult(Query::HYDRATE_ARRAY);
+
+
+
+        return $albums;
+    }
+
+
+   
 }

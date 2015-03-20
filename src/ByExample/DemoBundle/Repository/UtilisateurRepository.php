@@ -33,6 +33,13 @@ class UtilisateurRepository extends EntityRepository{
         
         }
 
+        public function findFriends($id){
+                $query=$this->_em->createQuery('SELECT u.username, u.id FROM ByExampleDemoBundle:User u, ByExampleDemoBundle:Utilisateur p JOIN p.idutilisateurami t WHERE p.id =:utilisateur AND u.id=t.id')->setParameter("utilisateur",$id);
+                $friends=$query->getResult();
+                return $friends;
+        }
+
+         
 
 
 }

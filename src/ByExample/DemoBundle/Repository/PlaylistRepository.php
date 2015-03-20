@@ -55,7 +55,7 @@ class PlaylistRepository extends EntityRepository{
 	}
 
 	public function findPlaylistByUser($id_utilisateur){
-		$query=$this->_em->createQuery('SELECT p.id, p.nom FROM ByExampleDemoBundle:Playlist p WHERE p.idutilisateur =:id_utilisateur')->setParameter("id_utilisateur",$id_utilisateur);
+		$query=$this->_em->createQuery('SELECT p.id, p.nom, p.datecreation FROM ByExampleDemoBundle:Playlist p WHERE p.idutilisateur =:id_utilisateur')->setParameter("id_utilisateur",$id_utilisateur);
         $tagplaylist=$query->getResult();
         return $tagplaylist;
 	}
