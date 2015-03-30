@@ -41,7 +41,7 @@ use ByExample\DemoBundle\Repository\UtilisateurRepository;
 class UserRestController extends Controller
 {
 
-  
+
 
 
     /**
@@ -98,8 +98,9 @@ class UserRestController extends Controller
         $request = $this->getRequest();
         $note = $request->get('note');
         $repo=$em->getRepository('ByExampleDemoBundle:Note');
-        $notes=$repo->putNote($id_item, $note, $id);
-        
+        $type= $this->container->getParameter('type_note_item');
+        $notes=$repo->putNote($id_item, $note, $id, $type);
+
         if ($notes == 0){
             $view->setStatusCode(200);
         }elseif($notes) {
@@ -166,7 +167,7 @@ class UserRestController extends Controller
         $name = $request->get('nomPlaylist');
         $repo=$em->getRepository('ByExampleDemoBundle:Playlist');
         $idplaylist=$repo->insertPlaylist($name, $id);
-        
+
         if($idplaylist) {
             $view->setStatusCode(200)->setData(array("id"=> $idplaylist));
         } else {
@@ -264,7 +265,7 @@ class UserRestController extends Controller
        // $user= $userManager->findOneById($id);
         $em = $this->getDoctrine()->getManager();
         $repo=$em->getRepository('ByExampleDemoBundle:Utilisateur');
-        
+
 
         if (!$user) {
             $view = FOSView::create();
@@ -294,7 +295,7 @@ class UserRestController extends Controller
             }
         }
 
-        /*if ($request->get('plainPassword')) {    
+        /*if ($request->get('plainPassword')) {
             $user->setPlainPassword($request->get('plainPassword'));
         }*/
 
@@ -318,7 +319,7 @@ class UserRestController extends Controller
         return $view->setData();
     }
 
-    
+
 
 
     /**
@@ -380,8 +381,9 @@ class UserRestController extends Controller
         $request = $this->getRequest();
         $note = $request->get('note');
         $repo=$em->getRepository('ByExampleDemoBundle:Note');
-        $notes=$repo->putNoteArtiste($idArtiste, $note, $id);
-        
+        $type= $this->container->getParameter('type_note_artist');
+        $notes=$repo->putNoteArtiste($idArtiste, $note, $id, $type);
+
         if ($notes == 0){
             $view->setStatusCode(200);
         }elseif($notes) {
@@ -391,7 +393,7 @@ class UserRestController extends Controller
         }
         return $view;
     }
-    
+
 
     /**
     * Renvoie la note d'un utilisateur pour un artiste

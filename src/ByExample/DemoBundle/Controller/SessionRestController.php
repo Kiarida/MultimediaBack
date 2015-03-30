@@ -125,7 +125,7 @@ $view = FOSView::create();
                 //Sinon on la créé
                 $tag=$repoSession->insertSessionTag($tag,$id_session);
                 if($tag){
-                    $view->setStatusCode(200)->setData("Tag associé");
+                    $view->setStatusCode(200)->setData($tags[0]);
                 } else {
                     $view->setStatusCode(402);
                 } 
@@ -138,7 +138,7 @@ $view = FOSView::create();
             //Si le tag n'existe pas, on va le créer
             $newTag=$repoSession->insertTag($libelle, $id_session);
             if($newTag){
-                $view->setStatusCode(200)->setData($newTag->getId());
+                $view->setStatusCode(200)->setData($newTag);
             } else {
                 $view->setStatusCode(408);
             }

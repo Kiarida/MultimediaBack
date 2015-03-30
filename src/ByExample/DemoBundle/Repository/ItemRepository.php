@@ -30,10 +30,11 @@ class ItemRepository extends EntityRepository
     {
 
         $query = $this->_em->createQuery(
-        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, a.id as idArtiste, a.nom
+        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, i.url, a.id as idArtiste, a.nom
         FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a, ByExampleDemoBundle:Ecoute e
         WHERE e.iditem = i.id
         AND (e.date > :before)
+				AND i.typeitem = 1
         GROUP BY i.id
         ORDER BY views DESC')
         ->setParameter('before', new \DateTime('-'.$days.' days'))
@@ -46,7 +47,7 @@ class ItemRepository extends EntityRepository
     {
 
         $query = $this->_em->createQuery(
-        'SELECT t.libelle, nt.note
+        'SELECT t.id, t.libelle, nt.note
         FROM ByExampleDemoBundle:Tag t, ByExampleDemoBundle:NoteTagItem nt
         WHERE t.id = nt.idtag
         AND nt.iditem= :idItem')
@@ -80,8 +81,9 @@ class ItemRepository extends EntityRepository
         $this->_em->clear();
 
         $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i, itemgenre ig, artiste y,itemartiste ia
-        WHERE i.id = ig.idItem AND i.id = ia.idItem 
+        WHERE i.id = ig.idItem AND i.id = ia.idItem
         AND y.id = ia.idArtiste
+				AND i.typeitem = 1
         AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idGenre);
 
@@ -111,7 +113,7 @@ class ItemRepository extends EntityRepository
         $this->_em->clear();
 
         $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i,artiste y,itemartiste ia
-        WHERE i.id = ia.idItem 
+        WHERE i.id = ia.idItem
         AND y.id = ia.idArtiste
         AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idArtiste);
@@ -150,40 +152,47 @@ class ItemRepository extends EntityRepository
     }
 
     public function findItemByAlbum($idalbum){
-         $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
-        $items = $query->getResult(Query::HYDRATE_ARRAY);
+         //$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
+				$query = $this->_em->createQuery('SELECT i, partial r.{id, nom} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a JOIN i.idartiste r WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
+
+
+				$items = $query->getResult(Query::HYDRATE_ARRAY);
         return $items;
     }
 
     public function findAlbumByArtist($idArtiste){
-        /*$rsm = new ResultSetMapping($em);
-        $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
-        $rsm->addJoinedEntityResult('ByExampleDemoBundle:Item','c', 'i', 'idItem');
-       //$rsm->addFieldResult('c', 'item_id', 'id');
-        $rsm->addFieldResult('i','id','id');
-        $rsm->addScalarResult('url','url');
-        $rsm->addScalarResult('titre','titre');
-        $rsm->addScalarResult('note','note');
-        $rsm->addScalarResult('duree','duree');
-        $rsm->addScalarResult('typeItem','typeItem');
-        $rsm->addScalarResult('nbVues','nbVues');
-        $rsm->addScalarResult('date','date');*/
-
-
-        //$query = $this->_em->createQuery('SELECT b,i FROM ByExampleDemoBundle:Item i JOIN i.idartiste a JOIN i.idalbum b WHERE a.id = :idartiste')->setParameter('idartiste', $idArtiste);
-        //$items = $query->getResult(Query::HYDRATE_ARRAY);
-        //$query = $this->_em->createQuery('SELECT i FROM ByExampleDemoBundle:Item i JOIN i.idalbum b');
-        //$query=$this->_em->createNativeQuery('SELECT i.*, c.id FROM item i, itemitem b JOIN item c WHERE b.idAlbum=i.id AND b.idItem = c.id', $rsm);
         $query = $this->_em->createQuery('SELECT DISTINCT i FROM ByExampleDemoBundle:Item i, ByExampleDemoBundle:Item z JOIN z.idalbum b JOIN b.idartiste j WHERE b = i.id AND j.id = :idartiste')->setParameter('idartiste', $idArtiste);
-        
-        
         $albums =  $query->getResult(Query::HYDRATE_ARRAY);
-
-
-
         return $albums;
     }
 
 
-   
+		public function findAllGenre(){
+			$tableau = array();
+			for($i = 20; $i<57;$i++){
+
+				$query=$this->_em->createQuery('SELECT partial i.{id,titre}, partial a.{id,nom}
+		                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
+		                                            WHERE i.id = :id AND i.typeitem = 1')->setParameter('id',$i);
+				$item=$query->getResult(Query::HYDRATE_ARRAY);
+				if($item){
+					$tableau[$i]=$item;
+				}
+			}
+			return $tableau;
+		}
+
+
+		public function findItemByArtist($idArtiste){
+			$query = $this->_em->createQuery("SELECT i FROM ByExampleDemoBundle:Item i JOIN i.idartiste a WHERE i.typeitem=1 AND a=:idartiste")->setParameter("idartiste", $idArtiste);
+			$items=$query->getResult(Query::HYDRATE_ARRAY);
+			return $items;
+		}
+
+
+
+
+
+
+
 }

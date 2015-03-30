@@ -95,7 +95,7 @@ class PlaylistRestController extends Controller{
                 //Sinon on la créé
                 $tag=$repoPlaylist->insertPlaylistTag($tags,$id_playlist);
                 if($tag){
-                    $view->setStatusCode(200)->setData("Tag associé");
+                    $view->setStatusCode(200)->setData($tags[0]);
                 } else {
                     $view->setStatusCode(402);
                 } 
@@ -108,7 +108,7 @@ class PlaylistRestController extends Controller{
             //Si le tag n'existe pas, on va le créer
             $newTag=$repoPlaylist->insertTag($libelle, $id_playlist);
             if($newTag){
-                $view->setStatusCode(200)->setData($newTag->getId());
+                $view->setStatusCode(200)->setData($newTag);
             } else {
                 $view->setStatusCode(408);
             }

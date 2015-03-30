@@ -50,9 +50,9 @@ class Item
     private $duree;
 
     /**
-     * @var boolean
+     * @var integer
      *
-     * @ORM\Column(name="typeItem", type="boolean", nullable=false)
+     * @ORM\Column(name="typeItem", type="integer", nullable=false)
      */
     private $typeitem;
 
@@ -142,7 +142,7 @@ class Item
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem", fetch="EXTRA_LAZY")
-     * 
+     *
      */
     private $idnotetagitem;
     /**
@@ -156,12 +156,12 @@ class Item
         $this->idplaylist = new \Doctrine\Common\Collections\ArrayCollection();
         $this->idtag = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -177,14 +177,14 @@ class Item
     public function setUrl($url)
     {
         $this->url = $url;
-    
+
         return $this;
     }
 
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -200,14 +200,14 @@ class Item
     public function setTitre($titre)
     {
         $this->titre = $titre;
-    
+
         return $this;
     }
 
     /**
      * Get titre
      *
-     * @return string 
+     * @return string
      */
     public function getTitre()
     {
@@ -223,14 +223,14 @@ class Item
     public function setNote($note)
     {
         $this->note = $note;
-    
+
         return $this;
     }
 
     /**
      * Get note
      *
-     * @return integer 
+     * @return integer
      */
     public function getNote()
     {
@@ -246,14 +246,14 @@ class Item
     public function setDuree($duree)
     {
         $this->duree = $duree;
-    
+
         return $this;
     }
 
     /**
      * Get duree
      *
-     * @return string 
+     * @return string
      */
     public function getDuree()
     {
@@ -263,20 +263,20 @@ class Item
     /**
      * Set typeitem
      *
-     * @param boolean $typeitem
+     * @param integer $typeitem
      * @return Item
      */
     public function setTypeitem($typeitem)
     {
         $this->typeitem = $typeitem;
-    
+
         return $this;
     }
 
     /**
      * Get typeitem
      *
-     * @return boolean 
+     * @return integer
      */
     public function getTypeitem()
     {
@@ -292,14 +292,14 @@ class Item
     public function setNbvues($nbvues)
     {
         $this->nbvues = $nbvues;
-    
+
         return $this;
     }
 
     /**
      * Get nbvues
      *
-     * @return integer 
+     * @return integer
      */
     public function getNbvues()
     {
@@ -315,14 +315,14 @@ class Item
     public function setDate($date)
     {
         $this->date = $date;
-    
+
         return $this;
     }
 
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -339,14 +339,14 @@ class Item
     public function setUrlCover($url)
     {
         $this->urlCover = $url;
-    
+
         return $this;
     }
 
     /**
      * Get url cover
      *
-     * @return string 
+     * @return string
      */
     public function getUrlCover()
     {
@@ -362,14 +362,14 @@ class Item
     public function setUrlPoster($url)
     {
         $this->urlPoster = $url;
-    
+
         return $this;
     }
 
     /**
      * Get url cover
      *
-     * @return string 
+     * @return string
      */
     public function getUrlPoster()
     {
@@ -385,7 +385,7 @@ class Item
     public function addIdartiste(\ByExample\DemoBundle\Entity\Artiste $idartiste)
     {
         $this->idartiste[] = $idartiste;
-    
+
         return $this;
     }
 
@@ -402,7 +402,7 @@ class Item
     /**
      * Get idartiste
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdartiste()
     {
@@ -418,7 +418,7 @@ class Item
     public function addIdgenre(\ByExample\DemoBundle\Entity\Genre $idgenre)
     {
         $this->idgenre[] = $idgenre;
-    
+
         return $this;
     }
 
@@ -435,7 +435,7 @@ class Item
     /**
      * Get idgenre
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdgenre()
     {
@@ -451,7 +451,7 @@ class Item
     public function addIdalbum(\ByExample\DemoBundle\Entity\Item $idalbum)
     {
         $this->idalbum[] = $idalbum;
-    
+
         return $this;
     }
 
@@ -468,7 +468,7 @@ class Item
     /**
      * Get idalbum
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdalbum()
     {
@@ -484,7 +484,7 @@ class Item
     public function addIdplaylist(\ByExample\DemoBundle\Entity\Playlist $idplaylist)
     {
         $this->idplaylist[] = $idplaylist;
-    
+
         return $this;
     }
 
@@ -501,7 +501,7 @@ class Item
     /**
      * Get idplaylist
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdplaylist()
     {

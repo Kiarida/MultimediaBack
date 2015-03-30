@@ -4,6 +4,7 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
+use ByExample\DemoBundle\Entity\Genre;
 
 /**
  * GenreRepository
@@ -28,4 +29,49 @@ class GenreRepository extends EntityRepository
         $genre = $query->getResult();
         return $genre;
     }
+
+
+		public function addGenre($item, $infos){
+			$new = [];
+			$repository = $this->_em->getRepository('ByExampleDemoBundle:Genre');
+			$repoItem = $this->_em->getRepository('ByExampleDemoBundle:Item');
+			$itemFound=$repoItem->find($item["id"]);
+			$informa=array();
+
+
+			for($i = 0; $i < 4; $i++){
+
+					$genre=$infos["terms"][$i];
+					if($genre){
+
+				    $genres = $repository->findByLibelle($genre["name"]);
+
+						if(!$genres){
+					    $newGenre=new Genre();
+					    $newGenre->setLibelle($genre["name"]);
+					    $newGenre->addIditem($itemFound);
+							$newGenre->setUrlCover($itemFound->getUrlcover());
+							//array_push($informa, $newGenre);
+					    $this->_em->persist($newGenre);
+					    $this->_em->flush();
+
+							$idGenre = $newGenre->getId();
+						}
+						else{
+							//return $genres;
+							//array_push($informa, $genres["id"]);
+
+							$idGenre = $genres[0]->getId();
+						}
+						$conn = $this->_em->getConnection();
+				      	$tag = $conn->insert("itemgenre", array("idGenre"=>$idGenre, "idItem"=>$item["id"]));
+
+
+				}
+		}
+		//return $genres;
+			//array_push($new, $itemFound);
+
+	}
+
 }

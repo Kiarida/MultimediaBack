@@ -8,14 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
  * Musique
  *
  * @ORM\Table(name="musique")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ByExample\DemoBundle\Repository\MusiqueRepository")
  */
 class Musique
 {
     /**
-     * @var integer
+     * @var float
      *
-     * @ORM\Column(name="tempo", type="integer", nullable=false)
+     * @ORM\Column(name="tempo", type="float", precision=5, scale=3, nullable=false)
      */
     private $tempo;
 
@@ -27,30 +27,30 @@ class Musique
     private $mode;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="loudness", type="integer", nullable=false)
+     * @ORM\Column(name="loudness", type="decimal", precision=5, scale=2, nullable=false)
      */
     private $loudness;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="energy", type="integer", nullable=false)
+     * @ORM\Column(name="energy", type="decimal", precision=5, scale=6, nullable=false)
      */
     private $energy;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="hotttness", type="integer", nullable=false)
+     * @ORM\Column(name="hotttness", type="decimal", precision=5, scale=6, nullable=false)
      */
     private $hotttness;
 
     /**
-     * @var integer
+     * @var decimal
      *
-     * @ORM\Column(name="danceability", type="integer", nullable=false)
+     * @ORM\Column(name="danceability", type="decimal", precision=5, scale=6, nullable=false)
      */
     private $danceability;
 
@@ -71,20 +71,20 @@ class Musique
     /**
      * Set tempo
      *
-     * @param integer $tempo
+     * @param float $tempo
      * @return Musique
      */
     public function setTempo($tempo)
     {
         $this->tempo = $tempo;
-    
+
         return $this;
     }
 
     /**
      * Get tempo
      *
-     * @return integer 
+     * @return float
      */
     public function getTempo()
     {
@@ -100,14 +100,14 @@ class Musique
     public function setMode($mode)
     {
         $this->mode = $mode;
-    
+
         return $this;
     }
 
     /**
      * Get mode
      *
-     * @return integer 
+     * @return integer
      */
     public function getMode()
     {
@@ -117,20 +117,20 @@ class Musique
     /**
      * Set loudness
      *
-     * @param integer $loudness
+     * @param decimal $loudness
      * @return Musique
      */
     public function setLoudness($loudness)
     {
         $this->loudness = $loudness;
-    
+
         return $this;
     }
 
     /**
      * Get loudness
      *
-     * @return integer 
+     * @return decimal
      */
     public function getLoudness()
     {
@@ -140,20 +140,20 @@ class Musique
     /**
      * Set energy
      *
-     * @param integer $energy
+     * @param decimal $energy
      * @return Musique
      */
     public function setEnergy($energy)
     {
         $this->energy = $energy;
-    
+
         return $this;
     }
 
     /**
      * Get energy
      *
-     * @return integer 
+     * @return decimal
      */
     public function getEnergy()
     {
@@ -163,20 +163,20 @@ class Musique
     /**
      * Set hotttness
      *
-     * @param integer $hotttness
+     * @param decimal $hotttness
      * @return Musique
      */
     public function setHotttness($hotttness)
     {
         $this->hotttness = $hotttness;
-    
+
         return $this;
     }
 
     /**
      * Get hotttness
      *
-     * @return integer 
+     * @return decimal
      */
     public function getHotttness()
     {
@@ -186,20 +186,20 @@ class Musique
     /**
      * Set danceability
      *
-     * @param integer $danceability
+     * @param decimal $danceability
      * @return Musique
      */
     public function setDanceability($danceability)
     {
         $this->danceability = $danceability;
-    
+
         return $this;
     }
 
     /**
      * Get danceability
      *
-     * @return integer 
+     * @return decimal
      */
     public function getDanceability()
     {
@@ -215,14 +215,14 @@ class Musique
     public function setIditem(\ByExample\DemoBundle\Entity\Item $iditem)
     {
         $this->iditem = $iditem;
-    
+
         return $this;
     }
 
     /**
      * Get iditem
      *
-     * @return \ByExample\DemoBundle\Entity\Item 
+     * @return \ByExample\DemoBundle\Entity\Item
      */
     public function getIditem()
     {

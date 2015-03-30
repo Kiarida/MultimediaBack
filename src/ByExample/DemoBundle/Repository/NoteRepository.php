@@ -13,10 +13,10 @@ use \DateTime;
  */
 class NoteRepository extends EntityRepository
 {
-    public function putNoteArtiste($idArtiste, $note, $idUtilisateur){
+    public function putNoteArtiste($idArtiste, $note, $idUtilisateur, $type){
         $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
         $noteObj = $repository->findNoteByArtisteAndUser($idArtiste,$idUtilisateur); //on recupere la note de l'utilisateur pour l'item
-        
+
         if($noteObj){ //si elle existe
             $query = $this->_em->createQuery(
                 'UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.id=:idnote')
@@ -35,7 +35,7 @@ class NoteRepository extends EntityRepository
             $newNote->setDate(new DateTime());
             $newNote->setIdutilisateur($utilisateur);
             $newNote->setIdartiste($artiste);
-            $newNote->setType(1);
+            $newNote->setType($type);
             $this->_em->persist($newNote);
             $this->_em->flush();
             $idNote = $newNote->getId();
@@ -58,7 +58,7 @@ class NoteRepository extends EntityRepository
 
 	public function findNoteByArtiste($idArtiste)
 	{
-       
+
 		$query = $this->_em->createQuery('SELECT a.note FROM ByExampleDemoBundle:Artiste a WHERE a.id = :idArtiste')
         ->setParameter('idArtiste', $idArtiste);
         $note = $query->getResult();
@@ -67,7 +67,7 @@ class NoteRepository extends EntityRepository
 
     public function findNoteByItem($idItem)
     {
-       
+
         $query = $this->_em->createQuery('SELECT i.note FROM ByExampleDemoBundle:Item i WHERE i.id = :idItem')
         ->setParameter('idItem', $idItem);
         $note = $query->getResult();
@@ -75,7 +75,7 @@ class NoteRepository extends EntityRepository
     }
 
     public function findNoteByArtisteAndUser($idArtiste, $idUser){
-        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n 
+        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n
             WHERE n.idartiste = :idArtiste AND n.idutilisateur=:idUser')
         ->setParameter('idArtiste', $idArtiste)->setParameter('idUser', $idUser);
         $note = $query->getResult();
@@ -83,17 +83,17 @@ class NoteRepository extends EntityRepository
     }
 
     public function findNoteByItemAndUser($idItem, $idUser){
-        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n 
+        $query = $this->_em->createQuery('SELECT n FROM ByExampleDemoBundle:Note n
             WHERE n.iditem = :idItem AND n.idutilisateur=:idUser')
         ->setParameter('idItem', $idItem)->setParameter('idUser', $idUser);
         $note = $query->getResult();
         return $note;
     }
 
-    public function putNote($idItem, $note, $idUtilisateur){
+    public function putNote($idItem, $note, $idUtilisateur, $type){
         $repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
         $noteObj = $repository->findNoteByItemAndUser($idItem,$idUtilisateur); //on recupere la note de l'utilisateur pour l'item
-        
+
         if($noteObj){ //si elle existe
             $query = $this->_em->createQuery(
                 'UPDATE ByExampleDemoBundle:Note n SET n.note = :note WHERE n.id=:idnote')
@@ -112,7 +112,7 @@ class NoteRepository extends EntityRepository
             $newNote->setDate(new DateTime());
             $newNote->setIdutilisateur($utilisateur);
             $newNote->setIditem($item);
-            $newNote->setType(0);
+            $newNote->setType($type);
             $this->_em->persist($newNote);
             $this->_em->flush();
             $idNote = $newNote->getId();
