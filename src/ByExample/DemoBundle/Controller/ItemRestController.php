@@ -375,19 +375,20 @@ class ItemRestController extends Controller
 
   /**
     * Met à jour la note d'un tag sur un item
-    * @Route("/items/{idItem}/tags/{idTag}")
+    * @Route("users/{iduser}/items/{idItem}/tags/{idTag}")
     * @Method({"PUT"})
     * @ApiDoc()
     */
 
-    public function putNoteTagItemAction($idItem, $idTag){
+    public function putNoteTagItemAction($iduser,$idItem, $idTag){
       $view = FOSView::create();
       if($this->get('request')->getMethod() == "PUT"){
         $note_tag= $this->container->getParameter('note_tag');
           $param = $this->get('request')->request->get('param');
           $em =$this->getDoctrine()->getManager();
-          $repo = $em->getRepository('ByExampleDemoBundle:Tag');
-          $note=$repo->addNoteTagItem($idTag, $idItem, $param, $note_tag);
+          $type= $this->container->getParameter('type_note_tag');
+          $repo = $em->getRepository('ByExampleDemoBundle:Note');
+          $note=$repo->addNoteTagItem($idTag, $idItem, $iduser, $param, $note_tag, $type);
           if ($note) {
                   $view->setStatusCode(200)->setData($note);
               } else {
@@ -397,6 +398,30 @@ class ItemRestController extends Controller
       return $view;
 
     }
+
+    /**
+      * Récupère les deux notes d'un tag sur un item
+      * @Route("users/{iduser}/items/{idItem}/tags/{idTag}")
+      * @Method({"GET"})
+      * @ApiDoc()
+      */
+
+      public function getNoteTagItemAction($iduser,$idItem, $idTag){
+        $view = FOSView::create();
+        $em =$this->getDoctrine()->getManager();
+        $notes=array();
+        $repo = $em->getRepository('ByExampleDemoBundle:Note');
+        $noteUtil=$repo->findByItemTagUser($idItem,$idTag, $iduser);
+
+        if ($noteUtil) {
+                    $view->setStatusCode(200)->setData($noteUtil);
+                } else {
+                    $view->setStatusCode(404);
+
+              }
+        return $view;
+
+      }
 
 
     /**

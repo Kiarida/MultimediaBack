@@ -27,3 +27,4 @@ parameters:
 
     type_note_item : 0
     type_note_artist : 1
+    type_note_tag : 2

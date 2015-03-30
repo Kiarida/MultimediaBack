@@ -73,11 +73,22 @@ class Note
      */
     private $iditem;
 
+/**
+        * @var \Tag
+        *
+        * @ORM\ManyToOne(targetEntity="Tag")
+        * @ORM\JoinColumns({
+        *   @ORM\JoinColumn(name="idTag", referencedColumnName="id")
+        * })
+        */
+       private $idtag;
+
+
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -93,14 +104,14 @@ class Note
     public function setNote($note)
     {
         $this->note = $note;
-    
+
         return $this;
     }
 
     /**
      * Get note
      *
-     * @return integer 
+     * @return integer
      */
     public function getNote()
     {
@@ -116,14 +127,14 @@ class Note
     public function setDate($date)
     {
         $this->date = $date;
-    
+
         return $this;
     }
 
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -139,14 +150,14 @@ class Note
     public function setType($type)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
     /**
      * Get type
      *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -162,14 +173,14 @@ class Note
     public function setIdutilisateur(\ByExample\DemoBundle\Entity\Utilisateur $idutilisateur = null)
     {
         $this->idutilisateur = $idutilisateur;
-    
+
         return $this;
     }
 
     /**
      * Get idutilisateur
      *
-     * @return \ByExample\DemoBundle\Entity\Utilisateur 
+     * @return \ByExample\DemoBundle\Entity\Utilisateur
      */
     public function getIdutilisateur()
     {
@@ -185,14 +196,14 @@ class Note
     public function setIdartiste(\ByExample\DemoBundle\Entity\Artiste $idartiste = null)
     {
         $this->idartiste = $idartiste;
-    
+
         return $this;
     }
 
     /**
      * Get idartiste
      *
-     * @return \ByExample\DemoBundle\Entity\Artiste 
+     * @return \ByExample\DemoBundle\Entity\Artiste
      */
     public function getIdartiste()
     {
@@ -208,17 +219,41 @@ class Note
     public function setIditem(\ByExample\DemoBundle\Entity\Item $iditem = null)
     {
         $this->iditem = $iditem;
-    
+
         return $this;
     }
 
     /**
      * Get iditem
      *
-     * @return \ByExample\DemoBundle\Entity\Item 
+     * @return \ByExample\DemoBundle\Entity\Item
      */
     public function getIditem()
     {
         return $this->iditem;
+    }
+
+
+    /**
+     * Set idtag
+     *
+     * @param \ByExample\DemoBundle\Entity\Item $iditem
+     * @return Note
+     */
+    public function setIdtag(\ByExample\DemoBundle\Entity\Tag $idtag = null)
+    {
+        $this->idtag = $idtag;
+
+        return $this;
+    }
+
+    /**
+     * Get idtag
+     *
+     * @return \ByExample\DemoBundle\Entity\Tag
+     */
+    public function getIdtag()
+    {
+        return $this->idtag;
     }
 }

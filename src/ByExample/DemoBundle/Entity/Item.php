@@ -137,14 +137,15 @@ class Item
      */
     private $idplaylist;
 
-
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem", fetch="EXTRA_LAZY")
-     *
-     */
-    private $idnotetagitem;
+         * @var \Doctrine\Common\Collections\Collection
+         *
+         * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="iditem", fetch="EXTRA_LAZY")
+         *
+         */
+        private $idtag;
+
+
     /**
      * Constructor
      */
@@ -473,6 +474,40 @@ class Item
     public function getIdalbum()
     {
         return $this->idalbum;
+    }
+
+
+    /**
+     * Add idtag
+     *
+     * @param \ByExample\DemoBundle\Entity\Tag $idtag
+     * @return Item
+     */
+    public function addIdtag(\ByExample\DemoBundle\Entity\Tag $idtag)
+    {
+        $this->idtag[] = $idtag;
+
+        return $this;
+    }
+
+    /**
+     * Remove idtag
+     *
+     * @param \ByExample\DemoBundle\Entity\Tag $idtag
+     */
+    public function removeIdtag(\ByExample\DemoBundle\Entity\Tag $idalbum)
+    {
+        $this->idalbum->removeElement($idalbum);
+    }
+
+    /**
+     * Get idtag
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIdtag()
+    {
+        return $this->idtag;
     }
 
     /**

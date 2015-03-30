@@ -46,12 +46,12 @@ class Tag
     private $idartiste;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="idtag")
-     * 
-     */
-    private $idnotetagitem;
+      * @var \Doctrine\Common\Collections\Collection
+      *
+      * @ORM\OneToMany(targetEntity="NoteTagItem", mappedBy="idtag")
+      *
+      */
+     private $idnotetagitem;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -83,6 +83,7 @@ class Tag
      */
     private $idsession;
 
+
     /**
      * Constructor
      */
@@ -93,12 +94,12 @@ class Tag
         $this->idplaylist = new \Doctrine\Common\Collections\ArrayCollection();
         $this->idsession = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -114,14 +115,14 @@ class Tag
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
-    
+
         return $this;
     }
 
     /**
      * Get libelle
      *
-     * @return string 
+     * @return string
      */
     public function getLibelle()
     {
@@ -137,7 +138,7 @@ class Tag
     public function addIditem(\ByExample\DemoBundle\Entity\Item $iditem)
     {
         $this->iditem[] = $iditem;
-    
+
         return $this;
     }
 
@@ -154,7 +155,7 @@ class Tag
     /**
      * Get iditem
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIditem()
     {
@@ -170,7 +171,7 @@ class Tag
     public function addIdartiste(\ByExample\DemoBundle\Entity\Artiste $idartiste)
     {
         $this->idartiste[] = $idartiste;
-    
+
         return $this;
     }
 
@@ -187,7 +188,7 @@ class Tag
     /**
      * Get idartiste
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdartiste()
     {
@@ -203,7 +204,7 @@ class Tag
     public function addIdplaylist(\ByExample\DemoBundle\Entity\Playlist $idplaylist)
     {
         $this->idplaylist[] = $idplaylist;
-    
+
         return $this;
     }
 
@@ -220,7 +221,7 @@ class Tag
     /**
      * Get idplaylist
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdplaylist()
     {
@@ -236,7 +237,7 @@ class Tag
     public function addIdsession(\ByExample\DemoBundle\Entity\Session $idsession)
     {
         $this->idsession[] = $idsession;
-    
+
         return $this;
     }
 
@@ -253,10 +254,12 @@ class Tag
     /**
      * Get idsession
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdsession()
     {
         return $this->idsession;
     }
+
+
 }

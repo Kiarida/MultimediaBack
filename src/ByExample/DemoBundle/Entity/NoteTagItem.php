@@ -1,9 +1,6 @@
 <?php
-
 namespace ByExample\DemoBundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
-
 /**
  * Tag
  *
@@ -12,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class NoteTagItem
 {
-   
 
     /**
      * @var decimal
@@ -20,26 +16,20 @@ class NoteTagItem
      * @ORM\Column(name="note", type="decimal", precision=5, scale=2, nullable=false)
      */
     private $note;
-
-
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\Id @ORM\ManyToOne(targetEntity="Item")
      * @ORM\JoinColumn(name="idItem", referencedColumnName="id")
      **/
-
     private $iditem;
-
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\Id @ORM\ManyToOne(targetEntity="Tag")
      * @ORM\JoinColumn(name="idTag", referencedColumnName="id")
      **/
-
     private $idtag;
-   
 
     /**
      * Constructor
@@ -48,20 +38,17 @@ class NoteTagItem
     {
         $this->iditem = new \Doctrine\Common\Collections\ArrayCollection();
         $this->idtag = new \Doctrine\Common\Collections\ArrayCollection();
-
     }
-    
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
     }
-
     /**
      * Set note
      *
@@ -71,19 +58,17 @@ class NoteTagItem
     public function setNote($note)
     {
         $this->note = $note;
-    
+
         return $this;
     }
-
     /**
      * Get note
      *
-     * @return string 
+     * @return string
      */
     public function getNote()
     {
         return $this->note;
     }
 
-  
 }

@@ -26,14 +26,14 @@ use Doctrine\ODM\PHPCR\Query\QueryException;
 use Doctrine\ORM\Query;
 use Doctrine\Common\Util\Debug;
 /**
- * 
+ *
  * @Route("/api/notes")
  *@NamePrefix("byexample_notes_")
  */
 
 class NoteRestController extends Controller
 {
-	
+
 
   /**
   * Retourne la note moyenne d'un artiste

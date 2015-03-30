@@ -65,12 +65,12 @@ class Artiste
         $this->iditem = new \Doctrine\Common\Collections\ArrayCollection();
         $this->idtag = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -86,14 +86,14 @@ class Artiste
     public function setNom($nom)
     {
         $this->nom = $nom;
-    
+
         return $this;
     }
 
     /**
      * Get nom
      *
-     * @return string 
+     * @return string
      */
     public function getNom()
     {
@@ -103,20 +103,20 @@ class Artiste
     /**
      * Set note
      *
-     * @param integer $note
+     * @param decimal $note
      * @return Artiste
      */
     public function setNote($note)
     {
         $this->note = $note;
-    
+
         return $this;
     }
 
     /**
      * Get cover
      *
-     * @return string 
+     * @return string
      */
     public function getUrlCover()
     {
@@ -132,14 +132,14 @@ class Artiste
     public function setUrlCover($url)
     {
         $this->urlCover = $url;
-    
+
         return $this;
     }
 
     /**
      * Get note
      *
-     * @return integer 
+     * @return decimal 
      */
     public function getNote()
     {
@@ -155,7 +155,7 @@ class Artiste
     public function addIditem(\ByExample\DemoBundle\Entity\Item $iditem)
     {
         $this->iditem[] = $iditem;
-    
+
         return $this;
     }
 
@@ -172,7 +172,7 @@ class Artiste
     /**
      * Get iditem
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIditem()
     {
@@ -188,7 +188,7 @@ class Artiste
     public function addIdtag(\ByExample\DemoBundle\Entity\Tag $idtag)
     {
         $this->idtag[] = $idtag;
-    
+
         return $this;
     }
 
@@ -205,7 +205,7 @@ class Artiste
     /**
      * Get idtag
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getIdtag()
     {

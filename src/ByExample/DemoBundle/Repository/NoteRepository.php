@@ -146,4 +146,104 @@ class NoteRepository extends EntityRepository
         $note = $query->getResult();
         return $note;
     }
+
+    public function addNoteTagItem($idTag, $idItem, $idUtilisateur, $param, $note_tag, $type){
+
+  		$repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
+  		$notes = $repository->findByItemTagUser($idItem, $idTag, $idUtilisateur);
+      //Si la note existe déjà, on va la modifier
+  		if($notes){
+  			$note = $notes[0]["note"];
+        if($note >= 0.10 && $note <= 0.90){
+    			$qb = $this->_em->createQueryBuilder();
+    			if($param == "add"){
+    				$note = $note+$note_tag;
+    			}
+    			if($param == "sub"){
+    				$note=$note-$note_tag;
+    			}
+    				$q = $qb->update('ByExampleDemoBundle:Note', 'u')
+    					->set('u.note', $note)
+    					->where('u.idtag = ?1')
+    					->andWhere('u.iditem = ?2')
+              ->andWhere('u.idutilisateur=?3')
+    					->setParameter(1, $idTag)
+    					->setParameter(2, $idItem)
+              ->setParameter(3, $idUtilisateur)
+    					->getQuery();
+    					$p = $q->execute();
+    					//return $note;
+    			}
+        }
+          //sinon, on va créer une nouvelle note
+    			else{
+    					$repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+    					$utilisateur = $repository->find($idUtilisateur);
+    					$repository = $this->_em->getRepository('ByExampleDemoBundle:Tag');
+    					$tag = $repository->find($idTag);
+    					$repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
+    					$item = $repository->find($idItem);
+    					$newNote = new Note();
+    					$newNote->setNote(0.10);
+    					$newNote->setDate(new DateTime());
+    					$newNote->setIdutilisateur($utilisateur);
+    					$newNote->setIdtag($tag);
+              $newNote->setIditem($item);
+    					$newNote->setType($type);
+    					$this->_em->persist($newNote);
+    					$this->_em->flush();
+    					$idNote = $newNote->getId();
+    			}
+
+        //calcul de la moyenne
+        $query = $this->_em->createQuery(
+        'SELECT AVG(n.note) as moyenne From ByExampleDemoBundle:Note n WHERE n.idtag=:idTag AND n.iditem=:idItem')
+        ->setParameter('idTag', $idTag)
+        ->setParameter('idItem', $idItem);
+        $moyenne = $query->getResult();
+
+        //update moyenne
+        $conn = $this->_em->getConnection();
+  			$noteUpdate = $conn->executeUpdate('UPDATE notetagitem SET note = ? WHERE iditem = ? AND idtag = ?', array($moyenne[0]["moyenne"], $idItem, $idTag));
+
+
+        return $moyenne[0];
+
+
+  		/*	$query=$this->_em->createQuery("SELECT partial a.{id}, t
+  			FROM ByExampleDemoBundle:Tag a JOIN a.idnotetagitem t
+  			WHERE t.iditem = :iditem AND t.idtag = :idtag")
+  			->setParameter("iditem", $idItem)
+  			->setParameter("idtag", $idTag);
+
+  			$noteResult = $query->getSingleResult(Query::HYDRATE_ARRAY);
+  			$note="";
+  			$noteUpdate="";
+  			if($noteResult){
+  				$note =$noteResult["idnotetagitem"][0]["note"];
+
+
+  			$conn = $this->_em->getConnection();
+  			$noteUpdate = $conn->executeUpdate('UPDATE notetagitem SET note = ? WHERE iditem = ? AND idtag = ?', array($note, $idItem, $idTag));
+  		}
+  			return $noteUpdate;*/
+
+  	}
+
+    public function findByItemTagUser($idItem, $idTag, $idUser){
+      $query = $this->_em->createQuery("SELECT n.note FROM ByExampleDemoBundle:Note n WHERE n.idutilisateur=:iduser AND n.iditem=:iditem AND n.idtag=:idtag")
+      ->setParameter("iduser",$idUser)
+      ->setParameter("idtag", $idTag)
+      ->setParameter("iditem", $idItem);
+      $note=$query->getResult();
+      return $note;
+    }
+
+    public function getNoteTagItem($idItem, $idTag){
+      $query=$this->_em->createQuery("SELECT n.note FROM ByExampleDemoBundle:Tag t JOIN t.idnotetagitem n WHERE n.iditem=:iditem AND n.idtag=:idtag")
+      ->setParameter("idtag", $idTag)
+      ->setParameter("iditem", $idItem);
+      $note=$query->getResult();
+      return $note;
+    }
 }

@@ -42,31 +42,5 @@ class TagRepository extends EntityRepository{
 	}
 
 
-	public function addNoteTagItem($idTag, $idItem, $param, $note_tag){
-
-			$query=$this->_em->createQuery("SELECT partial a.{id}, t
-			FROM ByExampleDemoBundle:Tag a JOIN a.idnotetagitem t
-			WHERE t.iditem = :iditem AND t.idtag = :idtag")
-			->setParameter("iditem", $idItem)
-			->setParameter("idtag", $idTag);
-
-			$noteResult = $query->getSingleResult(Query::HYDRATE_ARRAY);
-			$note="";
-			$noteUpdate="";
-			if($noteResult){
-				$note =$noteResult["idnotetagitem"][0]["note"];
-
-
-			if($param == "add"){
-				$note = $note+$note_tag;
-			}
-			if($param == "sub"){
-				$note=$note-$note_tag;
-			}
-			$conn = $this->_em->getConnection();
-			$noteUpdate = $conn->executeUpdate('UPDATE notetagitem SET note = ? WHERE iditem = ? AND idtag = ?', array($note, $idItem, $idTag));
-		}
-			return $noteUpdate;
-
-	}
+	
 }
