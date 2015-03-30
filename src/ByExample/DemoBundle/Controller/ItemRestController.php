@@ -398,4 +398,24 @@ class ItemRestController extends Controller
 
     }
 
+
+    /**
+      * Met à jour le nombre de vues d'un item
+      * @Route("/items/{idItem}/vues/")
+      * @Method({"PUT"})
+      * @ApiDoc()
+      */
+      public function updateViewItemAction($idItem){
+        $view = FOSView::create();
+        $em =$this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleDemoBundle:Item');
+        $notes = $repo->updateView($idItem);
+        if ($notes) {
+                $view->setStatusCode(200)->setData($notes);
+            } else {
+                $view->setStatusCode(404);
+            }
+
+            return $view;
+          }
  }

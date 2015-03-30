@@ -189,6 +189,20 @@ class ItemRepository extends EntityRepository
 			return $items;
 		}
 
+		public function updateView($idItem){
+			$repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
+			$vue = $repository->find($idItem);
+			$vues = $vue->getNbvues();
+				$qb = $this->_em->createQueryBuilder();
+				$q = $qb->update('ByExampleDemoBundle:Item', 'u')
+					->set('u.nbvues', $vues+1)
+					->where('u.id = ?1')
+					->setParameter(1, $idItem)
+					->getQuery();
+					$p = $q->execute();
+					return $vues;
+		}
+
 
 
 
