@@ -18,12 +18,12 @@ class ArtisteRepository extends EntityRepository
     {
         $key = "%".$key."%";
         $query = $this->_em->createQuery(
-        'SELECT p
+        'SELECT p.id, p.nom, p.urlCover
         FROM ByExampleDemoBundle:Artiste p
         WHERE p.nom LIKE :nom')
         ->setParameter('nom', $key);
-        $artistes = $query->getResult();
-        
+        $artistes = $query->getResult(Query::HYDRATE_OBJECT);
+
         return $artistes;
     }
 
