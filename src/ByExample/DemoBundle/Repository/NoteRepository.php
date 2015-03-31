@@ -151,19 +151,21 @@ class NoteRepository extends EntityRepository
 
   		$repository = $this->_em->getRepository('ByExampleDemoBundle:Note');
   		$notes = $repository->findByItemTagUser($idItem, $idTag, $idUtilisateur);
+      if($param=="sub"){
+        $noteMaj=0;
+      }
+      else if($param="add"){
+        $noteMaj=1;
+      }
       //Si la note existe déjà, on va la modifier
   		if($notes){
+
   			$note = $notes[0]["note"];
-        if($note >= 0.10 && $note <= 0.90){
-    			$qb = $this->_em->createQueryBuilder();
-    			if($param == "add"){
-    				$note = $note+$note_tag;
-    			}
-    			if($param == "sub"){
-    				$note=$note-$note_tag;
-    			}
+        if(($note == 1 && $param == "sub") || ($note == 0 && $param == "add")){
+
+          $qb = $this->_em->createQueryBuilder();
     				$q = $qb->update('ByExampleDemoBundle:Note', 'u')
-    					->set('u.note', $note)
+    					->set('u.note', $noteMaj)
     					->where('u.idtag = ?1')
     					->andWhere('u.iditem = ?2')
               ->andWhere('u.idutilisateur=?3')
@@ -173,7 +175,8 @@ class NoteRepository extends EntityRepository
     					->getQuery();
     					$p = $q->execute();
     					//return $note;
-    			}
+            }
+
         }
           //sinon, on va créer une nouvelle note
     			else{
@@ -184,7 +187,7 @@ class NoteRepository extends EntityRepository
     					$repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
     					$item = $repository->find($idItem);
     					$newNote = new Note();
-    					$newNote->setNote(0.10);
+    					$newNote->setNote($noteMaj);
     					$newNote->setDate(new DateTime());
     					$newNote->setIdutilisateur($utilisateur);
     					$newNote->setIdtag($tag);
