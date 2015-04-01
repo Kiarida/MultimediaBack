@@ -115,6 +115,7 @@ class ItemRepository extends EntityRepository
         $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i,artiste y,itemartiste ia
         WHERE i.id = ia.idItem
         AND y.id = ia.idArtiste
+				AND i.typeitem = 1
         AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idArtiste);
 
