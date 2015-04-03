@@ -454,6 +454,11 @@ class ItemRestController extends Controller
 
     public function getGroovesharkAction($iditem){
       $view = FOSView::create();
+
+      $em =$this->getDoctrine()->getManager();
+      $repo = $em->getRepository('ByExampleDemoBundle:Item');
+      $item=$repo->find($iditem);
+      $url=$item->getUrl();
       $gs = new gsAPI();
       if (!empty($_SESSION['gsSessionID'])) {
     //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
@@ -483,7 +488,7 @@ class ItemRestController extends Controller
     }
     $user = $gs->authenticate("geoffray-bonnin", "loriamusic");
     $country = $gs->getCountry();
-    $url = $gs->getSubscriberStreamKey("25134723");
+    $url = $gs->getSubscriberStreamKey($url);
         if($url){
           $view->setStatusCode(200)->setData($url);
       } else {
