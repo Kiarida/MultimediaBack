@@ -486,7 +486,7 @@ class ItemRestController extends Controller
       //$item = $gs->getStreamKeyStreamServer("27838296");
 
     }
-    $user = $gs->authenticate("geoffray-bonnin", "loriamusic");
+    $user = $gs->authenticate("", "");
     $country = $gs->getCountry();
     $url = $gs->getSubscriberStreamKey($url);
         if($url){
