@@ -5,6 +5,7 @@ namespace ByExample\DemoBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use ByExample\DemoBundle\Entity\Item;
 use ByExample\DemoBundle\Entity\Tag;
+use ByExample\DemoBundle\Entity\gsAPI;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\View\View AS FOSView;
@@ -443,4 +444,54 @@ class ItemRestController extends Controller
 
             return $view;
           }
+
+    /**
+    * Test streaming grooveshark
+    * @Route("items/grooveshark/{iditem}")
+    * @Method({"GET"})
+    * @ApiDoc()
+    */
+
+    public function getGroovesharkAction($iditem){
+      $view = FOSView::create();
+      $gs = new gsAPI();
+      if (!empty($_SESSION['gsSessionID'])) {
+    //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
+      $gs->setSession($_SESSION['gsSessionID']);
+        if (!empty($_GET['token'])) {
+            //we must've gotten back from Grooveshark after the user authenticated
+            $user = $gs->authenticateToken($_GET['token']);
+            //the logged in user is saved in gsSessionID and you don't need to store anything else on your end
+            //when the user refreshes we will restore the gsSessionID and get the user again
+        } else {
+            $user = $gs->getUserInfo();
+        }
+        if (empty($user['UserID'])) {
+            //not logged in
+            $user = null;
+        }
+    } else {
+      //since we didn't already have a gsSessionID, start one with Grooveshark and store it
+      $sessionID = $gs->startSession();
+      if (empty($sessionID)) {
+          //something failed
+          exit;
+      }
+      $_SESSION['gsSessionID'] = $sessionID;
+      //$item = $gs->getStreamKeyStreamServer("27838296");
+
+    }
+    $user = $gs->authenticate("geoffray-bonnin", "loriamusic");
+    $country = $gs->getCountry();
+    $url = $gs->getSubscriberStreamKey("25134723");
+        if($url){
+          $view->setStatusCode(200)->setData($url);
+      } else {
+          $view->setStatusCode(404);
+      }
+
+      return $view;
+    }
+
+
  }

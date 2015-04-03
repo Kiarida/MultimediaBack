@@ -30,7 +30,7 @@ class ItemRepository extends EntityRepository
     {
 
         $query = $this->_em->createQuery(
-        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, i.url, a.id as idArtiste, a.nom
+        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, i.url, i.urlCover, a.id as idArtiste, a.nom
         FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a, ByExampleDemoBundle:Ecoute e
         WHERE e.iditem = i.id
         AND (e.date > :before)
