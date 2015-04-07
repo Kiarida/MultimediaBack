@@ -27,6 +27,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ODM\PHPCR\Query\QueryException;
 use Doctrine\ORM\Query;
 use Doctrine\Common\Util\Debug;
+use Symfony\Component\HttpFoundation\Session\Session;
 /**
  *
  * @Route("/api/items")
@@ -452,7 +453,7 @@ class ItemRestController extends Controller
     * @ApiDoc()
     */
 
-    public function getGroovesharkAction($iditem){
+    public function getGroovesharkAction($iditem, Request $request){
       $view = FOSView::create();
 
       $em =$this->getDoctrine()->getManager();
@@ -460,6 +461,7 @@ class ItemRestController extends Controller
       $item=$repo->find($iditem);
       $url=$item->getUrl();
       $gs = new gsAPI();
+      $session = $this->getRequest()->getSession();
       if (!empty($_SESSION['gsSessionID'])) {
     //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
       $gs->setSession($_SESSION['gsSessionID']);
@@ -479,20 +481,53 @@ class ItemRestController extends Controller
       //since we didn't already have a gsSessionID, start one with Grooveshark and store it
       $sessionID = $gs->startSession();
       if (empty($sessionID)) {
-          //something failed
           exit;
       }
-      $_SESSION['gsSessionID'] = $sessionID;
-      //$item = $gs->getStreamKeyStreamServer("27838296");
-
+      $session->set('gsSessionID', $sessionID);
+      //$_SESSION['gsSessionID'] = $sessionID;
     }
-    $user = $gs->authenticate("", "");
+
+    $user = $gs->authenticate("geoffray-bonnin", "loriamusic");
     $country = $gs->getCountry();
+
     $url = $gs->getSubscriberStreamKey($url);
-        if($url){
-          $view->setStatusCode(200)->setData($url);
+    
+    $session->set("foo", "bar");
+    //$session = $request->getSession();
+
+// définit et récupère des attributs de session
+    
+    if($url){
+          $view->setStatusCode(200)->setData($session);
       } else {
           $view->setStatusCode(404);
+      }
+
+      return $view;
+    }
+
+
+    /**
+    * Marks 30 seconds
+    * @Route("items/grooveshark/mark30secondes")
+    * @Method({"GET"})
+    * @ApiDoc()
+    */
+    public function mark30secondeAction(){
+      $view = FOSView::create();
+      $gs = new gsAPI();
+      $session = $this->getRequest()->getSession();
+      $success = $session->get("foo");
+       
+      //$streamKey = $this->getRequest()->query->get('gsStreamKey');
+      //$streamServer = $this->getRequest()->query->get('gsStreamServer');
+      //$success = $gs->markStreamKeyOver30Secs($streamKey, $streamServer);
+        
+      if($success){
+        $view->setStatusCode(200)->setData($success);
+      }
+      else{
+        $view->setStatusCode(404);
       }
 
       return $view;
