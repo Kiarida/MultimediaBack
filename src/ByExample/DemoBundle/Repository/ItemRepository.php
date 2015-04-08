@@ -71,7 +71,7 @@ class ItemRepository extends EntityRepository
         $rsm->addScalarResult('typeItem','typeItem');
         $rsm->addScalarResult('nbVues','nbVues');
         $rsm->addScalarResult('urlCover','urlCover');
-        $rsm->addScalarResult('urlPoster','urlPoster');
+        
 
         $rsm->addScalarResult('date','date');
 
@@ -106,6 +106,7 @@ class ItemRepository extends EntityRepository
         $rsm->addScalarResult('typeItem','typeItem');
         $rsm->addScalarResult('nbVues','nbVues');
         $rsm->addScalarResult('date','date');
+        $rsm->addScalarResult('urlCover','urlCover');
 
         $rsm->addScalarResult('idArtiste','idArtiste');
 
@@ -119,7 +120,7 @@ class ItemRepository extends EntityRepository
         AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idArtiste);
 
-        $item = $query->getResult();
+        $item = $query->getSingleResult();
         return $item;
     }
 
