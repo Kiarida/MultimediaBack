@@ -455,7 +455,7 @@ class ItemRestController extends Controller
 
     public function getGroovesharkAction($iditem, Request $request){
       $view = FOSView::create();
-
+      $this->getRequest()->getSession()->clear();
       $em =$this->getDoctrine()->getManager();
       $repo = $em->getRepository('ByExampleDemoBundle:Item');
       $item=$repo->find($iditem);
@@ -487,18 +487,20 @@ class ItemRestController extends Controller
       //$_SESSION['gsSessionID'] = $sessionID;
     }
 
-    $user = $gs->authenticate("geoffray-bonnin", "loriamusic");
+    $user = $gs->authenticate("", "");
     $country = $gs->getCountry();
 
     $url = $gs->getSubscriberStreamKey($url);
     
-    $session->set("foo", "bar");
+    $session->set("gsStreamKey", $url["StreamKey"]);
+    $session->set("gsStreamServer", $url["StreamServerID"]);
+    $session->set("gsSongID", $iditem);
     //$session = $request->getSession();
 
 // définit et récupère des attributs de session
     
     if($url){
-          $view->setStatusCode(200)->setData($session);
+          $view->setStatusCode(200)->setData($url);
       } else {
           $view->setStatusCode(404);
       }
@@ -516,12 +518,39 @@ class ItemRestController extends Controller
     public function mark30secondeAction(){
       $view = FOSView::create();
       $gs = new gsAPI();
+
       $session = $this->getRequest()->getSession();
-      $success = $session->get("foo");
-       
-      //$streamKey = $this->getRequest()->query->get('gsStreamKey');
-      //$streamServer = $this->getRequest()->query->get('gsStreamServer');
-      //$success = $gs->markStreamKeyOver30Secs($streamKey, $streamServer);
+      $gs->sessionID=$session->get("gsSessionID");
+      $streamKey = $session->get('gsStreamKey');
+      $streamServer = $session->get('gsStreamServer');
+      $success = $gs->markStreamKeyOver30Secs($streamKey, $streamServer);
+        
+      if($success){
+        $view->setStatusCode(200)->setData($success);
+      }
+      else{
+        $view->setStatusCode(404);
+      }
+
+      return $view;
+    }
+
+    /**
+    * Mark complete video
+    * @Route("items/grooveshark/markComplete")
+    * @Method({"GET"})
+    * @ApiDoc()
+    */
+    public function markCompleteAction(){
+      $view = FOSView::create();
+      $gs = new gsAPI();
+
+      $session = $this->getRequest()->getSession();
+      $gs->sessionID=$session->get("gsSessionID");
+      $streamKey = $session->get('gsStreamKey');
+      $songID = $session->get('gsSongID');
+      $streamServer = $session->get('gsStreamServer');
+      $success = $gs->markSongComplete($songID, $streamKey, $streamServer);
         
       if($success){
         $view->setStatusCode(200)->setData($success);

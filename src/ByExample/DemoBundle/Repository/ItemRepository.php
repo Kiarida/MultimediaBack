@@ -87,7 +87,7 @@ class ItemRepository extends EntityRepository
         AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idGenre);
 
-        $item = $query->getResult();
+        $item = $query->getSingleResult();
         return $item;
     }
 
