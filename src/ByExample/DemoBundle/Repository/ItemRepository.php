@@ -18,10 +18,16 @@ class ItemRepository extends EntityRepository
 	{
         $key = "%".$key."%";
 
-		$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}
-                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
+		$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}, partial alb.{id,titre}
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
                                             WHERE i.titre LIKE :key')
         ->setParameter('key', $key);
+
+        /*$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
+                                            WHERE i.titre LIKE :key')
+        ->setParameter('key', $key);*/
+
         $items = $query->getResult(Query::HYDRATE_ARRAY);
         return $items;
 	}
@@ -30,8 +36,8 @@ class ItemRepository extends EntityRepository
     {
 
         $query = $this->_em->createQuery(
-        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, i.url, i.urlCover, a.id as idArtiste, a.nom
-        FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a, ByExampleDemoBundle:Ecoute e
+        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, i.url, i.urlCover, alb.titre as albumTitre, a.id as idArtiste, a.nom
+        FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb, ByExampleDemoBundle:Ecoute e
         WHERE e.iditem = i.id
         AND (e.date > :before)
 				AND i.typeitem = 1
@@ -59,13 +65,17 @@ class ItemRepository extends EntityRepository
     public function findRandomItemByGenre($idGenre)
     {
 
-        $rsm = new ResultSetMapping($em);
+        /*$rsm = new ResultSetMapping($em);
         $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
         $rsm->addEntityResult('ByExampleDemoBundle:Artiste','y');
+       
+        
+        
         $rsm->addScalarResult('nom','nom');
         $rsm->addScalarResult('id','id');
         $rsm->addScalarResult('url','url');
-        $rsm->addScalarResult('titre','titre');
+       
+        $rsm->addScalarResult('titre','i');
         $rsm->addScalarResult('note','note');
         $rsm->addScalarResult('duree','duree');
         $rsm->addScalarResult('typeItem','typeItem');
@@ -74,27 +84,52 @@ class ItemRepository extends EntityRepository
         
 
         $rsm->addScalarResult('date','date');
-
+        //$rsm->addJoinedEntityResult('ByExampleDemoBundle:Item','ialb');
         $rsm->addScalarResult('idArtiste','idArtiste');
+        $rsm->addMetaResult('titre', 'title');
+
+
+
 
         $this->_em->flush();
         $this->_em->clear();
 
-        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i, itemgenre ig, artiste y,itemartiste ia
+        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom, ialb.titre as title FROM item i, itemgenre ig, artiste y,itemartiste ia, item ialb, itemitem alb
         WHERE i.id = ig.idItem AND i.id = ia.idItem
+        AND i.id=alb.iditem
+        AND ialb.id = alb.idalbum
         AND y.id = ia.idArtiste
-				AND i.typeitem = 1
+		AND i.typeitem = 1
         AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
         $query->setParameter(1, $idGenre);
 
-        $item = $query->getSingleResult();
+
+        /*$query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom, alb.titre FROM item i, itemgenre ig, artiste y,itemartiste ia LEFT JOIN i.idalbum
+        WHERE i.id = ig.idItem AND i.id = ia.idItem
+        AND y.id = ia.idArtiste
+                AND i.typeitem = 1
+        AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
+        $query->setParameter(1, $idGenre);*/
+
+        $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idgenre g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idGenre)->getSingleScalarResult();
+       
+        $offset = max(0, rand(0, $rows - 1));
+
+        $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem, urlCover}, partial a.{id,nom}, partial alb.{id,titre}
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb LEFT JOIN i.idgenre g
+                                            WHERE g.id = :key AND i.typeitem=1')
+        ->setParameter('key', $idGenre)
+        ->setMaxResults(1)
+        ->setFirstResult($offset);
+
+        $item = $query->getResult(Query::HYDRATE_ARRAY);
         return $item;
     }
 
     public function findRandomItemByArtiste($idArtiste)
     {
 
-        $rsm = new ResultSetMapping($em);
+        /*$rsm = new ResultSetMapping($em);
         $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
         $rsm->addEntityResult('ByExampleDemoBundle:Artiste','y');
         $rsm->addScalarResult('nom','nom');
@@ -121,6 +156,21 @@ class ItemRepository extends EntityRepository
         $query->setParameter(1, $idArtiste);
 
         $item = $query->getSingleResult();
+        return $item;*/
+
+
+        $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idArtiste)->getSingleScalarResult();
+       
+        $offset = max(0, rand(0, $rows - 1));
+
+        $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem, urlCover}, partial a.{id,nom}, partial alb.{id,titre}
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
+                                            WHERE a.id = :key AND i.typeitem=1')
+        ->setParameter('key', $idArtiste)
+        ->setMaxResults(1)
+        ->setFirstResult($offset);
+
+        $item = $query->getResult(Query::HYDRATE_ARRAY);
         return $item;
     }
 

@@ -220,7 +220,7 @@ class ItemRestController extends Controller
   }
 
   /**
-  * Retourne un item depuis Spotify
+  * Retourne un item depuis Echonest
   * @Route("/items/getgenres/")
   * @Method({"GET"})
   * @ApiDoc()
@@ -337,9 +337,17 @@ class ItemRestController extends Controller
     $albums = $repo->findAlbumByArtist($idArtiste);
     $biography = $albums;
     $i = 0;
+    
     foreach ($albums as  $album) {
+      $j=0;
         $biography[$i]["tracks"] = [];
         $biography[$i]["tracks"] = $repo->findItemByAlbum($album['id']);
+        foreach ($biography[$i]["tracks"] as $track) {
+          $biography[$i]["tracks"][$j]["idalbum"][0]=array("id"=> $album['id'], "titre"=>$album["titre"]);
+          $j++;
+        }
+        
+        
         $i++;
     }
     if ($biography) {
