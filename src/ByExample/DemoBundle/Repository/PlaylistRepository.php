@@ -17,8 +17,8 @@ use \DateTime;
 class PlaylistRepository extends EntityRepository{
 
 	public function findPlaylistById($id, $id_playlist){
-		$query=$this->_em->createQuery('SELECT partial p.{id,nom,datecreation}, partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom} 
-	    FROM ByExampleDemoBundle:Playlist p left join p.iditem i LEFT JOIN i.idartiste a
+		$query=$this->_em->createQuery('SELECT partial p.{id,nom,datecreation}, partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}, partial alb.{id, titre} 
+	    FROM ByExampleDemoBundle:Playlist p left join p.iditem i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
 	    WHERE p.id LIKE :idplaylist 
 	    AND p.idutilisateur = :idutil')
 	    ->setParameter("idplaylist",$id_playlist)->setParameter("idutil",$id);

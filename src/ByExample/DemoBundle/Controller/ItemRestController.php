@@ -13,6 +13,7 @@ use ByExample\DemoBundle\Repository\ItemRepository;
 use ByExample\DemoBundle\Repository\MusiqueRepository;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Route;
+use FOS\RestBundle\Controller\Annotations\Put;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\Annotations\Rest;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -175,7 +176,7 @@ class ItemRestController extends Controller
   }
 
   /**
-  * Retourne un item depuis Spotify
+  * Parcourt la liste des items en BDD et récupère les infos depuis echonest
   * @Route("/items/spotify/{idTrack}")
   * @Method({"GET"})
   * @ApiDoc()
@@ -220,7 +221,7 @@ class ItemRestController extends Controller
   }
 
   /**
-  * Retourne un item depuis Echonest
+  * Récupère les infos sur les artistes depuis echonest
   * @Route("/items/getgenres/")
   * @Method({"GET"})
   * @ApiDoc()
@@ -468,41 +469,7 @@ class ItemRestController extends Controller
       $repo = $em->getRepository('ByExampleDemoBundle:Item');
       $item=$repo->find($iditem);
       $url=$item->getUrl();
-      $gs = new gsAPI();
-      $session = $this->getRequest()->getSession();
-      if (!empty($_SESSION['gsSessionID'])) {
-    //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
-      $gs->setSession($_SESSION['gsSessionID']);
-        if (!empty($_GET['token'])) {
-            //we must've gotten back from Grooveshark after the user authenticated
-            $user = $gs->authenticateToken($_GET['token']);
-            //the logged in user is saved in gsSessionID and you don't need to store anything else on your end
-            //when the user refreshes we will restore the gsSessionID and get the user again
-        } else {
-            $user = $gs->getUserInfo();
-        }
-        if (empty($user['UserID'])) {
-            //not logged in
-            $user = null;
-        }
-    } else {
-      //since we didn't already have a gsSessionID, start one with Grooveshark and store it
-      $sessionID = $gs->startSession();
-      if (empty($sessionID)) {
-          exit;
-      }
-      $session->set('gsSessionID', $sessionID);
-      //$_SESSION['gsSessionID'] = $sessionID;
-    }
-
-    $user = $gs->authenticate("", "");
-    $country = $gs->getCountry();
-
-    $url = $gs->getSubscriberStreamKey($url);
-    
-    $session->set("gsStreamKey", $url["StreamKey"]);
-    $session->set("gsStreamServer", $url["StreamServerID"]);
-    $session->set("gsSongID", $iditem);
+      $url = $repo->getItemGrooveshark($url, $request);
     //$session = $request->getSession();
 
 // définit et récupère des attributs de session
@@ -544,6 +511,29 @@ class ItemRestController extends Controller
     }
 
     /**
+  * Recherche des items dans la base en fonction du mot clé donné en paramètre
+  * @Route("/items/grooveshark/search/{key}")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+    public function searchItemGroovesharkAction($key){
+      $view = FOSView::create();
+      $gs = new gsAPI();
+
+      $session = $this->getRequest()->getSession();
+      $gs->sessionID=$session->get("gsSessionID");
+      $gs->setCountry("France");
+       $success = $gs->getSongSearchResults($key);
+       if($success){
+        $view->setStatusCode(200)->setData($success);
+      }
+      else{
+        $view->setStatusCode(404);
+      }
+
+      return $view;
+    }
+    /**
     * Mark complete video
     * @Route("items/grooveshark/markComplete")
     * @Method({"GET"})
@@ -568,6 +558,62 @@ class ItemRestController extends Controller
       }
 
       return $view;
+    }
+
+
+    /**
+    * Get info from grooveshark artist
+    * @Route("items/grooveshark/artistInfo")
+    * @Method({"GET"})
+    * @ApiDoc()
+    */
+    public function artistInfoAction(){
+      $view = FOSView::create();
+      $gs = new gsAPI();
+
+      $session = $this->getRequest()->getSession();
+      $gs->sessionID=$session->get("gsSessionID");
+    
+      $success = $gs->getArtistAlbums(401561);
+      foreach($success as $succ){
+
+      }
+      if($success){
+        $view->setStatusCode(200)->setData($success);
+      }
+      else{
+        $view->setStatusCode(404);
+      }
+
+      return $view;
+    }
+
+    /**
+    * Insère titre / album et artiste sommairement
+    * @Post("items")
+    * @ApiDoc()
+    */
+    public function addItemArtisteAction(){
+      $view = FOSView::create();
+      if($this->get('request')->getMethod() == "POST"){
+        $em =$this->getDoctrine()->getManager();
+        $url = $this->getRequest()->request->get('url');
+        $titre = $this->getRequest()->request->get('titre');
+        $nomAlbum=$this->getRequest()->request->get('nomAlbum');
+        //$typeitem = $this->getRequest()->query->get('typeitem');
+        $nom = $this->getRequest()->request->get('nom');
+        $repo = $em->getRepository('ByExampleDemoBundle:Item');
+        $success = $repo->addItemArtiste($url, $titre, $nomAlbum, $nom);
+      }
+      if($success){
+       //$link = $repo->getItemGrooveshark($url, $this->getRequest());
+        $view->setStatusCode(200)->setData($success);
+      }
+      else{
+        $view->setStatusCode(404);
+      }
+
+      return $view; 
     }
 
 

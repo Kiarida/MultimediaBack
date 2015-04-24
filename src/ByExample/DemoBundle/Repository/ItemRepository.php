@@ -4,7 +4,11 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
+use ByExample\DemoBundle\Entity\Item;
+use ByExample\DemoBundle\Entity\gsAPI;
+use ByExample\DemoBundle\Entity\Artiste;
 use Doctrine\ORM\Query;
+use \DateTime;
 
 /**
  * ItemRepository
@@ -255,10 +259,155 @@ class ItemRepository extends EntityRepository
 					return $vues;
 		}
 
+        public function findItemByArtistandName($titre, $idArtiste){
+            $query = $this->_em->createQuery("SELECT partial i.{id, url, titre, note, duree, date, urlCover}, partial alb.{id, titre}, partial a.{id, nom} FROM ByExampleDemoBundle:Item i JOIN i.idartiste a LEFT JOIN i.idalbum alb WHERE i.typeitem=1 AND a=:idartiste AND i.titre=:titre")->setParameter("idartiste", $idArtiste)->setParameter("titre", $titre);
+            $items=$query->getResult(Query::HYDRATE_ARRAY);
+            return $items;
+        }
+
+         public function findAlbumByArtistandName($titre, $idArtiste){
+            $query = $this->_em->createQuery("SELECT partial i.{id, url, titre, note, duree, date, urlCover} FROM ByExampleDemoBundle:Item i JOIN i.idartiste a WHERE i.typeitem=2 AND a=:idartiste AND i.titre=:titre")->setParameter("idartiste", $idArtiste)->setParameter("titre", $titre);
+            $items=$query->getResult(Query::HYDRATE_ARRAY);
+            return $items;
+        }
+
+        public function addItemArtiste($url, $titre, $nomAlbum, $nom){
+            $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
+            $repoArtiste = $this->_em->getRepository('ByExampleDemoBundle:Artiste');
+            $singer=$repoArtiste->findOneByNom($nom);
+            //Si l'artiste existe déjà, on va regarder si l'item existe déjà
+            if($singer){
+                $idArtiste=$singer->getId();
+                 $vue = $repository->findItemByArtistandName($titre, $idArtiste);
+                 $alb = $repository->findAlbumByArtistandName($nomAlbum, $idArtiste);
+                 if($vue){
+                    //Si l'item existe déjà, on va le retourner
+                    return $vue;
+                 }
+                 else{ //Sinon on le créé
+                    $item = new Item();
+                    $item->setUrl($url);
+                    $item->setTitre($titre);
+                    $item->setTypeItem(1);
+                    $item->setNote(0);
+                    $item->setDuree(0);
+                    $item->setNbvues(0);
+                    $item->setDate(new Datetime());
+                
+                    $success = $this->_em->persist($item);
+                    $this->_em->flush();
+
+                    $idItem = $item->getId();
+                   
+                    $conn = $this->_em->getConnection();
+                    $conn->insert("itemartiste", array("idItem"=>$idItem, "idArtiste"=>$idArtiste));
+                
+                //on regarde aussi si l'album existe
+                    if($alb){
+                          $idAlbum=$alb[0]["id"];
+                          $conn->insert("itemitem", array("idItem"=>$idItem, "idAlbum"=>$idAlbum));
+                      }
+                      else{
+                        $album = new Item();
+                        $album->setUrl("");
+                        $album->setTitre($nomAlbum);
+                        $album->setTypeItem(2);
+                        $album->setNote(0);
+                        $album->setDuree(0);
+                        $album->setNbvues(0);
+                        $album->setDate(new Datetime());
+                        $this->_em->persist($album);
+                        $this->_em->flush();
+                        $idAlbum = $album->getId();
+                        $conn->insert("itemartiste", array("idItem"=>$idAlbum, "idArtiste"=>$idArtiste));
+                     }
+                }
+                
+             }
+             else{
+                $item = new Item();
+                $item->setUrl($url);
+                $item->setTitre($titre);
+                $item->setTypeItem(1);
+                $item->setNote(0);
+                $item->setDuree(0);
+                $item->setNbvues(0);
+                $item->setDate(new Datetime());
+                //$item->setIdArtiste($idArtiste);
+
+                $album = new Item();
+                $album->setUrl("");
+                $album->setTitre($nomAlbum);
+                $album->setTypeItem(2);
+                $album->setNote(0);
+                $album->setDuree(0);
+                $album->setNbvues(0);
+                $album->setDate(new Datetime());
+
+                $artiste = new Artiste();
+                $artiste->setNom($nom);
+                $artiste->setNote(0);
+                $artiste->setUrlCover("");
+
+                $this->_em->persist($artiste);
+                $this->_em->persist($album);
+                $this->_em->persist($item);
+                $this->_em->flush();
+
+                $idItem = $item->getId();
+                $idAlbum = $album->getId();
+                $idArtiste = $artiste->getId();
+
+                $conn = $this->_em->getConnection();
+                $conn->insert("itemartiste", array("idItem"=>$idItem, "idArtiste"=>$idArtiste));
+                $conn->insert("itemartiste", array("idItem"=>$idAlbum, "idArtiste"=>$idArtiste));
+                $conn->insert("itemitem", array("idItem"=>$idItem, "idAlbum"=>$idAlbum));
+            }
+           
 
 
+            return array($idItem);
+        }
 
 
+        public function getItemGrooveshark($url, $request){
+            $gs = new gsAPI();
+      $session = $request->getSession();
+      if (!empty($_SESSION['gsSessionID'])) {
+    //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
+      $gs->setSession($_SESSION['gsSessionID']);
+        if (!empty($_GET['token'])) {
+            //we must've gotten back from Grooveshark after the user authenticated
+            $user = $gs->authenticateToken($_GET['token']);
+            //the logged in user is saved in gsSessionID and you don't need to store anything else on your end
+            //when the user refreshes we will restore the gsSessionID and get the user again
+        } else {
+            $user = $gs->getUserInfo();
+        }
+        if (empty($user['UserID'])) {
+            //not logged in
+            $user = null;
+        }
+    } else {
+      //since we didn't already have a gsSessionID, start one with Grooveshark and store it
+      $sessionID = $gs->startSession();
+      if (empty($sessionID)) {
+          exit;
+      }
+      $session->set('gsSessionID', $sessionID);
+      //$_SESSION['gsSessionID'] = $sessionID;
+    }
+
+    $user = $gs->authenticate("", "");
+    $country = $gs->getCountry();
+
+    $url = $gs->getSubscriberStreamKey($url);
+    
+    $session->set("gsStreamKey", $url["StreamKey"]);
+    $session->set("gsStreamServer", $url["StreamServerID"]);
+    $session->set("gsSongID", $iditem);
+    return $url;
+        }
 
 
 }
