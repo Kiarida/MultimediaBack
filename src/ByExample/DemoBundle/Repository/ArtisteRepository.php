@@ -61,4 +61,40 @@ class ArtisteRepository extends EntityRepository
         $artistes = $query->getResult();
         return $artistes;
     }
+
+    //Insère les infos d'un artiste dans la table intermédiaire artistemusique
+    public function putMusicArtist($idArtiste, $infos){
+        $repository = $this->_em->getRepository('ByExampleDemoBundle:Artistemusique');
+        $artist=$repository->findByIdartiste($idArtiste);
+        if(!$artist){
+            $conn = $this->_em->getConnection();
+            $conn->insert("artistemusique", array("idArtiste"=>$idArtiste, "hotttness"=>$infos["songs"][0]["artist_hotttnesss"], "familiarity"=>$infos["songs"][0]["artist_familiarity"]));
+        }
+    }
+
+
+    public function updateImgArtistLastFM($artiste){
+        $params = array("artist" => $artiste[0]["nom"],"format" => "json");
+
+            $url="http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=30c3c9603ff7e5fba386bf8348abdb46";
+
+            $url .= '&' . http_build_query($params);
+
+
+            $ch = curl_init();
+            curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+            curl_setopt($ch, CURLOPT_URL, $url );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $info=curl_exec($ch);
+            $infodecode = json_decode($info, true);
+            $img="'".$infodecode["artist"]["image"][3]["#text"]."'";
+            $qb = $this->_em->createQueryBuilder();
+                $q = $qb->update('ByExampleDemoBundle:Artiste', 'u')
+                    ->set('u.urlCover', $img )
+                    ->where('u.id = ?1')
+                    ->setParameter(1, $artiste[0]["id"])
+                    ->getQuery();
+                    $p = $q->execute();
+                    return $infodecode;
+    }
 }

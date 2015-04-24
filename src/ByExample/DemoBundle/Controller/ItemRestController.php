@@ -29,6 +29,8 @@ use Doctrine\ODM\PHPCR\Query\QueryException;
 use Doctrine\ORM\Query;
 use Doctrine\Common\Util\Debug;
 use Symfony\Component\HttpFoundation\Session\Session;
+use \DateTime;
+
 /**
  *
  * @Route("/api/items")
@@ -177,27 +179,31 @@ class ItemRestController extends Controller
 
   /**
   * Parcourt la liste des items en BDD et récupère les infos depuis echonest
-  * @Route("/items/spotify/{idTrack}")
+  * @Route("/items/echonest/{idTrack}")
   * @Method({"GET"})
   * @ApiDoc()
   */
-  public function getItemSpotifyAction($idTrack){
+  public function getItemEchonestAction($idTrack){
      $view = FOSView::create();
      $em =$this->getDoctrine()->getManager();
      $repo = $em->getRepository('ByExampleDemoBundle:Item');
 
-     $items=$repo->findAllGenre();
+     $items=$repo->findNewItemsAndArtists();
      $infos=[];
      foreach($items as $item){
-       $titre=$item[0]["titre"];
-       $artist=$item[0]["idartiste"][0]["nom"];
+       $titre=$item["titre"];
+       $artist=$item["idartiste"][0]["nom"];
 
        $params = array("artist" => $artist, "title" => $titre, "bucket" => "song_hotttnesss");
        $param2=array("bucket" =>"audio_summary");
+       $param3=array("bucket"=>"artist_familiarity");
+       $param4=array("bucket"=>"artist_hotttnesss");
        $url="http://developer.echonest.com/api/v4/song/search?api_key=1N7LROIETL6PEVJAF&format=json&results=1";
 
        $url .= '&' . http_build_query($params);
        $url .= '&' . http_build_query($param2);
+       $url .= '&' . http_build_query($param3);
+       $url .= '&' . http_build_query($param4);
 
        $ch = curl_init();
        curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
@@ -205,12 +211,74 @@ class ItemRestController extends Controller
        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
        $info=curl_exec($ch);
        $infodecode = json_decode($info, true);
+
        $repoMusique = $em->getRepository('ByExampleDemoBundle:Musique');
+       $repoArtiste = $em->getRepository('ByExampleDemoBundle:Artiste');
        if(!empty($infodecode["response"]["songs"])){
-         $repoMusique->putMusicItem($item[0]["id"],$infodecode["response"]);
+         $repoMusique->putMusicItem($item["id"],$infodecode["response"]);
+         //$insertitems = $repo->getAlbumLastFM($item["idartiste"][0]["nom"], $item["idalbum"]);
+         if(!isset($item["idalbum"][0]["urlCover"])){
+            $insertitems = $repo->getAlbumLastFM($item["idartiste"][0]["nom"], $item["idalbum"], $item["id"]);
+         }
+         if(!isset($item["idartiste"][0]["urlCover"])){
+          $repoArtiste->putMusicArtist($item["idartiste"][0]["id"], $infodecode["response"]);
+          $repoArtiste->updateImgArtistLastFM($item["idartiste"]);
+          $asso = $this->getGenresItemAction($item["idartiste"][0]["id"]);
+          
+        }
+          
        }
-       $infos[$item[0]["id"]] = $infodecode;
+       $infos[$item["id"]] = $infodecode;
+       curl_close($ch);
      }
+     if ($asso) {
+            $view->setStatusCode(200)->setData($asso);
+        } else {
+            $view->setStatusCode(407);
+        }
+
+        return $view;
+  }
+
+
+
+
+  /**
+  * Récupère les infos sur les artistes depuis echonest
+  * @Route("/items/getgenres/")
+  * @Method({"GET"})
+  * @ApiDoc()
+  */
+  public function getGenresItemAction($idArtist){
+     $view = FOSView::create();
+     $em =$this->getDoctrine()->getManager();
+     $repo = $em->getRepository('ByExampleDemoBundle:Item');
+     $repoGenre = $em->getRepository('ByExampleDemoBundle:Genre');
+     $repoArtists = $em->getRepository('ByExampleDemoBundle:Artiste');
+     $artist=$repoArtists->find($idArtist);
+     $infos=[];
+     $artistName=$artist->getNom();
+     $params = array("name" => $artistName);
+       $url="http://developer.echonest.com/api/v4/artist/terms?api_key=1N7LROIETL6PEVJAF&format=json";
+
+       $url .= '&' . http_build_query($params);
+
+       $ch = curl_init();
+       curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+       curl_setopt($ch, CURLOPT_URL, $url );
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       $info=curl_exec($ch);
+       $infodecode = json_decode($info, true);
+
+       curl_close($ch);
+       $items=$repo->findItemByArtist($artist->getId());
+       foreach($items as $item){
+           $new = $repoGenre->addGenre($item, $infodecode["response"]);
+           array_push($infos, $new);
+         
+
+     }
+
      if ($infos) {
             $view->setStatusCode(200)->setData($infos);
         } else {
@@ -220,13 +288,18 @@ class ItemRestController extends Controller
         return $view;
   }
 
+
+
+
+
+
   /**
   * Récupère les infos sur les artistes depuis echonest
-  * @Route("/items/getgenres/")
+  * @Route("")
   * @Method({"GET"})
   * @ApiDoc()
   */
-  public function getGenresItemAction(){
+  public function getGenresAction(){
      $view = FOSView::create();
      $em =$this->getDoctrine()->getManager();
      $repo = $em->getRepository('ByExampleDemoBundle:Item');
@@ -248,7 +321,7 @@ class ItemRestController extends Controller
        $info=curl_exec($ch);
        $infodecode = json_decode($info, true);
 
-
+       curl_close($ch);
        $items=$repo->findItemByArtist($artist->getId());
        foreach($items as $item){
          $new = $repoGenre->addGenre($item, $infodecode["response"]);
@@ -266,61 +339,7 @@ class ItemRestController extends Controller
         return $view;
   }
 
-  /**
-  * Recherche un item sur Soundcloud
-  * @Route("/items/souncloud/")
-  * @Method({"GET"})
-  * @ApiDoc()
-  */
-  public function searchItemSoundcloudAction(){
-    if($this->get('request')->getMethod() == "GET"){
 
-        $artist = $this->getRequest()->query->get('artist');
-        $title = $this->getRequest()->query->get('title');
-        //$duration = $this->get('request')->request->get('duration');
-        $em =$this->getDoctrine()->getManager();
-    $view = FOSView::create();
-    $bad=["Remix","Cover", "mix", "Rework", "Edit", "Mashup", "COVER", "Bootleg", "RMX", "Parody"];
-    //$bad=["COVER"];
-    $good=[];
-    $params = array("q" => $artist." - ".$title, "limit" => 50);
-    $url="https://api.soundcloud.com/tracks.json?consumer_key=d00a97f4dd31e93d67b63f4034aedc44";
-
-    $url .= '&' . http_build_query($params);
-    $ch = curl_init();
-    curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
-    curl_setopt($ch, CURLOPT_URL, $url );
-    //curl_setopt($ch, CURLOPT_TIMEOUT, 1000);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $item=curl_exec($ch);
-    $items=json_decode($item, true);
-
-    foreach($items as $itm){
-      $cpt=0;
-      foreach($bad as $word){
-        if(strpos($itm["title"], $word) ==true){
-          //$good="SALYT";
-          break;
-        }
-        else{
-          $cpt++;
-        }
-        if($cpt == 10){
-          array_push($good, $itm);
-        }
-      }
-    }
-
-    if ($item) {
-           $view->setStatusCode(200)->setData($good);
-       } else {
-           $view->setStatusCode(404);
-       }
-
-       return $view;
-
-  }
-}
 
 
   /**

@@ -19,16 +19,30 @@ class MusiqueRepository extends EntityRepository
 public function putMusicItem($idItem, $infos){
     $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
     $item = $repository->find($idItem);
-    $newMusique=new Musique();
-    $newMusique->setTempo($infos["songs"][0]["audio_summary"]["tempo"]);
-    $newMusique->setMode($infos["songs"][0]["audio_summary"]["mode"]);
-    $newMusique->setLoudness($infos["songs"][0]["audio_summary"]["loudness"]);
-    $newMusique->setEnergy($infos["songs"][0]["audio_summary"]["energy"]);
-    $newMusique->setDanceability($infos["songs"][0]["audio_summary"]["danceability"]);
-    $newMusique->setHotttness($infos["songs"][0]["song_hotttnesss"]);
-    $newMusique->setIditem($item);
-    $this->_em->persist($newMusique);
-    $this->_em->flush();
+    $repository = $this->_em->getRepository('ByExampleDemoBundle:Musique');
+    $music=$repository->findByIditem($idItem);
+    if(!$music){
+        $newMusique=new Musique();
+        $newMusique->setTempo($infos["songs"][0]["audio_summary"]["tempo"]);
+        $newMusique->setMode($infos["songs"][0]["audio_summary"]["mode"]);
+        $newMusique->setLoudness($infos["songs"][0]["audio_summary"]["loudness"]);
+        $newMusique->setEnergy($infos["songs"][0]["audio_summary"]["energy"]);
+        $newMusique->setDanceability($infos["songs"][0]["audio_summary"]["danceability"]);
+        $newMusique->setHotttness($infos["songs"][0]["song_hotttnesss"]);
+        $newMusique->setIditem($item);
+        $this->_em->persist($newMusique);
+
+        $qb = $this->_em->createQueryBuilder();
+        $q = $qb->update('ByExampleDemoBundle:Item', 'u')
+        ->set('u.duree', $infos["songs"][0]["audio_summary"]["duration"])
+        ->where('u.id = ?1')
+        ->setParameter(1, $idItem)
+        ->getQuery();
+        $p = $q->execute();
+
+
+        $this->_em->flush();
+    }
 
   }
 

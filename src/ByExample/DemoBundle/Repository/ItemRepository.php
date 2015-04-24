@@ -239,6 +239,15 @@ class ItemRepository extends EntityRepository
 		}
 
 
+        /*On va chercher tous les items qui n'ont pas d'urlCover, leur album et leur artiste*/
+        public function findNewItemsAndArtists(){
+            $query=$this->_em->createQuery('SELECT partial i.{id,titre}, partial a.{id,nom, urlCover}, partial alb.{id, titre, urlCover}
+                                                    FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
+                                                    WHERE i.typeitem = 1 AND i.urlCover IS NULL');
+                $items=$query->getResult(Query::HYDRATE_ARRAY);
+                return $items;
+        }
+
 		public function findItemByArtist($idArtiste){
 			$query = $this->_em->createQuery("SELECT i FROM ByExampleDemoBundle:Item i JOIN i.idartiste a WHERE i.typeitem=1 AND a=:idartiste")->setParameter("idartiste", $idArtiste);
 			$items=$query->getResult(Query::HYDRATE_ARRAY);
@@ -372,41 +381,100 @@ class ItemRepository extends EntityRepository
 
         public function getItemGrooveshark($url, $request){
             $gs = new gsAPI();
-      $session = $request->getSession();
-      if (!empty($_SESSION['gsSessionID'])) {
-    //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
-      $gs->setSession($_SESSION['gsSessionID']);
-        if (!empty($_GET['token'])) {
-            //we must've gotten back from Grooveshark after the user authenticated
-            $user = $gs->authenticateToken($_GET['token']);
-            //the logged in user is saved in gsSessionID and you don't need to store anything else on your end
-            //when the user refreshes we will restore the gsSessionID and get the user again
-        } else {
-            $user = $gs->getUserInfo();
-        }
-        if (empty($user['UserID'])) {
-            //not logged in
-            $user = null;
-        }
-    } else {
-      //since we didn't already have a gsSessionID, start one with Grooveshark and store it
-      $sessionID = $gs->startSession();
-      if (empty($sessionID)) {
-          exit;
-      }
-      $session->set('gsSessionID', $sessionID);
-      //$_SESSION['gsSessionID'] = $sessionID;
-    }
+            $session = $request->getSession();
+            if (!empty($_SESSION['gsSessionID'])) {
+            //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
+                $gs->setSession($_SESSION['gsSessionID']);
+                if (!empty($_GET['token'])) {
+                    //we must've gotten back from Grooveshark after the user authenticated
+                    $user = $gs->authenticateToken($_GET['token']);
+                    //the logged in user is saved in gsSessionID and you don't need to store anything else on your end
+                    //when the user refreshes we will restore the gsSessionID and get the user again
+                } else {
+                    $user = $gs->getUserInfo();
+                }
+                if (empty($user['UserID'])) {
+                    //not logged in
+                    $user = null;
+                }
+            } else {
+              //since we didn't already have a gsSessionID, start one with Grooveshark and store it
+              $sessionID = $gs->startSession();
+              if (empty($sessionID)) {
+                  exit;
+              }
+              $session->set('gsSessionID', $sessionID);
+              //$_SESSION['gsSessionID'] = $sessionID;
+            }
 
-    $user = $gs->authenticate("", "");
-    $country = $gs->getCountry();
+            $user = $gs->authenticate("", "");
+            $country = $gs->getCountry();
 
-    $url = $gs->getSubscriberStreamKey($url);
-    
-    $session->set("gsStreamKey", $url["StreamKey"]);
-    $session->set("gsStreamServer", $url["StreamServerID"]);
-    $session->set("gsSongID", $iditem);
-    return $url;
+            $url = $gs->getSubscriberStreamKey($url);
+            
+            $session->set("gsStreamKey", $url["StreamKey"]);
+            $session->set("gsStreamServer", $url["StreamServerID"]);
+            $session->set("gsSongID", $iditem);
+            return $url;
+        }
+
+
+
+
+        public function getAlbumLastFM($artist, $album, $item){
+            $params = array("artist" => $artist, "album" => $album[0]["titre"], "format" => "json");
+
+            $url="http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=30c3c9603ff7e5fba386bf8348abdb46";
+
+            $url .= '&' . http_build_query($params);
+
+
+            $ch = curl_init();
+            curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+            curl_setopt($ch, CURLOPT_URL, $url );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $info=curl_exec($ch);
+            $date = new Datetime();
+            $infodecode = json_decode($info, true);
+            if($infodecode["album"]["releasedate"] && $infodecode["album"]["releasedate"] != "    " ){
+                //$date = new Datetime($infodecode["album"]["releasedate"]);
+                $date = explode(",", $infodecode["album"]["releasedate"]);
+                $date = explode("    ", $date[0]);
+                $date = date_create_from_format('d M Y', $date[1]);
+            }
+            //$date=$date->format("Y-m-d");
+           // $date=new DateTime($date);
+            $cover=$infodecode["album"]["image"][4]["#text"];
+
+        
+
+            $query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Item i SET i.date=:d, i.urlCover =:cover WHERE i.id=:id')
+            ->setParameter("d",$date)
+            ->setParameter("cover",$cover)
+            ->setParameter("id",$album[0]["id"]);
+            /*$qb = $this->_em->createQueryBuilder();
+                $q = $qb->update('ByExampleDemoBundle:Item', 'u')
+                    ->set('u.date', $date)
+                    ->set('u.urlCover', $cover)
+                    ->where('u.id = ?1')
+                    ->setParameter(1, $album[0]["id"])
+                    ->getQuery();
+                    $p = $q->execute();*/
+            $result=$query->getResult();
+
+            $cover="'".$infodecode["album"]["image"][4]["#text"]."'";
+            $qb = $this->_em->createQueryBuilder();
+                $q = $qb->update('ByExampleDemoBundle:Item', 'u')
+                    ->set('u.urlCover',$cover)
+                    ->where('u.id = ?1')
+                    ->setParameter(1, $item)
+                    ->getQuery();
+                    $p = $q->execute();
+
+            //return $infodecode; 
+         
+        
+
         }
 
 
