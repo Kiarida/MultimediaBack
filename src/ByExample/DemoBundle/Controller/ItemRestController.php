@@ -623,6 +623,9 @@ class ItemRestController extends Controller
         $nom = $this->getRequest()->request->get('nom');
         $repo = $em->getRepository('ByExampleDemoBundle:Item');
         $success = $repo->addItemArtiste($url, $titre, $nomAlbum, $nom);
+        
+
+        //
       }
       if($success){
        //$link = $repo->getItemGrooveshark($url, $this->getRequest());

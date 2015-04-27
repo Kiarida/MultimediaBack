@@ -375,7 +375,7 @@ class ItemRepository extends EntityRepository
            
 
 
-            return array($idItem);
+            return $item=$repository->findItemByArtistandName($titre, $idArtiste);;
         }
 
 
