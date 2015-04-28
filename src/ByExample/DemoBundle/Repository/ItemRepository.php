@@ -293,7 +293,26 @@ class ItemRepository extends EntityRepository
                     //Si l'item existe déjà, on va le retourner
                     return $vue;
                  }
-                 else{ //Sinon on le créé
+                 //on regarde aussi si l'album existe
+                    if($alb){
+                          $idAlbum=$alb[0]["id"];
+                          
+                      }
+                      else{
+                        $album = new Item();
+                        $album->setUrl("");
+                        $album->setTitre($nomAlbum);
+                        $album->setTypeItem(2);
+                        $album->setNote(0);
+                        $album->setDuree(0);
+                        $album->setNbvues(0);
+                        $album->setDate(new Datetime());
+                        $this->_em->persist($album);
+                        $this->_em->flush();
+                        $idAlbum = $album->getId();
+                        $conn->insert("itemartiste", array("idItem"=>$idAlbum, "idArtiste"=>$idArtiste));
+                     }
+                 if(!$vue){ //Sinon on le créé
                     $item = new Item();
                     $item->setUrl($url);
                     $item->setTitre($titre);
@@ -310,26 +329,9 @@ class ItemRepository extends EntityRepository
                    
                     $conn = $this->_em->getConnection();
                     $conn->insert("itemartiste", array("idItem"=>$idItem, "idArtiste"=>$idArtiste));
+                    $conn->insert("itemitem", array("idItem"=>$idItem, "idAlbum"=>$idAlbum));
                 
-                //on regarde aussi si l'album existe
-                    if($alb){
-                          $idAlbum=$alb[0]["id"];
-                          $conn->insert("itemitem", array("idItem"=>$idItem, "idAlbum"=>$idAlbum));
-                      }
-                      else{
-                        $album = new Item();
-                        $album->setUrl("");
-                        $album->setTitre($nomAlbum);
-                        $album->setTypeItem(2);
-                        $album->setNote(0);
-                        $album->setDuree(0);
-                        $album->setNbvues(0);
-                        $album->setDate(new Datetime());
-                        $this->_em->persist($album);
-                        $this->_em->flush();
-                        $idAlbum = $album->getId();
-                        $conn->insert("itemartiste", array("idItem"=>$idAlbum, "idArtiste"=>$idArtiste));
-                     }
+                
                 }
                 
              }
