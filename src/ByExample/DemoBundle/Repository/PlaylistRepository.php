@@ -17,11 +17,16 @@ use \DateTime;
 class PlaylistRepository extends EntityRepository{
 
 	public function findPlaylistById($id, $id_playlist){
-		$query=$this->_em->createQuery('SELECT partial p.{id,nom,datecreation}, partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}, partial alb.{id, titre} 
-	    FROM ByExampleDemoBundle:Playlist p left join p.iditem i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
-	    WHERE p.id LIKE :idplaylist 
-	    AND p.idutilisateur = :idutil')
+		$query=$this->_em->createQuery('SELECT partial p.{id,nom,datecreation}, partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}, partial alb.{id, titre}, pi 
+	    FROM ByExampleDemoBundle:Playlist p left join p.iditem i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb JOIN i.iditemplaylist pi
+	    WHERE p.id = :idplaylist 
+	    AND p.idutilisateur = :idutil ORDER BY pi.position')
 	    ->setParameter("idplaylist",$id_playlist)->setParameter("idutil",$id);
+	    
+	    /*$query=$this->_em->createQuery('SELECT pi.position
+	    FROM ByExampleDemoBundle:Playlist p JOIN p.idplaylistitem pi 
+	    WHERE p.id = :idplaylist ')
+	    ->setParameter("idplaylist",$id_playlist);*/
 	    $playlists=$query->getResult(Query::HYDRATE_ARRAY);
 	    return $playlists;
 	}
@@ -88,5 +93,46 @@ class PlaylistRepository extends EntityRepository{
         $conn = $this->_em->getConnection();
         $conn->insert("tagplaylist", array("idTag"=>$idTag, "idPlaylist"=>$id_playlist));
         return $newTag;
+	}
+
+	public function countItem($idplaylist){
+		$query=$this->_em->createQuery('SELECT COUNT(i) FROM ByExampleDemoBundle:Item i JOIN i.idplaylist p WHERE p = :idplay')->setParameter('idplay', $idplaylist);
+		$count = $query->getSingleResult();
+		return ($count["1"]);
+	}
+
+	public function updatePosition($idplaylist, $iditem, $index){
+		$repository = $this->_em->getRepository('ByExampleDemoBundle:PlaylistItem');
+
+		$queryOld=$this->_em->createQuery('SELECT partial i.{id} FROM ByExampleDemoBundle:Item i JOIN i.iditemplaylist pi WHERE pi.position = :position AND pi.idplaylist =:playlist')
+		->setParameter("position", $index)
+		->setParameter("playlist", $idplaylist);
+		$oldItem=$queryOld->getResult(Query::HYDRATE_ARRAY);
+
+		$query=$this->_em->createQuery('SELECT p.position FROM ByExampleDemoBundle:PlaylistItem p WHERE p.iditem =:iditem AND p.idplaylist =:idplaylist')
+		->setParameter('iditem', $iditem)
+		->setParameter('idplaylist', $idplaylist);
+        $newItem = $query->getResult(Query::HYDRATE_ARRAY);
+
+		$qb = $this->_em->createQueryBuilder();
+				$q = $qb->update('ByExampleDemoBundle:PlaylistItem', 'u')
+					->set('u.position', $newItem[0]["position"])
+					->where('u.idplaylist = ?1')
+					->andWhere('u.iditem = ?2')
+					->setParameter(1, $idplaylist)
+					->setParameter(2, $oldItem[0]["id"])
+					->getQuery();
+					$p = $q->execute();
+
+		$qb = $this->_em->createQueryBuilder();
+				$q = $qb->update('ByExampleDemoBundle:PlaylistItem', 'u')
+					->set('u.position', $index)
+					->where('u.idplaylist = ?1')
+					->andWhere('u.iditem = ?2')
+					->setParameter(1, $idplaylist)
+					->setParameter(2, $iditem)
+					->getQuery();
+					$p = $q->execute();
+		return $p;
 	}
 }

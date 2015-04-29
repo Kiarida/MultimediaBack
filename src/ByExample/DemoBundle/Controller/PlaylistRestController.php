@@ -171,11 +171,13 @@ class PlaylistRestController extends Controller{
             $iditem = $this->get('request')->request->get('iditem');
             $em = $this->getDoctrine()->getManager();
             $repoPlaylist=$em->getRepository('ByExampleDemoBundle:Playlist');
+            $index=$repoPlaylist->countItem($id_playlist);
             $repoItem=$em->getRepository('ByExampleDemoBundle:Item');
             $item=$repoItem->findOneById($iditem);
             if ($item) {
-                    if($em->getConnection()->insert("itemplaylist", array("idItem"=>$iditem, "idPlaylist"=>$id_playlist))){
-                        $view->setStatusCode(200)->setData("Success");
+                $insert=$em->getConnection()->insert("itemplaylist", array("idItem"=>$iditem, "idPlaylist"=>$id_playlist, "position"=>$index));
+                    if($insert){
+                        $view->setStatusCode(200)->setData($insert);
                     } else {
                         $view->setStatusCode(402);
                     } 
@@ -188,7 +190,7 @@ class PlaylistRestController extends Controller{
     }
 
     /**
-     * Supprime un item à une playlist
+     * Supprime un item d'une playlist
     * @DELETE("users/{id}/playlist/{id_playlist}/items/{iditem}")
     * @ApiDoc()
     * @return FOSView
@@ -202,6 +204,33 @@ class PlaylistRestController extends Controller{
         return $view;
      }
 
+     /**
+     *Met à jour la position d'un item dans une playlist
+    * @Put("users/{id}/playlist/{id_playlist}/items")
+    * @ApiDoc()
+    * @return FOSView
+   */
+     public function updateIndexItemAction($id, $id_playlist){
+        $view = FOSView::create();  
+        $iditem = $this->get('request')->request->get('iditem');
+        $position = $this->get('request')->request->get('position');
+        $em = $this->getDoctrine()->getManager();
+        $repoPlaylist=$em->getRepository('ByExampleDemoBundle:Playlist');
+        
+        $repoItem=$em->getRepository('ByExampleDemoBundle:Item');
+        $item=$repoItem->findOneById($iditem);
+
+        if($item){
+            $oldItem=$repoPlaylist->updatePosition($id_playlist, $iditem, $position);
+            if($oldItem){
+                $view->setStatusCode(200)->setData("Success");
+            }
+            
+        } else {
+            $view->setStatusCode(408);
+        }
+        return $view;
+     }
 
 
 

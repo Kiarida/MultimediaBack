@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GetMetadata extends ContainerAwareCommand
+class GetMetadataCommand extends ContainerAwareCommand
 {
     protected function configure()
     {

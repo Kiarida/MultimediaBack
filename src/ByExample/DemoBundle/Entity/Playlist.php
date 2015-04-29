@@ -82,6 +82,15 @@ class Playlist
      */
     private $idutilisateur;
 
+
+     /**
+      * @var \Doctrine\Common\Collections\Collection
+      *
+      * @ORM\OneToMany(targetEntity="PlaylistItem", mappedBy="idplaylist")
+      *
+      */
+     private $idplaylistitem;
+
     /**
      * Constructor
      */

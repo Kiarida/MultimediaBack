@@ -145,6 +145,13 @@ class Item
          */
         private $idtag;
 
+         /**
+      * @var \Doctrine\Common\Collections\Collection
+      *
+      * @ORM\OneToMany(targetEntity="PlaylistItem", mappedBy="iditem")
+      *
+      */
+     private $iditemplaylist;
 
     /**
      * Constructor
