@@ -101,32 +101,23 @@ class PlaylistRepository extends EntityRepository{
 		return ($count["1"]);
 	}
 
-	public function updatePosition($idplaylist, $iditem, $index){
+	public function updatePosition($idplaylist, $iditem, $index, $iditem2, $index2){
 		$repository = $this->_em->getRepository('ByExampleDemoBundle:PlaylistItem');
 
-		$queryOld=$this->_em->createQuery('SELECT partial i.{id} FROM ByExampleDemoBundle:Item i JOIN i.iditemplaylist pi WHERE pi.position = :position AND pi.idplaylist =:playlist')
-		->setParameter("position", $index)
-		->setParameter("playlist", $idplaylist);
-		$oldItem=$queryOld->getResult(Query::HYDRATE_ARRAY);
-
-		$query=$this->_em->createQuery('SELECT p.position FROM ByExampleDemoBundle:PlaylistItem p WHERE p.iditem =:iditem AND p.idplaylist =:idplaylist')
-		->setParameter('iditem', $iditem)
-		->setParameter('idplaylist', $idplaylist);
-        $newItem = $query->getResult(Query::HYDRATE_ARRAY);
 
 		$qb = $this->_em->createQueryBuilder();
 				$q = $qb->update('ByExampleDemoBundle:PlaylistItem', 'u')
-					->set('u.position', $newItem[0]["position"])
+					->set('u.position', $index)
 					->where('u.idplaylist = ?1')
 					->andWhere('u.iditem = ?2')
 					->setParameter(1, $idplaylist)
-					->setParameter(2, $oldItem[0]["id"])
+					->setParameter(2, $iditem2)
 					->getQuery();
 					$p = $q->execute();
 
 		$qb = $this->_em->createQueryBuilder();
 				$q = $qb->update('ByExampleDemoBundle:PlaylistItem', 'u')
-					->set('u.position', $index)
+					->set('u.position', $index2)
 					->where('u.idplaylist = ?1')
 					->andWhere('u.iditem = ?2')
 					->setParameter(1, $idplaylist)

@@ -212,16 +212,17 @@ class PlaylistRestController extends Controller{
    */
      public function updateIndexItemAction($id, $id_playlist){
         $view = FOSView::create();  
-        $iditem = $this->get('request')->request->get('iditem');
-        $position = $this->get('request')->request->get('position');
+        $iditem = $this->get('request')->request->get('iditemGrab');
+        $position = $this->get('request')->request->get('indexGrab');
+        $iditem2 = $this->get('request')->request->get('iditemMov');
+        $position2 = $this->get('request')->request->get('indexMov');
         $em = $this->getDoctrine()->getManager();
         $repoPlaylist=$em->getRepository('ByExampleDemoBundle:Playlist');
-        
         $repoItem=$em->getRepository('ByExampleDemoBundle:Item');
         $item=$repoItem->findOneById($iditem);
 
         if($item){
-            $oldItem=$repoPlaylist->updatePosition($id_playlist, $iditem, $position);
+            $oldItem=$repoPlaylist->updatePosition($id_playlist, $iditem, $position, $iditem2, $position2);
             if($oldItem){
                 $view->setStatusCode(200)->setData("Success");
             }
