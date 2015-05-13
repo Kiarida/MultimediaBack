@@ -524,6 +524,78 @@ class UserRestController extends Controller
 
     }
 
+    /**
+    * Récupère un token d'authentification depuis rhapsody
+    * @Get("users/{id}/rhapsody/new")
+    * @ApiDoc()
+    * @return FOSView
+    */
+    public function getTokenAction($id){
+        $view = FOSView::create();
+        $username=$this->container->getParameter('username_rhapsody');
+        $password=$this->container->getParameter('password_rhapsody');
+        $api_key=$this->container->getParameter('api_key');
+        $api_secret=$this->container->getParameter('api_secret');
+        $params = array("username" => $username, "password"=>$password, "grant_type"=>"password");
+       $url="https://api.rhapsody.com/oauth/token";
+       $ch = curl_init();
+
+
+
+       curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+
+       curl_setopt($ch, CURLOPT_POST, true);
+       curl_setopt($ch, CURLOPT_URL, $url );
+       curl_setopt($ch, CURLOPT_USERPWD, $api_key.":".$api_secret);
+       curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+       
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       $info=curl_exec($ch);
+       $infodecode = json_decode($info, true);
+
+       if($infodecode){
+            $view->setStatusCode(200)->setData($infodecode);
+        }else{
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+    /**
+    * Refresh un token de streaming depuis rhapsody
+    * @Put("users/{id}/rhapsody/refresh")
+    * @ApiDoc()
+    * @return FOSView
+    */
+    public function putRefreshTokenAction($id){
+        $view = FOSView::create();
+        $refresh_token = $this->get('request')->request->get('refreshToken');
+        $api_key=$this->container->getParameter('api_key');
+        $api_secret=$this->container->getParameter('api_secret');
+        $url = "https://api.rhapsody.com/oauth/access_token";
+        $params=array("client_id"=>$api_key, "client_secret"=>$api_secret, "response_type"=>"code", "grant_type"=>"refresh_token", "refresh_token"=>$refresh_token);
+        
+        $ch = curl_init();
+
+
+       curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+
+       curl_setopt($ch, CURLOPT_POST, true);
+       curl_setopt($ch, CURLOPT_URL, $url );
+       curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+       
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       $info=curl_exec($ch);
+       $infodecode = json_decode($info, true);
+       if($infodecode){
+            $view->setStatusCode(200)->setData($infodecode);
+        }else{
+            $view->setStatusCode(404);
+        }
+        return $view;
+
+   }
+
 
 
 }

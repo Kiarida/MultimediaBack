@@ -31,9 +31,9 @@ class Genre
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Item", mappedBy="idgenre")
+     * @ORM\ManyToMany(targetEntity="Artiste", mappedBy="idgenre")
      */
-    private $iditem;
+    private $idartiste;
 
     /**
     *@var string
@@ -85,36 +85,36 @@ class Genre
     }
 
     /**
-     * Add iditem
+     * Add idartiste
      *
-     * @param \ByExample\DemoBundle\Entity\Item $iditem
+     * @param \ByExample\DemoBundle\Entity\Artiste $idartiste
      * @return Genre
      */
-    public function addIditem(\ByExample\DemoBundle\Entity\Item $iditem)
+    public function addIdartiste(\ByExample\DemoBundle\Entity\Artiste $idartiste)
     {
-        $this->iditem[] = $iditem;
+        $this->idartiste[] = $idartiste;
     
         return $this;
     }
 
     /**
-     * Remove iditem
+     * Remove idartiste
      *
-     * @param \ByExample\DemoBundle\Entity\Item $iditem
+     * @param \ByExample\DemoBundle\Entity\Artiste $idartiste
      */
-    public function removeIditem(\ByExample\DemoBundle\Entity\Item $iditem)
+    public function removeIdartiste(\ByExample\DemoBundle\Entity\Artiste $idartiste)
     {
-        $this->iditem->removeElement($iditem);
+        $this->idartiste->removeElement($idartiste);
     }
 
     /**
-     * Get iditem
+     * Get idartiste
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getIditem()
+    public function getIdartiste()
     {
-        return $this->iditem;
+        return $this->idartiste;
     }
 
 

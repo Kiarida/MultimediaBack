@@ -28,6 +28,10 @@ class PlaylistRepository extends EntityRepository{
 	    WHERE p.id = :idplaylist ')
 	    ->setParameter("idplaylist",$id_playlist);*/
 	    $playlists=$query->getResult(Query::HYDRATE_ARRAY);
+	    if(!$playlists){
+	    	$repository = $this->_em->getRepository('ByExampleDemoBundle:Playlist');
+	    	$playlists=array($repository->findOneById($id_playlist));
+	    }
 	    return $playlists;
 	}
 

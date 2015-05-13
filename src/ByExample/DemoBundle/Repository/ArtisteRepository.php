@@ -4,6 +4,7 @@ namespace ByExample\DemoBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
+use ByExample\DemoBundle\Entity\Artiste;
 use Doctrine\ORM\Query;
 
 /**
@@ -73,7 +74,10 @@ class ArtisteRepository extends EntityRepository
     }
 
 
-    public function updateImgArtistLastFM($artiste){
+
+    public function updateArtist($artiste){
+
+        //First request : we make a call to lastfm for urlCover
         $params = array("artist" => $artiste[0]["nom"],"format" => "json");
 
             $url="http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=30c3c9603ff7e5fba386bf8348abdb46";
@@ -88,13 +92,81 @@ class ArtisteRepository extends EntityRepository
             $info=curl_exec($ch);
             $infodecode = json_decode($info, true);
             $img="'".$infodecode["artist"]["image"][3]["#text"]."'";
+
+        //Second request : we make a call to the Echonest for similar artist and EchonestID
+
+
+    }
+
+    public function updateImgArtistLastFM($artiste, $idEchonest){
+        $params = array("artist" => $artiste[0]["nom"],"format" => "json");
+
+            $url="http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=30c3c9603ff7e5fba386bf8348abdb46";
+
+            $url .= '&' . http_build_query($params);
+
+
+            $ch = curl_init();
+            curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+            curl_setopt($ch, CURLOPT_URL, $url );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $info=curl_exec($ch);
+            $infodecode = json_decode($info, true);
+            $img="'".$infodecode["artist"]["image"][3]["#text"]."'";
+            $idEcho="'".$idEchonest."'";
             $qb = $this->_em->createQueryBuilder();
                 $q = $qb->update('ByExampleDemoBundle:Artiste', 'u')
                     ->set('u.urlCover', $img )
+                    ->set('u.idecho',  $idEcho)
                     ->where('u.id = ?1')
                     ->setParameter(1, $artiste[0]["id"])
                     ->getQuery();
                     $p = $q->execute();
                     return $infodecode;
     }
+
+
+    public function getSimilarArtists($artiste){
+        $repository = $this->_em->getRepository('ByExampleDemoBundle:Artiste');
+        
+        $infos=[];
+        $artistName=$artiste[0]["nom"];
+        $idArtiste=$artiste[0]["id"];
+        $params = array("name" => $artistName, "results" => 10);
+        $url="http://developer.echonest.com/api/v4/artist/similar?api_key=1N7LROIETL6PEVJAF&format=json";
+
+        $url .= '&' . http_build_query($params);
+
+        $ch = curl_init();
+        curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+        curl_setopt($ch, CURLOPT_URL, $url );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $info=curl_exec($ch);
+        $infodecode = json_decode($info, true);
+
+        curl_close($ch);
+        foreach($infodecode["response"]["artists"] as $artistSim){
+            $artist=$repository->findByIdecho($artistSim["id"]);
+
+            if(!$artist){
+               $newartiste = new Artiste();
+                $newartiste->setNom($artistSim["name"]);
+                $newartiste->setNote(0);
+                $newartiste->setIdecho($artistSim["id"]);
+
+                $this->_em->persist($newartiste);
+                $this->_em->flush();
+                $idSim=$newartiste->getId();
+            }
+            else{
+
+                $idSim=$artist[0]->getId();
+            }
+            $conn = $this->_em->getConnection();
+            $conn->insert("artistesimilaire", array("idArtiste"=>$idArtiste, "idSim"=>$idSim));
+        }
+
+
+        return $infodecode;
+      }
 }

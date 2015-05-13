@@ -177,6 +177,7 @@ class ItemRestController extends Controller
         return $view;
   }
 
+
   /**
   * Parcourt la liste des items en BDD et récupère les infos depuis echonest
   * @Route("/items/echonest/{idTrack}")
@@ -222,8 +223,9 @@ class ItemRestController extends Controller
          }
          if(!isset($item["idartiste"][0]["urlCover"])){
           $repoArtiste->putMusicArtist($item["idartiste"][0]["id"], $infodecode["response"]);
-          $repoArtiste->updateImgArtistLastFM($item["idartiste"]);
+          $update = $repoArtiste->updateImgArtistLastFM($item["idartiste"], $infodecode["response"]["songs"][0]["artist_id"]);
           $asso = $this->getGenresItemAction($item["idartiste"][0]["id"]);
+          //$similar = $repoArtiste->getSimilarArtists($item["idartiste"]);
           
         }
           
@@ -245,14 +247,13 @@ class ItemRestController extends Controller
 
   /**
   * Récupère les infos sur les artistes depuis echonest
-  * @Route("/items/getgenres/")
+  * @Route("/items/getgenres/{idArtist}")
   * @Method({"GET"})
   * @ApiDoc()
   */
   public function getGenresItemAction($idArtist){
      $view = FOSView::create();
      $em =$this->getDoctrine()->getManager();
-     $repo = $em->getRepository('ByExampleDemoBundle:Item');
      $repoGenre = $em->getRepository('ByExampleDemoBundle:Genre');
      $repoArtists = $em->getRepository('ByExampleDemoBundle:Artiste');
      $artist=$repoArtists->find($idArtist);
@@ -271,16 +272,14 @@ class ItemRestController extends Controller
        $infodecode = json_decode($info, true);
 
        curl_close($ch);
-       $items=$repo->findItemByArtist($artist->getId());
-       foreach($items as $item){
-           $new = $repoGenre->addGenre($item, $infodecode["response"]);
-           array_push($infos, $new);
+
+      $new = $repoGenre->addGenre($artist, $infodecode["response"]);
          
 
-     }
+     
 
-     if ($infos) {
-            $view->setStatusCode(200)->setData($infos);
+     if ($new) {
+            $view->setStatusCode(200)->setData($new);
         } else {
             $view->setStatusCode(407);
         }
@@ -537,14 +536,22 @@ class ItemRestController extends Controller
   */
     public function searchItemGroovesharkAction($key){
       $view = FOSView::create();
-      $gs = new gsAPI();
+      $api_key=$this->container->getParameter('api_key');
+      $params = array("q" => $key, "type" => "track");
 
-      $session = $this->getRequest()->getSession();
-      $gs->sessionID=$session->get("gsSessionID");
-      $gs->setCountry("France");
-       $success = $gs->getSongSearchResults($key);
-       if($success){
-        $view->setStatusCode(200)->setData($success);
+            $url="http://api.rhapsody.com/v1/search/typeahead";
+
+            $url .= "?". http_build_query($params);
+
+
+            $ch = curl_init();
+            curl_setopt ($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'apikey:'.$api_key));
+            curl_setopt($ch, CURLOPT_URL, $url );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $info=curl_exec($ch);
+            $infodecode = json_decode($info, true);
+       if($infodecode){
+        $view->setStatusCode(200)->setData($infodecode);
       }
       else{
         $view->setStatusCode(404);

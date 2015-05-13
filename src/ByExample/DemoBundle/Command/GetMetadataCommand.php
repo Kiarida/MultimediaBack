@@ -63,6 +63,7 @@ class GetMetadataCommand extends ContainerAwareCommand
           $repoArtiste->putMusicArtist($item["idartiste"][0]["id"], $infodecode["response"]);
           $repoArtiste->updateImgArtistLastFM($item["idartiste"]);
           $asso = $this->getGenresItemAction($item["idartiste"][0]["id"]);
+          $similar = $repoArtiste->getSimilarArtists($item["idartiste"]);
           
         }
           
@@ -73,7 +74,7 @@ class GetMetadataCommand extends ContainerAwareCommand
 
 
         $em->flush();
-        $output->writeln("finish");
+        $output->writeln($similar);
 
     }
 

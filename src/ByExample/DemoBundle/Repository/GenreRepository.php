@@ -33,33 +33,31 @@ class GenreRepository extends EntityRepository
     }
 
 
-		public function addGenre($item, $infos){
+		public function addGenre($artiste, $infos){
+
 			$new = [];
 			$repository = $this->_em->getRepository('ByExampleDemoBundle:Genre');
 
-			$repoItem = $this->_em->getRepository('ByExampleDemoBundle:Item');
-			$itemFound=$repoItem->find($item["id"]);
+			$repoArtiste = $this->_em->getRepository('ByExampleDemoBundle:Artiste');
+		
 			$informa=array();
 
 
-			for($i = 0; $i < 4; $i++){
-
-					$genre=$infos["terms"][$i];
-					if($genre){
-
+			foreach($infos["terms"] as $info){			
+					$genre=$info;
 				    $genres = $repository->findByLibelle($genre["name"]);
 				    
 				   
 						if(!$genres){
 					    $newGenre=new Genre();
 					    $newGenre->setLibelle($genre["name"]);
-					    $newGenre->addIditem($itemFound);
-						$newGenre->setUrlCover($itemFound->getUrlcover());
+					    $newGenre->addIdartiste($artiste);
+						$newGenre->setUrlCover($artiste->getUrlcover());
 							//array_push($informa, $newGenre);
 					    $this->_em->persist($newGenre);
 					    $this->_em->flush();
 
-							$idGenre = $newGenre->getId();
+						$idGenre = $newGenre->getId();
 						}
 						else{
 							//return $genres;
@@ -68,16 +66,17 @@ class GenreRepository extends EntityRepository
 							$idGenre = $genres[0]->getId();
 						}
 						$conn = $this->_em->getConnection();
-						$query = $this->_em->createQuery('SELECT partial i.{id, titre} FROM ByExampleDemoBundle:Item i LEFT JOIN i.idgenre g WHERE i.id=:id AND g =:idgenre')
-           				->setParameter("id",$item["id"])
+						$query = $this->_em->createQuery('SELECT ag FROM ByExampleDemoBundle:Artistegenre ag WHERE ag.idartiste=:id AND ag.idgenre =:idgenre')
+           				->setParameter("id",$artiste->getId())
             			->setParameter("idgenre",$idGenre);
 					    $asso = $query->getResult(Query::HYDRATE_OBJECT);
 					     if(!$asso){
-				      		$tag = $conn->insert("itemgenre", array("idGenre"=>$idGenre, "idItem"=>$item["id"]));
+				      		$tag = $conn->insert("artistegenre", array("idGenre"=>$idGenre, "idArtiste"=>$artiste->getId(), "frequency"=>$genre["frequency"], "weight"=>$genre["weight"]));
 				      }
-				}
+				      
+				
 		}
-		//return $genres;
+		//return ;
 			//array_push($new, $itemFound);
 
 	}

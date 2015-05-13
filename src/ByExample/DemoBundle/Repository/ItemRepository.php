@@ -120,7 +120,7 @@ class ItemRepository extends EntityRepository
         $offset = max(0, rand(0, $rows - 1));
 
         $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem, urlCover}, partial a.{id,nom}, partial alb.{id,titre}
-                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb LEFT JOIN i.idgenre g
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb LEFT JOIN a.idgenre g
                                             WHERE g.id = :key AND i.typeitem=1')
         ->setParameter('key', $idGenre)
         ->setMaxResults(1)
@@ -222,21 +222,6 @@ class ItemRepository extends EntityRepository
         return $albums;
     }
 
-
-		public function findAllGenre(){
-			$tableau = array();
-			for($i = 20; $i<57;$i++){
-
-				$query=$this->_em->createQuery('SELECT partial i.{id,titre}, partial a.{id,nom}
-		                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
-		                                            WHERE i.id = :id AND i.typeitem = 1')->setParameter('id',$i);
-				$item=$query->getResult(Query::HYDRATE_ARRAY);
-				if($item){
-					$tableau[$i]=$item;
-				}
-			}
-			return $tableau;
-		}
 
 
         /*On va chercher tous les items qui n'ont pas d'urlCover, leur album et leur artiste*/
@@ -358,7 +343,7 @@ class ItemRepository extends EntityRepository
                 $artiste = new Artiste();
                 $artiste->setNom($nom);
                 $artiste->setNote(0);
-                $artiste->setUrlCover("");
+
 
                 $this->_em->persist($artiste);
                 $this->_em->persist($album);

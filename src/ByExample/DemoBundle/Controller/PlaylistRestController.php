@@ -44,6 +44,7 @@ class PlaylistRestController extends Controller{
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ByExampleDemoBundle:Playlist');
         $playlists=$repo->findPlaylistById($id, $id_playlist);
+        
         if ($playlists) {
             $view->setStatusCode(200)->setData($playlists);
         } else {

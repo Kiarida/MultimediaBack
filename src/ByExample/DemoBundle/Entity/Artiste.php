@@ -56,6 +56,43 @@ class Artiste
      */
     private $urlCover;
 
+       /**
+     * @var integer
+     *
+     * @ORM\Column(name="idEcho", type="integer", nullable=false)
+     */
+    private $idecho;
+
+   /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Artiste", inversedBy="idartiste", fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(name="artistesimilaire",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idArtiste", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idSim", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $idartistesim;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="idartiste", fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(name="artistegenre",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idArtiste", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idGenre", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $idgenre;
+
 
     /**
      * Constructor
@@ -210,5 +247,63 @@ class Artiste
     public function getIdtag()
     {
         return $this->idtag;
+    }
+
+
+    /**
+     * Set idecho
+     *
+     * @param string $idecho
+     * @return Artiste
+     */
+    public function setIdecho($idecho)
+    {
+        $this->idecho = $idecho;
+
+        return $this;
+    }
+
+    /**
+     * Get idecho
+     *
+     * @return string
+     */
+    public function getIdecho()
+    {
+        return $this->idecho;
+    }
+
+
+    /**
+     * Add idgenre
+     *
+     * @param \ByExample\DemoBundle\Entity\Genre $idgenre
+     * @return Item
+     */
+    public function addIdgenre(\ByExample\DemoBundle\Entity\Genre $idgenre)
+    {
+        $this->idgenre[] = $idgenre;
+
+        return $this;
+    }
+
+    /**
+     * Remove idgenre
+     *
+     * @param \ByExample\DemoBundle\Entity\Genre $idgenre
+     */
+    public function removeIdgenre(\ByExample\DemoBundle\Entity\Genre $idgenre)
+    {
+        $this->idgenre->removeElement($idgenre);
+    }
+
+    /**
+     * Get idgenre
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIdgenre()
+    {
+        return $this->idgenre;
     }
 }

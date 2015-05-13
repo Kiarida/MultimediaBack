@@ -100,20 +100,7 @@ class Item
      */
     private $idartiste;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="iditem", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="itemgenre",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idGenre", referencedColumnName="id")
-     *   }
-     * )
-     */
-    private $idgenre;
+    
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -417,38 +404,7 @@ class Item
         return $this->idartiste;
     }
 
-    /**
-     * Add idgenre
-     *
-     * @param \ByExample\DemoBundle\Entity\Genre $idgenre
-     * @return Item
-     */
-    public function addIdgenre(\ByExample\DemoBundle\Entity\Genre $idgenre)
-    {
-        $this->idgenre[] = $idgenre;
-
-        return $this;
-    }
-
-    /**
-     * Remove idgenre
-     *
-     * @param \ByExample\DemoBundle\Entity\Genre $idgenre
-     */
-    public function removeIdgenre(\ByExample\DemoBundle\Entity\Genre $idgenre)
-    {
-        $this->idgenre->removeElement($idgenre);
-    }
-
-    /**
-     * Get idgenre
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getIdgenre()
-    {
-        return $this->idgenre;
-    }
+    
 
     /**
      * Add idalbum
