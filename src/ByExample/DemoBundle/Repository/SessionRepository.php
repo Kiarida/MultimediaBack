@@ -9,6 +9,7 @@ use ByExample\DemoBundle\Entity\Utilisateur;
 use ByExample\DemoBundle\Entity\Session;
 use Doctrine\ORM\Query;
 use \DateTime;
+use \DateInterval;
 
 /**
  * SessionRepository
@@ -108,6 +109,35 @@ class SessionRepository extends EntityRepository{
 				$res[] = $session;
 		}
 		return $res;
+	}
+
+	public function closeSession($id_user=false, $session=false){
+		$repo = $this->_em->getRepository('ByExampleDemoBundle:Session');
+		$repoEcoute = $this->_em->getRepository('ByExampleDemoBundle:Ecoute');
+		$repoItem = $this->_em->getRepository('ByExampleDemoBundle:Item');
+		if($id_user && $session == false){
+			$session = $repo->findCurrentSession($id_user);
+		}
+		$ecoute = $repoEcoute->findLastEcouteBySession($session->getId());
+		$item=$repoItem->findLastItemBySession($session->getId());
+
+		$seconds = intval(explode(".", $item[0]["iditem"]["duree"])[0]);
+
+		$dv = new DateInterval('PT'.$seconds.'S');
+		$date_d=$ecoute->getDate();
+		$date_temp=$date_d->add($dv);
+		$date_act=new DateTime();
+		if($date_temp < $date_act){
+			$fin_session=$date_act;
+		}
+		else{
+			$fin_session=$date_temp;
+		}
+		$session->setDatefin($fin_session);
+		$this->_em->persist($session);
+		
+
+
 	}
 
 	

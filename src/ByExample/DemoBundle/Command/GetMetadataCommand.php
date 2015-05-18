@@ -82,8 +82,8 @@ class GetMetadataCommand extends ContainerAwareCommand
 
 
     public function getGenresItemAction($idArtist){
-     $em = $this->getContainer()->get('doctrine')->getManager();
-     $repo = $em->getRepository('ByExampleDemoBundle:Item');
+     $view = FOSView::create();
+     $em =$this->getDoctrine()->getManager();
      $repoGenre = $em->getRepository('ByExampleDemoBundle:Genre');
      $repoArtists = $em->getRepository('ByExampleDemoBundle:Artiste');
      $artist=$repoArtists->find($idArtist);
@@ -102,13 +102,19 @@ class GetMetadataCommand extends ContainerAwareCommand
        $infodecode = json_decode($info, true);
 
        curl_close($ch);
-       $items=$repo->findItemByArtist($artist->getId());
-       foreach($items as $item){
-           $new = $repoGenre->addGenre($item, $infodecode["response"]);
-           array_push($infos, $new);
+
+      $new = $repoGenre->addGenre($artist, $infodecode["response"]);
          
 
-         }
+     
+
+     if ($new) {
+            $view->setStatusCode(200)->setData($new);
+        } else {
+            $view->setStatusCode(407);
+        }
+
+        return $view;
       }
 
 

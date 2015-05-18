@@ -56,6 +56,29 @@ class EcouteRestController extends Controller{
         return $view;
     }
 
+
+    /**
+    * Test 
+    * @Get("users/{id}/lastecoute/{idsession}")
+    * @ApiDoc()
+    * @return FOSView
+    */
+    public function getLastEcouteAction($id, $idsession){
+        $view = FOSView::create();
+
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleDemoBundle:Session');
+        $ecoutes = $repo->closeSession($id);
+        if ($ecoutes) {
+            $view->setStatusCode(200)->setData($ecoutes);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
+
+
     /**
     * Créé une écoute
     * @Post("users/{id}/ecoute")
@@ -85,7 +108,8 @@ class EcouteRestController extends Controller{
         	//on ajoute l'écoute une fois la session crée
         	$repoEcoute = $em->getRepository('ByExampleDemoBundle:Ecoute');
         	$ecoute = $repoEcoute->addEcoute($session, $item, $typeEcoute);
-
+            $repo = $em->getRepository('ByExampleDemoBundle:Item');
+            $notes = $repo->updateView($idItem);
         	$view->setStatusCode(200)->setData($ecoute);
         }else{ //l'item n'existe pas
         	$view->setStatusCode(404);

@@ -74,4 +74,16 @@ class EcouteRepository extends EntityRepository{
 	    $items=$query->getResult(Query::HYDRATE_OBJECT);
 	    return $items[0];
 	}
+
+	public function findLastEcouteLightBySession($id_session){
+		$query=$this->_em->createQuery('SELECT partial e.{id, iditem}
+	    FROM ByExampleDemoBundle:Ecoute e
+	    LEFT  JOIN e.idsession s
+        WHERE s.id = :session
+        ORDER BY e.id DESC')
+	    ->setParameter("session",$id_session)
+	    ->setMaxResults(1);
+	    $items=$query->getResult(Query::HYDRATE_OBJECT);
+	    return $items[0];
+	}
 }

@@ -295,6 +295,7 @@ class ItemRepository extends EntityRepository
                         $this->_em->persist($album);
                         $this->_em->flush();
                         $idAlbum = $album->getId();
+                        $conn = $this->_em->getConnection();
                         $conn->insert("itemartiste", array("idItem"=>$idAlbum, "idArtiste"=>$idArtiste));
                      }
                  if(!$vue){ //Sinon on le créé
@@ -462,6 +463,14 @@ class ItemRepository extends EntityRepository
          
         
 
+        }
+
+        public function findLastItemBySession($id_session){
+            $query=$this->_em->createQuery('SELECT partial e.{id}, partial i.{id, duree} FROM ByExampleDemoBundle:Ecoute e LEFT JOIN e.idsession s LEFT JOIN e.iditem i WHERE s.id=:session ORDER BY e.id DESC')
+            ->setParameter("session", $id_session)
+            ->setMaxResults(1);
+            $item = $query->getResult(Query::HYDRATE_ARRAY);
+            return $item;
         }
 
 

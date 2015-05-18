@@ -24,8 +24,9 @@ class CheckSessionCommand extends ContainerAwareCommand
     	$em = $this->getContainer()->get('doctrine')->getManager();
         $sessions = $em->getRepository('ByExampleDemoBundle:Session')->getExpiredSession();
         foreach ($sessions as $session) {
-            $session->setDatefin(new \Datetime());
-            $em->persist($session);
+            $em->getRepository('ByExampleDemoBundle:Session')->closeSession(false, $session);
+            //$session->setDatefin(new \Datetime());
+            //$em->persist($session);
         }
         $em->flush();
         $output->writeln("finish");
