@@ -168,4 +168,25 @@ $view = FOSView::create();
         return $view;
     }
 
+
+    /**
+    * Termine une session 
+    * @Put("session/end")
+    * @ApiDoc()
+    * @return FOSView
+    */
+    public function getLastEcouteAction($id){
+        $view = FOSView::create();
+
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleDemoBundle:Session');
+        $ecoutes = $repo->closeSession($id, false);
+        if ($ecoutes) {
+            $view->setStatusCode(200)->setData($ecoutes);
+        } else {
+            $view->setStatusCode(404);
+        }
+        return $view;
+    }
+
 }

@@ -135,6 +135,7 @@ class SessionRepository extends EntityRepository{
 		}
 		$session->setDatefin($fin_session);
 		$this->_em->persist($session);
+		$this->_em->flush();
 		
 
 

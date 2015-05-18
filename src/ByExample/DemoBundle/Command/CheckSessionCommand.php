@@ -28,7 +28,7 @@ class CheckSessionCommand extends ContainerAwareCommand
             //$session->setDatefin(new \Datetime());
             //$em->persist($session);
         }
-        $em->flush();
+        
         $output->writeln("finish");
 
     }

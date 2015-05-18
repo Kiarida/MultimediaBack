@@ -57,25 +57,7 @@ class EcouteRestController extends Controller{
     }
 
 
-    /**
-    * Test 
-    * @Get("users/{id}/lastecoute/{idsession}")
-    * @ApiDoc()
-    * @return FOSView
-    */
-    public function getLastEcouteAction($id, $idsession){
-        $view = FOSView::create();
-
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ByExampleDemoBundle:Session');
-        $ecoutes = $repo->closeSession($id);
-        if ($ecoutes) {
-            $view->setStatusCode(200)->setData($ecoutes);
-        } else {
-            $view->setStatusCode(404);
-        }
-        return $view;
-    }
+    
 
 
 
