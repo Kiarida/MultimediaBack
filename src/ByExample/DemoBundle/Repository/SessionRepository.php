@@ -118,24 +118,27 @@ class SessionRepository extends EntityRepository{
 		if($id_user && $session == false){
 			$session = $repo->findCurrentSession($id_user);
 		}
-		$ecoute = $repoEcoute->findLastEcouteBySession($session->getId());
-		$item=$repoItem->findLastItemBySession($session->getId());
+		if($session){
+			$ecoute = $repoEcoute->findLastEcouteBySession($session->getId());
+			$item=$repoItem->findLastItemBySession($session->getId());
 
-		$seconds = intval(explode(".", $item[0]["iditem"]["duree"])[0]);
+			$seconds = intval(explode(".", $item[0]["iditem"]["duree"])[0]);
 
-		$dv = new DateInterval('PT'.$seconds.'S');
-		$date_d=$ecoute->getDate();
-		$date_temp=$date_d->add($dv);
-		$date_act=new DateTime();
-		if($date_temp < $date_act){
-			$fin_session=$date_act;
+			$dv = new DateInterval('PT'.$seconds.'S');
+			$date_d=$ecoute->getDate();
+			$date_temp=$date_d->add($dv);
+			$date_act=new DateTime();
+			if($date_temp > $date_act){
+				$fin_session=$date_act;
+			}
+			else{
+				$fin_session=$date_temp;
+			}
+			$session->setDatefin($fin_session);
+			$this->_em->persist($session);
+			$this->_em->flush();
 		}
-		else{
-			$fin_session=$date_temp;
-		}
-		$session->setDatefin($fin_session);
-		$this->_em->persist($session);
-		$this->_em->flush();
+		
 		
 
 

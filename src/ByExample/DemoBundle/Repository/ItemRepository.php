@@ -265,7 +265,7 @@ class ItemRepository extends EntityRepository
             return $items;
         }
 
-        public function addItemArtiste($url, $titre, $nomAlbum, $nom){
+        public function addItemArtiste($url, $titre, $nomAlbum, $nom, $duration){
             $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
             $repoArtiste = $this->_em->getRepository('ByExampleDemoBundle:Artiste');
             $singer=$repoArtiste->findOneByNom($nom);
@@ -304,7 +304,7 @@ class ItemRepository extends EntityRepository
                     $item->setTitre($titre);
                     $item->setTypeItem(1);
                     $item->setNote(0);
-                    $item->setDuree(0);
+                    $item->setDuree($duration);
                     $item->setNbvues(0);
                     $item->setDate(new Datetime());
                 
@@ -327,7 +327,7 @@ class ItemRepository extends EntityRepository
                 $item->setTitre($titre);
                 $item->setTypeItem(1);
                 $item->setNote(0);
-                $item->setDuree(0);
+                $item->setDuree($duration);
                 $item->setNbvues(0);
                 $item->setDate(new Datetime());
                 //$item->setIdArtiste($idArtiste);
