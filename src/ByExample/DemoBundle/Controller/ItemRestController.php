@@ -537,16 +537,14 @@ class ItemRestController extends Controller
     public function searchItemGroovesharkAction($key){
       $view = FOSView::create();
       $api_key=$this->container->getParameter('api_key');
+      $api_key_last=$this->container->getParameter('api_key_last');
       $array=[];
-      $params = array("combined" => $key, "bucket" => "id:rhapsody-FR");
-       $param2=array("bucket" =>"tracks");
-    
-       $url="http://developer.echonest.com/api/v4/song/search?api_key=NNLVK0KSQ8PVIAOTU&format=json";
+      $params = array("track" => $key, "api_key" => $api_key_last, "format" => "json", "limit" => "30");
+      
+       $url="http://ws.audioscrobbler.com/2.0/?method=track.search";
 
        $url .= '&' . http_build_query($params);
-       $url .= '&' . http_build_query($param2);
-       $url .= '&' . http_build_query($param3);
-       $url .= '&' . http_build_query($param4);
+      
 
        $ch = curl_init();
        curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
@@ -554,8 +552,28 @@ class ItemRestController extends Controller
        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
        $info=curl_exec($ch);
        $infodecode = json_decode($info, true);
-
        if($infodecode){
+        foreach($infodecode["results"]["trackmatches"]["track"] as $track){
+          $url="http://api.rhapsody.com/v1/search/typeahead";
+          $params = array("q" => $track["name"], "type" => "track");
+                $url .= "?". http_build_query($params);
+
+                $ch = curl_init();
+                curl_setopt ($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'apikey:'.$api_key));
+                curl_setopt($ch, CURLOPT_URL, $url );
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $info=curl_exec($ch);
+                $infodecode2 = json_decode($info, true);
+                foreach($infodecode2 as $songRhapsody){
+                  if($songRhapsody["artist"]["name"]==$track["artist"]){
+                    array_push($array,$songRhapsody);
+                  }
+                
+                
+                }
+        }
+       }
+       /*if($infodecode){
         foreach($infodecode["response"]["songs"] as $song){
           if($song["tracks"][0]["foreign_id"]){
             $result=explode(":", $song["tracks"][0]["foreign_id"]);
