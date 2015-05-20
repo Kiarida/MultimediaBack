@@ -537,7 +537,74 @@ class ItemRestController extends Controller
     public function searchItemGroovesharkAction($key){
       $view = FOSView::create();
       $api_key=$this->container->getParameter('api_key');
-      $params = array("q" => $key, "type" => "track");
+      $array=[];
+      $params = array("combined" => $key, "bucket" => "id:rhapsody-FR");
+       $param2=array("bucket" =>"tracks");
+    
+       $url="http://developer.echonest.com/api/v4/song/search?api_key=NNLVK0KSQ8PVIAOTU&format=json";
+
+       $url .= '&' . http_build_query($params);
+       $url .= '&' . http_build_query($param2);
+       $url .= '&' . http_build_query($param3);
+       $url .= '&' . http_build_query($param4);
+
+       $ch = curl_init();
+       curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
+       curl_setopt($ch, CURLOPT_URL, $url );
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       $info=curl_exec($ch);
+       $infodecode = json_decode($info, true);
+
+       if($infodecode){
+        foreach($infodecode["response"]["songs"] as $song){
+          if($song["tracks"][0]["foreign_id"]){
+            $result=explode(":", $song["tracks"][0]["foreign_id"]);
+            $id_rhapso = $result[2];
+            //$params = array("" => $key, "type" => "track");
+
+              $url="http://api.rhapsody.com/v1/tracks/".$id_rhapso;
+
+              //$url .= "?". http_build_query($params);
+
+
+              $ch = curl_init();
+              curl_setopt ($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'apikey:'.$api_key));
+              curl_setopt($ch, CURLOPT_URL, $url );
+              curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+              $info=curl_exec($ch);
+              $songs = json_decode($info, true);
+              if($songs["code"]){
+                $url="http://api.rhapsody.com/v1/search/typeahead";
+                $params = array("q" => $song["title"], "type" => "track");
+                $url .= "?". http_build_query($params);
+
+                $ch = curl_init();
+                curl_setopt ($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'apikey:'.$api_key));
+                curl_setopt($ch, CURLOPT_URL, $url );
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $info=curl_exec($ch);
+                $infodecode2 = json_decode($info, true);
+                foreach($infodecode2 as $songRhapsody){
+                  if($songRhapsody["artist"]["name"]==$song["artist_name"]){
+                    array_push($array,$songRhapsody);
+                  }
+                
+                
+                }
+              }
+              else{
+                  //$songs=$infodecode;
+                  array_push($array, $songs);
+                }
+
+              
+            }
+        }
+        //$result=explode(":",$infodecode["response"]["songs"][0]["tracks"][0]["foreign_id"]);
+        //$id_rhapso=
+       }
+
+      /*$params = array("q" => $key, "type" => "track");
 
             $url="http://api.rhapsody.com/v1/search/typeahead";
 
@@ -549,9 +616,10 @@ class ItemRestController extends Controller
             curl_setopt($ch, CURLOPT_URL, $url );
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $info=curl_exec($ch);
-            $infodecode = json_decode($info, true);
-       if($infodecode){
-        $view->setStatusCode(200)->setData($infodecode);
+            $infodecode = json_decode($info, true);*/
+
+       if($array){
+        $view->setStatusCode(200)->setData($array);
       }
       else{
         $view->setStatusCode(404);

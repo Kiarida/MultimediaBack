@@ -61,7 +61,7 @@ class GetMetadataCommand extends ContainerAwareCommand
          }
          if(!isset($item["idartiste"][0]["urlCover"])){
           $repoArtiste->putMusicArtist($item["idartiste"][0]["id"], $infodecode["response"]);
-          $repoArtiste->updateImgArtistLastFM($item["idartiste"]);
+          $repoArtiste->updateImgArtistLastFM($item["idartiste"], $infodecode["response"]["songs"][0]["artist_id"]);
           $asso = $this->getGenresItemAction($item["idartiste"][0]["id"]);
           $similar = $repoArtiste->getSimilarArtists($item["idartiste"]);
           
@@ -82,8 +82,7 @@ class GetMetadataCommand extends ContainerAwareCommand
 
 
     public function getGenresItemAction($idArtist){
-     $view = FOSView::create();
-     $em =$this->getDoctrine()->getManager();
+     $em = $this->getContainer()->get('doctrine')->getManager();
      $repoGenre = $em->getRepository('ByExampleDemoBundle:Genre');
      $repoArtists = $em->getRepository('ByExampleDemoBundle:Artiste');
      $artist=$repoArtists->find($idArtist);
@@ -109,12 +108,8 @@ class GetMetadataCommand extends ContainerAwareCommand
      
 
      if ($new) {
-            $view->setStatusCode(200)->setData($new);
-        } else {
-            $view->setStatusCode(407);
-        }
-
-        return $view;
+            return $new;
+        } 
       }
 
 
