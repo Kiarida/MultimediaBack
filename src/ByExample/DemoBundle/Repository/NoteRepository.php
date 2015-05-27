@@ -133,20 +133,6 @@ class NoteRepository extends EntityRepository
         return $note;
     }
 
-
-
-    public function getUserNoteItem($iditem, $iduser){
-        $query = $this->_em->createQuery('SELECT n.note FROM ByExampleDemoBundle:Note n WHERE n.iditem = '.$iditem.' AND n.idutilisateur ='.$iduser);
-        $note = $query->getResult();
-        return $note;
-    }
-
-    public function getUserNoteArtiste($idartiste, $iduser){
-        $query = $this->_em->createQuery('SELECT n.note FROM ByExampleDemoBundle:Note n WHERE n.idartiste = '.$idartiste.' AND n.idutilisateur ='.$iduser);
-        $note = $query->getResult();
-        return $note;
-    }
-
     public function addNoteTagItem($idTag, $idItem, $idUtilisateur, $param, $note_tag, $type){
 
   		$repository = $this->_em->getRepository('ByExampleDemoBundle:Note');

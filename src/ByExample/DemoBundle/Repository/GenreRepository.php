@@ -44,41 +44,29 @@ class GenreRepository extends EntityRepository
 
 
 			foreach($infos["terms"] as $info){			
-					$genre=$info;
-				    $genres = $repository->findByLibelle($genre["name"]);
-				    
-				   
-						if(!$genres){
-					    $newGenre=new Genre();
-					    $newGenre->setLibelle($genre["name"]);
-					    $newGenre->addIdartiste($artiste);
-						$newGenre->setUrlCover($artiste->getUrlcover());
-							//array_push($informa, $newGenre);
-					    $this->_em->persist($newGenre);
-					    $this->_em->flush();
-
-						$idGenre = $newGenre->getId();
-						}
-						else{
-							//return $genres;
-							//array_push($informa, $genres["id"]);
-
-							$idGenre = $genres[0]->getId();
-						}
-						$conn = $this->_em->getConnection();
-						$query = $this->_em->createQuery('SELECT ag FROM ByExampleDemoBundle:Artistegenre ag WHERE ag.idartiste=:id AND ag.idgenre =:idgenre')
-           				->setParameter("id",$artiste->getId())
-            			->setParameter("idgenre",$idGenre);
-					    $asso = $query->getResult(Query::HYDRATE_OBJECT);
-					     if(!$asso){
-				      		$tag = $conn->insert("artistegenre", array("idGenre"=>$idGenre, "idArtiste"=>$artiste->getId(), "frequency"=>$genre["frequency"], "weight"=>$genre["weight"]));
-				      }
-				      
-				
-		}
-		//return ;
-			//array_push($new, $itemFound);
-
+				$genre=$info;
+				$genres = $repository->findByLibelle($genre["name"]);
+				if(!$genres){
+					$newGenre=new Genre();
+					$newGenre->setLibelle($genre["name"]);
+					$newGenre->addIdartiste($artiste);
+					$newGenre->setUrlCover($artiste->getUrlcover());
+					//array_push($informa, $newGenre);
+					$this->_em->persist($newGenre);
+					$this->_em->flush();
+					$idGenre = $newGenre->getId();
+				}
+				else{
+					$idGenre = $genres[0]->getId();
+				}
+				$conn = $this->_em->getConnection();
+				$query = $this->_em->createQuery('SELECT ag FROM ByExampleDemoBundle:Artistegenre ag WHERE ag.idartiste=:id AND ag.idgenre =:idgenre')
+           		->setParameter("id",$artiste->getId())
+            	->setParameter("idgenre",$idGenre);
+				$asso = $query->getResult(Query::HYDRATE_OBJECT);
+				if(!$asso){
+				    $tag = $conn->insert("artistegenre", array("idGenre"=>$idGenre, "idArtiste"=>$artiste->getId(), "frequency"=>$genre["frequency"], "weight"=>$genre["weight"]));
+				}	
+			}
 	}
-
 }

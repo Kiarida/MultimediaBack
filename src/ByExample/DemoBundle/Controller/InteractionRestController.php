@@ -34,7 +34,7 @@ use Doctrine\ORM\Query;
 class InteractionRestController extends Controller{
    
     /**
-    * Permet d'enregistrer une intéraction liée à une écoute
+    * Permet d'enregistrer une interaction liée à une écoute
     * @Post("users/{id}/interaction")
     * @ApiDoc()
     * @return FOSView

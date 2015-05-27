@@ -18,44 +18,28 @@ use \DateTime;
  */
 class ItemRepository extends EntityRepository
 {
-	public function findItemsBySearchKey($key)
-	{
+	public function findItemsBySearchKey($key){
         $key = "%".$key."%";
 
 		$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}, partial alb.{id,titre}
                                             FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
                                             WHERE i.titre LIKE :key')
         ->setParameter('key', $key);
-
-        /*$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}
-                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a
-                                            WHERE i.titre LIKE :key')
-        ->setParameter('key', $key);*/
-
         $items = $query->getResult(Query::HYDRATE_ARRAY);
         return $items;
 	}
 
-    public function findItemsByPopularity($days, $limit)
-    {
-
+    public function findItemsByPopularity($days, $limit){
         $query = $this->_em->createQuery(
-        'SELECT COUNT(i.id) as views, i.id, i.titre, i.note, i.url, i.urlCover, alb.titre as albumTitre, a.id as idArtiste, a.nom
-        FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb, ByExampleDemoBundle:Ecoute e
-        WHERE e.iditem = i.id
-        AND (e.date > :before)
-				AND i.typeitem = 1
-        GROUP BY i.id
-        ORDER BY views DESC')
+        'SELECT partial i.{id, titre, note, url, urlCover}, partial alb.{id, titre}, partial a.{id, nom} FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb, ByExampleDemoBundle:Ecoute e
+        WHERE e.iditem = i.id AND (e.date > :before) AND i.typeitem=1 GROUP BY i.id ORDER BY i.nbvues DESC')
         ->setParameter('before', new \DateTime('-'.$days.' days'))
         ->setMaxResults($limit);
-        $items = $query->getResult();
+        $items = $query->getResult(Query::HYDRATE_ARRAY);
         return $items;
     }
 
-    public function findTagsByItem($idItem)
-    {
-
+    public function findTagsByItem($idItem){
         $query = $this->_em->createQuery(
         'SELECT t.id, t.libelle, nt.note
         FROM ByExampleDemoBundle:Tag t, ByExampleDemoBundle:NoteTagItem nt
@@ -66,120 +50,33 @@ class ItemRepository extends EntityRepository
         return $items;
     }
 
-    public function findRandomItemByGenre($idGenre)
-    {
-
-        /*$rsm = new ResultSetMapping($em);
-        $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
-        $rsm->addEntityResult('ByExampleDemoBundle:Artiste','y');
-       
-        
-        
-        $rsm->addScalarResult('nom','nom');
-        $rsm->addScalarResult('id','id');
-        $rsm->addScalarResult('url','url');
-       
-        $rsm->addScalarResult('titre','i');
-        $rsm->addScalarResult('note','note');
-        $rsm->addScalarResult('duree','duree');
-        $rsm->addScalarResult('typeItem','typeItem');
-        $rsm->addScalarResult('nbVues','nbVues');
-        $rsm->addScalarResult('urlCover','urlCover');
-        
-
-        $rsm->addScalarResult('date','date');
-        //$rsm->addJoinedEntityResult('ByExampleDemoBundle:Item','ialb');
-        $rsm->addScalarResult('idArtiste','idArtiste');
-        $rsm->addMetaResult('titre', 'title');
-
-
-
-
-        $this->_em->flush();
-        $this->_em->clear();
-
-        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom, ialb.titre as title FROM item i, itemgenre ig, artiste y,itemartiste ia, item ialb, itemitem alb
-        WHERE i.id = ig.idItem AND i.id = ia.idItem
-        AND i.id=alb.iditem
-        AND ialb.id = alb.idalbum
-        AND y.id = ia.idArtiste
-		AND i.typeitem = 1
-        AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
-        $query->setParameter(1, $idGenre);
-
-
-        /*$query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom, alb.titre FROM item i, itemgenre ig, artiste y,itemartiste ia LEFT JOIN i.idalbum
-        WHERE i.id = ig.idItem AND i.id = ia.idItem
-        AND y.id = ia.idArtiste
-                AND i.typeitem = 1
-        AND ig.idGenre = ? ORDER BY RAND() LIMIT 1', $rsm);
-        $query->setParameter(1, $idGenre);*/
-
-        $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idgenre g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idGenre)->getSingleScalarResult();
-       
+    public function findRandomItemByGenre($idGenre){
+        $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idgenre g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idGenre)->getSingleScalarResult(); 
         $offset = max(0, rand(0, $rows - 1));
-
         $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem, urlCover}, partial a.{id,nom}, partial alb.{id,titre}
                                             FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb LEFT JOIN a.idgenre g
                                             WHERE g.id = :key AND i.typeitem=1')
         ->setParameter('key', $idGenre)
         ->setMaxResults(1)
         ->setFirstResult($offset);
-
         $item = $query->getResult(Query::HYDRATE_ARRAY);
         return $item;
     }
 
-    public function findRandomItemByArtiste($idArtiste)
-    {
-
-        /*$rsm = new ResultSetMapping($em);
-        $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
-        $rsm->addEntityResult('ByExampleDemoBundle:Artiste','y');
-        $rsm->addScalarResult('nom','nom');
-        $rsm->addScalarResult('id','id');
-        $rsm->addScalarResult('url','url');
-        $rsm->addScalarResult('titre','titre');
-        $rsm->addScalarResult('note','note');
-        $rsm->addScalarResult('duree','duree');
-        $rsm->addScalarResult('typeItem','typeItem');
-        $rsm->addScalarResult('nbVues','nbVues');
-        $rsm->addScalarResult('date','date');
-        $rsm->addScalarResult('urlCover','urlCover');
-
-        $rsm->addScalarResult('idArtiste','idArtiste');
-
-        $this->_em->flush();
-        $this->_em->clear();
-
-        $query = $this->_em->createNativeQuery('SELECT i.*, idArtiste, y.nom FROM item i,artiste y,itemartiste ia
-        WHERE i.id = ia.idItem
-        AND y.id = ia.idArtiste
-				AND i.typeitem = 1
-        AND ia.idArtiste = ? ORDER BY RAND() LIMIT 1', $rsm);
-        $query->setParameter(1, $idArtiste);
-
-        $item = $query->getSingleResult();
-        return $item;*/
-
-
+    public function findRandomItemByArtiste($idArtiste){
         $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idArtiste)->getSingleScalarResult();
-       
         $offset = max(0, rand(0, $rows - 1));
-
         $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem, urlCover}, partial a.{id,nom}, partial alb.{id,titre}
                                             FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
                                             WHERE a.id = :key AND i.typeitem=1')
         ->setParameter('key', $idArtiste)
         ->setMaxResults(1)
         ->setFirstResult($offset);
-
         $item = $query->getResult(Query::HYDRATE_ARRAY);
         return $item;
     }
 
     public function findItemByAction($id, $id_action){
-
         $rsm = new ResultSetMapping($em);
         $rsm->addEntityResult('ByExampleDemoBundle:Item','i');
         $rsm->addEntityResult('ByExampleDemoBundle:Actions','a');
@@ -208,11 +105,8 @@ class ItemRepository extends EntityRepository
     }
 
     public function findItemByAlbum($idalbum){
-         //$query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
-				$query = $this->_em->createQuery('SELECT i, partial r.{id, nom} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a JOIN i.idartiste r WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
-
-
-				$items = $query->getResult(Query::HYDRATE_ARRAY);
+		$query = $this->_em->createQuery('SELECT i, partial r.{id, nom} FROM ByExampleDemoBundle:Item i JOIN i.idalbum a JOIN i.idartiste r WHERE a = :idalbum')->setParameter('idalbum', $idalbum);
+		$items = $query->getResult(Query::HYDRATE_ARRAY);
         return $items;
     }
 
@@ -221,8 +115,6 @@ class ItemRepository extends EntityRepository
         $albums =  $query->getResult(Query::HYDRATE_ARRAY);
         return $albums;
     }
-
-
 
         /*On va chercher tous les items qui n'ont pas d'urlCover, leur album et leur artiste*/
         public function findNewItemsAndArtists(){
@@ -316,10 +208,7 @@ class ItemRepository extends EntityRepository
                     $conn = $this->_em->getConnection();
                     $conn->insert("itemartiste", array("idItem"=>$idItem, "idArtiste"=>$idArtiste));
                     $conn->insert("itemitem", array("idItem"=>$idItem, "idAlbum"=>$idAlbum));
-                
-                
                 }
-                
              }
              else{
                 $item = new Item();
@@ -366,57 +255,11 @@ class ItemRepository extends EntityRepository
             return $item=$repository->findItemByArtistandName($titre, $idArtiste);;
         }
 
-
-        public function getItemGrooveshark($url, $request){
-            $gs = new gsAPI();
-            $session = $request->getSession();
-            if (!empty($_SESSION['gsSessionID'])) {
-            //since we already have the gsSessionID lets restore that and see if were logged in already to Grooveshark
-                $gs->setSession($_SESSION['gsSessionID']);
-                if (!empty($_GET['token'])) {
-                    //we must've gotten back from Grooveshark after the user authenticated
-                    $user = $gs->authenticateToken($_GET['token']);
-                    //the logged in user is saved in gsSessionID and you don't need to store anything else on your end
-                    //when the user refreshes we will restore the gsSessionID and get the user again
-                } else {
-                    $user = $gs->getUserInfo();
-                }
-                if (empty($user['UserID'])) {
-                    //not logged in
-                    $user = null;
-                }
-            } else {
-              //since we didn't already have a gsSessionID, start one with Grooveshark and store it
-              $sessionID = $gs->startSession();
-              if (empty($sessionID)) {
-                  exit;
-              }
-              $session->set('gsSessionID', $sessionID);
-              //$_SESSION['gsSessionID'] = $sessionID;
-            }
-
-            $user = $gs->authenticate("", "");
-            $country = $gs->getCountry();
-
-            $url = $gs->getSubscriberStreamKey($url);
-            
-            $session->set("gsStreamKey", $url["StreamKey"]);
-            $session->set("gsStreamServer", $url["StreamServerID"]);
-            $session->set("gsSongID", $iditem);
-            return $url;
-        }
-
-
-
-
         public function getAlbumLastFM($artist, $album, $item){
             $params = array("artist" => $artist, "album" => $album[0]["titre"], "format" => "json");
 
             $url="http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=30c3c9603ff7e5fba386bf8348abdb46";
-
             $url .= '&' . http_build_query($params);
-
-
             $ch = curl_init();
             curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
             curl_setopt($ch, CURLOPT_URL, $url );
@@ -430,24 +273,11 @@ class ItemRepository extends EntityRepository
                 $date = explode("    ", $date[0]);
                 $date = date_create_from_format('d M Y', $date[1]);
             }
-            //$date=$date->format("Y-m-d");
-           // $date=new DateTime($date);
             $cover=$infodecode["album"]["image"][4]["#text"];
-
-        
-
             $query = $this->_em->createQuery('UPDATE ByExampleDemoBundle:Item i SET i.date=:d, i.urlCover =:cover WHERE i.id=:id')
             ->setParameter("d",$date)
             ->setParameter("cover",$cover)
             ->setParameter("id",$album[0]["id"]);
-            /*$qb = $this->_em->createQueryBuilder();
-                $q = $qb->update('ByExampleDemoBundle:Item', 'u')
-                    ->set('u.date', $date)
-                    ->set('u.urlCover', $cover)
-                    ->where('u.id = ?1')
-                    ->setParameter(1, $album[0]["id"])
-                    ->getQuery();
-                    $p = $q->execute();*/
             $result=$query->getResult();
 
             $cover="'".$infodecode["album"]["image"][4]["#text"]."'";
@@ -460,9 +290,6 @@ class ItemRepository extends EntityRepository
                     $p = $q->execute();
 
             //return $infodecode; 
-         
-        
-
         }
 
         public function findLastItemBySession($id_session){

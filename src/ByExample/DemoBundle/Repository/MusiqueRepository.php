@@ -32,13 +32,13 @@ public function putMusicItem($idItem, $infos){
         $newMusique->setIditem($item);
         $this->_em->persist($newMusique);
 
-        $qb = $this->_em->createQueryBuilder();
+        /*$qb = $this->_em->createQueryBuilder();
         $q = $qb->update('ByExampleDemoBundle:Item', 'u')
         ->set('u.duree', $infos["songs"][0]["audio_summary"]["duration"])
         ->where('u.id = ?1')
         ->setParameter(1, $idItem)
         ->getQuery();
-        $p = $q->execute();
+        $p = $q->execute();*/
 
 
         $this->_em->flush();

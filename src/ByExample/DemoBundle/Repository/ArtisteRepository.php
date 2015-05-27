@@ -73,31 +73,6 @@ class ArtisteRepository extends EntityRepository
         }
     }
 
-
-
-    public function updateArtist($artiste){
-
-        //First request : we make a call to lastfm for urlCover
-        $params = array("artist" => $artiste[0]["nom"],"format" => "json");
-
-            $url="http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=30c3c9603ff7e5fba386bf8348abdb46";
-
-            $url .= '&' . http_build_query($params);
-
-
-            $ch = curl_init();
-            curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
-            curl_setopt($ch, CURLOPT_URL, $url );
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $info=curl_exec($ch);
-            $infodecode = json_decode($info, true);
-            $img="'".$infodecode["artist"]["image"][3]["#text"]."'";
-
-        //Second request : we make a call to the Echonest for similar artist and EchonestID
-
-
-    }
-
     public function updateImgArtistLastFM($artiste, $idEchonest){
         $params = array("artist" => $artiste[0]["nom"],"format" => "json");
 

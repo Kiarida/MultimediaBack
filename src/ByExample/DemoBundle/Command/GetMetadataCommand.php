@@ -74,7 +74,7 @@ class GetMetadataCommand extends ContainerAwareCommand
 
 
         $em->flush();
-        $output->writeln($similar);
+        $output->writeln();
 
     }
 

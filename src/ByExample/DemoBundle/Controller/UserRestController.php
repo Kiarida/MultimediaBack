@@ -121,7 +121,7 @@ class UserRestController extends Controller
         $view = FOSView::create();
         $em = $this->getDoctrine()->getManager();
         $repo=$em->getRepository('ByExampleDemoBundle:Note');
-        $notes=$repo->getUserNoteItem($id_item,$iduser);
+        $notes=$repo->findNoteByItemAndUser($id_item,$iduser);
         if ($notes){
             $notes["idItem"] = intval($id_item);
             $view->setData($notes);
@@ -405,7 +405,7 @@ class UserRestController extends Controller
         $view = FOSView::create();
         $em = $this->getDoctrine()->getManager();
         $repo=$em->getRepository('ByExampleDemoBundle:Note');
-        $notes=$repo->getUserNoteArtiste($idArtiste,$iduser);
+        $notes=$repo->findNoteByArtisteAndUser($idArtiste,$iduser);
         if ($notes){
              $noteMoy=$repo->findNoteByArtiste($idArtiste);
             if($noteMoy){

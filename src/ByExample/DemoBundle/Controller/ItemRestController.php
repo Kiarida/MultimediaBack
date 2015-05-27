@@ -180,11 +180,11 @@ class ItemRestController extends Controller
 
   /**
   * Parcourt la liste des items en BDD et récupère les infos depuis echonest
-  * @Route("/items/echonest/{idTrack}")
+  * @Route("/items/echonest")
   * @Method({"GET"})
   * @ApiDoc()
   */
-  public function getItemEchonestAction($idTrack){
+  public function getItemEchonestAction(){
      $view = FOSView::create();
      $em =$this->getDoctrine()->getManager();
      $repo = $em->getRepository('ByExampleDemoBundle:Item');
@@ -288,59 +288,6 @@ class ItemRestController extends Controller
   }
 
 
-
-
-
-
-  /**
-  * Récupère les infos sur les artistes depuis echonest
-  * @Route("")
-  * @Method({"GET"})
-  * @ApiDoc()
-  */
-  public function getGenresAction(){
-     $view = FOSView::create();
-     $em =$this->getDoctrine()->getManager();
-     $repo = $em->getRepository('ByExampleDemoBundle:Item');
-     $repoGenre = $em->getRepository('ByExampleDemoBundle:Genre');
-     $repoArtists = $em->getRepository('ByExampleDemoBundle:Artiste');
-     $artists=$repoArtists->findAll();
-     $infos=[];
-     foreach($artists as $artist){
-       $artistName=$artist->getNom();
-       $params = array("name" => $artistName);
-       $url="http://developer.echonest.com/api/v4/artist/terms?api_key=1N7LROIETL6PEVJAF&format=json";
-
-       $url .= '&' . http_build_query($params);
-
-       $ch = curl_init();
-       curl_setopt ($ch, CURLOPT_HTTPHEADER, array ('Accept: application/json'));
-       curl_setopt($ch, CURLOPT_URL, $url );
-       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-       $info=curl_exec($ch);
-       $infodecode = json_decode($info, true);
-
-       curl_close($ch);
-       $items=$repo->findItemByArtist($artist->getId());
-       foreach($items as $item){
-         $new = $repoGenre->addGenre($item, $infodecode["response"]);
-         array_push($infos, $new);
-       }
-
-     }
-
-     if ($artists) {
-            $view->setStatusCode(200)->setData($infos);
-        } else {
-            $view->setStatusCode(407);
-        }
-
-        return $view;
-  }
-
-
-
-
   /**
   * Retourne les pistes d'un artiste donné
   * @Route("/items/albums/{idArtiste}")
@@ -378,29 +325,6 @@ class ItemRestController extends Controller
         return $view;
   }
 
-/**
-  * Retourne les pistes d'un album donné
-  * @Route("/items/album/{idAlbum}")
-  * @Method({"GET"})
-  * @ApiDoc()
-  */
-  public function getItemByAlbumAction($idAlbum){
-
-    $view = FOSView::create();
-
-    $em =$this->getDoctrine()->getManager();
-    $repo = $em->getRepository('ByExampleDemoBundle:Item');
-    $item = $repo->findItemByAlbum($idAlbum);
-    //$item = $repo->findItemByAlbum($idAlbum);
-
-    if ($item) {
-            $view->setStatusCode(200)->setData($item);
-        } else {
-            $view->setStatusCode(404);
-        }
-
-        return $view;
-  }
 
   /**
     * Met à jour la note d'un tag sur un item
@@ -472,61 +396,7 @@ class ItemRestController extends Controller
 
             return $view;
           }
-
-    /**
-    * Test streaming grooveshark
-    * @Route("items/grooveshark/{iditem}")
-    * @Method({"GET"})
-    * @ApiDoc()
-    */
-
-    public function getGroovesharkAction($iditem, Request $request){
-      $view = FOSView::create();
-      $this->getRequest()->getSession()->clear();
-      $em =$this->getDoctrine()->getManager();
-      $repo = $em->getRepository('ByExampleDemoBundle:Item');
-      $item=$repo->find($iditem);
-      $url=$item->getUrl();
-      $url = $repo->getItemGrooveshark($url, $request);
-    //$session = $request->getSession();
-
-// définit et récupère des attributs de session
-    
-    if($url){
-          $view->setStatusCode(200)->setData($url);
-      } else {
-          $view->setStatusCode(404);
-      }
-
-      return $view;
-    }
-
-
-    /**
-    * Marks 30 seconds
-    * @Route("items/grooveshark/mark30secondes")
-    * @Method({"GET"})
-    * @ApiDoc()
-    */
-    public function mark30secondeAction(){
-      $view = FOSView::create();
-      $gs = new gsAPI();
-
-      $session = $this->getRequest()->getSession();
-      $gs->sessionID=$session->get("gsSessionID");
-      $streamKey = $session->get('gsStreamKey');
-      $streamServer = $session->get('gsStreamServer');
-      $success = $gs->markStreamKeyOver30Secs($streamKey, $streamServer);
-        
-      if($success){
-        $view->setStatusCode(200)->setData($success);
-      }
-      else{
-        $view->setStatusCode(404);
-      }
-
-      return $view;
-    }
+   
 
     /**
   * Recherche des items dans la base en fonction du mot clé donné en paramètre
@@ -645,60 +515,8 @@ class ItemRestController extends Controller
 
       return $view;
     }
-    /**
-    * Mark complete video
-    * @Route("items/grooveshark/markComplete")
-    * @Method({"GET"})
-    * @ApiDoc()
-    */
-    public function markCompleteAction(){
-      $view = FOSView::create();
-      $gs = new gsAPI();
+  
 
-      $session = $this->getRequest()->getSession();
-      $gs->sessionID=$session->get("gsSessionID");
-      $streamKey = $session->get('gsStreamKey');
-      $songID = $session->get('gsSongID');
-      $streamServer = $session->get('gsStreamServer');
-      $success = $gs->markSongComplete($songID, $streamKey, $streamServer);
-        
-      if($success){
-        $view->setStatusCode(200)->setData($success);
-      }
-      else{
-        $view->setStatusCode(404);
-      }
-
-      return $view;
-    }
-
-
-    /**
-    * Get info from grooveshark artist
-    * @Route("items/grooveshark/artistInfo")
-    * @Method({"GET"})
-    * @ApiDoc()
-    */
-    public function artistInfoAction(){
-      $view = FOSView::create();
-      $gs = new gsAPI();
-
-      $session = $this->getRequest()->getSession();
-      $gs->sessionID=$session->get("gsSessionID");
-    
-      $success = $gs->getArtistAlbums(401561);
-      foreach($success as $succ){
-
-      }
-      if($success){
-        $view->setStatusCode(200)->setData($success);
-      }
-      else{
-        $view->setStatusCode(404);
-      }
-
-      return $view;
-    }
 
     /**
     * Insère titre / album et artiste sommairement
@@ -717,9 +535,6 @@ class ItemRestController extends Controller
         $nom = $this->getRequest()->request->get('nom');
         $repo = $em->getRepository('ByExampleDemoBundle:Item');
         $success = $repo->addItemArtiste($url, $titre, $nomAlbum, $nom, $duration);
-        
-
-        //
       }
       if($success){
        //$link = $repo->getItemGrooveshark($url, $this->getRequest());
