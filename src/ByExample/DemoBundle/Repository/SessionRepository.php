@@ -117,6 +117,7 @@ class SessionRepository extends EntityRepository{
 		$repoItem = $this->_em->getRepository('ByExampleDemoBundle:Item');
 		if($id_user && $session == false){
 			$session = $repo->findCurrentSession($id_user);
+			return $id_user;
 		}
 		if($session){
 			$ecoute = $repoEcoute->findLastEcouteBySession($session->getId());
