@@ -66,6 +66,9 @@ class SecurityController extends Controller
 
         $password = $user->getPassword();
         $utilisateur = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Utilisateur')->findOneById($user->getId());
+
+        
+
         $created = date('c');
         $nonce = substr(md5(uniqid('nonce_', true)), 0, 16);
         $nonceHigh = base64_encode($nonce);
@@ -74,7 +77,7 @@ class SecurityController extends Controller
         $auth = 'WSSE profile="'.$username.'"';
         $view->setHeader("Authorization", 'WSSE profile="UsernameToken"');
         $view->setHeader("X-WSSE", "UsernameToken Username=\"{$username}\", PasswordDigest=\"{$passwordDigest}\", Nonce=\"{$nonceHigh}\", Created=\"{$created}\"");
-        $data = array('WSSE' => $header, "auth" => $auth, "email" => $user->getEmail(), "country"=> $utilisateur->getPays(), "id"=>$user->getId(), "username" => $user->getUsername());
+        $data = array('WSSE' => $header, "auth" => $auth, "email" => $user->getEmail(), "country"=> $utilisateur->getPays(), "id"=>$user->getId(), "username" => $user->getUsername(), "role" => $user->getRoles());
         $view->setStatusCode(200)->setData($data);
         return $view;
     }

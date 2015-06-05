@@ -140,6 +140,13 @@ class Item
       */
      private $iditemplaylist;
 
+     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Recommandation", mappedBy="iditem")
+     */
+    private $idrecommandation;
+
     /**
      * Constructor
      */
@@ -504,6 +511,39 @@ class Item
     public function getIdplaylist()
     {
         return $this->idplaylist;
+    }
+
+    /**
+     * Add idrecommandation
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\Recommandation $idrecommandation
+     * @return Item
+     */
+    public function addIdrecommandation(\ByExample\RecommandationsBundle\Entity\Recommandation $idrecommandation)
+    {
+        $this->idrecommandation[] = $idrecommandation;
+
+        return $this;
+    }
+
+    /**
+     * Remove idrecommandation
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\Recommandation $idrecommandation
+     */
+    public function removeIdrecommandation(\ByExample\RecommandationsBundle\Entity\Recommandation $idrecommandation)
+    {
+        $this->idrecommandation->removeElement($idrecommandation);
+    }
+
+    /**
+     * Get idrecommandation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIdrecommandation()
+    {
+        return $this->idrecommandation;
     }
 
 }

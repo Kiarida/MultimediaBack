@@ -29,7 +29,8 @@ class AppKernel extends Kernel
             new Mopa\Bundle\WSSEAuthenticationBundle\MopaWSSEAuthenticationBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Nelmio\CorsBundle\NelmioCorsBundle(),
-            new ByExample\DemoBundle\ByExampleDemoBundle()
+            new ByExample\DemoBundle\ByExampleDemoBundle(),
+            new ByExample\RecommandationsBundle\ByExampleRecommandationsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

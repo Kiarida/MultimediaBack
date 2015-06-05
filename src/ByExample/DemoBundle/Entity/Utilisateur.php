@@ -68,6 +68,16 @@ class Utilisateur
      */
     private $idutilisateurami;
 
+
+      /**
+         * @var \Doctrine\Common\Collections\Collection
+         *
+         * @ORM\OneToMany(targetEntity="ByExample\RecommandationsBundle\Entity\TestUser", mappedBy="idutilisateur", fetch="EXTRA_LAZY")
+         *
+         */
+        private $idtestuser;
+
+
     /**
      * Constructor
      */
@@ -221,5 +231,39 @@ class Utilisateur
     public function getIdutilisateurami()
     {
         return $this->idutilisateurami;
+    }
+
+
+    /**
+     * Add idtestuser
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\TestUser $idtestuser
+     * @return Utilisateur
+     */
+    public function addIdtestuser(\ByExample\RecommandationsBundle\Entity\TestUser $idtestuser)
+    {
+        $this->idtestuser[] = $idtestuser;
+
+        return $this;
+    }
+
+    /**
+     * Remove idtestuser
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\TestUser $idtestuser
+     */
+    public function removeIdtestuser(\ByExample\RecommandationsBundle\Entity\TestUser $idtestuser)
+    {
+        $this->idtestuser->removeElement($idtestuser);
+    }
+
+    /**
+     * Get idtestuser
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIdtestuser()
+    {
+        return $this->idtestuser;
     }
 }

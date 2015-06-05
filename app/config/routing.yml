@@ -1,3 +1,7 @@
+by_example_recommandations:
+    resource: "@ByExampleRecommandationsBundle/Resources/config/routing.yml"
+    prefix:   /
+
 # Internal routing configuration to handle ESI
 #_internal:
 #   resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
@@ -32,6 +36,10 @@ byexample_demo_securityrest:
 
 restroutes:
     resource: "@ByExampleDemoBundle/Resources/config/rest_routes.yml"
+    type: rest
+
+algoroutes:
+    resource: "@ByExampleRecommandationsBundle/Resources/config/routing.yml"
     type: rest
 
 #byexample_demo_rest:

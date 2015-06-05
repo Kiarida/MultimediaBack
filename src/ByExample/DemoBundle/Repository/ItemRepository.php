@@ -300,5 +300,14 @@ class ItemRepository extends EntityRepository
             return $item;
         }
 
+        public function findFormatItems($iditem){
+            $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem,nbvues,date,urlCover,urlPoster}, partial a.{id,nom}, partial alb.{id,titre}
+                                            FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb
+                                            WHERE i.id = :key')
+            ->setParameter('key', $iditem);
+            $items = $query->getResult(Query::HYDRATE_ARRAY);
+            return $items;
+        }
+
 
 }
