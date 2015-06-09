@@ -44,6 +44,21 @@ class Test
      */
     private $label;
 
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="mode", type="string", length=25, nullable=true)
+     */
+    private $mode;
+
+     /**
+     * @var integer
+     *
+     * @ORM\Column(name="groups", type="integer", nullable=false)
+     */
+    private $groups;
+
+
 
    /**
          * @var \Doctrine\Common\Collections\Collection
@@ -95,7 +110,7 @@ class Test
      * Set label
      *
      * @param string $label
-     * @return Algorithm
+     * @return Test
      */
     public function setLabel($label){
         $this->label = $label;
@@ -156,5 +171,94 @@ class Test
     {
         $this->idalgorithm->removeElement($idalgorithm);
     }
+
+    /**
+     * Get mode
+     *
+     * @return string 
+     */
+    public function getMode(){
+        return $this->mode;
+    }
+
+
+    /**
+     * Set mode
+     *
+     * @param string $mode
+     * @return Test
+     */
+    public function setMode($mode){
+        $this->mode = $mode;
+    }
+
+
+    /**
+     * Get groups
+     *
+     * @return integer 
+     */
+    public function getGroups(){
+        return $this->groups;
+    }
+
+
+    /**
+     * Set groups
+     *
+     * @param integer $groups
+     * @return Test
+     */
+    public function setGroups($groups){
+        $this->groups = $groups;
+    }
+
+    /**
+     * Set datedebut
+     *
+     * @param \DateTime $datedebut
+     * @return Test
+     */
+    public function setDatedebut($datedebut)
+    {
+        $this->datedebut = $datedebut;
+    
+        return $this;
+    }
+
+    /**
+     * Get datedebut
+     *
+     * @return \DateTime 
+     */
+    public function getDatedebut()
+    {
+        return $this->datedebut;
+    }
+
+    /**
+     * Set datefin
+     *
+     * @param \DateTime $datefin
+     * @return Test
+     */
+    public function setDatefin($datefin)
+    {
+        $this->datefin = $datefin;
+    
+        return $this;
+    }
+
+    /**
+     * Get datefin
+     *
+     * @return \DateTime 
+     */
+    public function getDatefin()
+    {
+        return $this->datefin;
+    }
+
+
 
 }

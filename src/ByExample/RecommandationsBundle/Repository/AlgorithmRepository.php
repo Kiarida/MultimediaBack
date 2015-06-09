@@ -34,17 +34,6 @@ class AlgorithmRepository extends EntityRepository{
 	}
 
 
-	public function listAlgorithmsWithLimits(){
-		
-                $query = $this->_em->createQuery(
-                'SELECT partial a.{id, nom, label, used}, partial l.{id, symbole, valeur}
-                FROM ByExampleRecommandationsBundle:Algorithm a 
-                LEFT JOIN a.idlimit l
-                ');
-                $algo = $query->getResult(Query::HYDRATE_ARRAY);
-                return $algo;
-	}
-
 
 
 

@@ -30,22 +30,23 @@ use Doctrine\ORM\Query;
 
 
 /**
- 	*@NamePrefix("byexample_algorithm_")
+  *@NamePrefix("byexample_test_")
  **/
-class AlgorithmController extends Controller{
+class TestController extends Controller{
    
 
+    
 /**
-    * Permet de lister les algorithmes
-    * @Get("algorithms")
+    * Permet de lister les tests
+    * @Get("tests")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function getAlgorithmsAction(){
+  public function getTestsAction(){
         $view = FOSView::create();    
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ByExampleRecommandationsBundle:Algorithm');
+        $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
         $results=$repo->findAll();
         if($results){ //s'il y a une action sur l'item
           $view->setStatusCode(200)->setData($results);      
@@ -57,19 +58,64 @@ class AlgorithmController extends Controller{
  
 }
 
-
 /**
-    * Créer une association entre des utilisateurs et des algorithmes
-    * @Post("algorithms")
+    * Permet de lister les associations Algorithme pour un utilisateur
+    * @Get("tests/count/")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function postAlgorithmsUserAction($iduser){
+  public function getTestAction(){
         $view = FOSView::create();    
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ByExampleRecommandationsBundle:Algorithmuser');
-        $results=$repo->findByIdutilisateur($iduser);
+        $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
+        $results=$repo->createGroup(3);
+        if($results){ 
+          $view->setStatusCode(200)->setData($results);      
+        }else{ 
+          $view->setStatusCode(404);
+        }
+        return $view;
+}
+
+/**
+    * Permet de récupérer le test courant
+    * @Get("tests/current/")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+  public function getCurrentTestAction(){
+        $view = FOSView::create();    
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
+        $results=$repo->currentTest();
+        if($results){ 
+          $view->setStatusCode(200)->setData($results);      
+        }else{ 
+          $view->setStatusCode(404);
+        }
+        return $view;
+}
+
+/**
+    * Créer une association entre des utilisateurs et des algorithmes
+    * @Post("tests")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+  public function postTestAction(){
+        $view = FOSView::create();    
+        $label = $this->get('request')->request->get('label');
+        //$idalgo = $this->get('request')->request->get('idAlgo');
+        $mode = $this->get('request')->request->get('mode');
+        $groups = $this->get('request')->request->get('groups');
+        $idalgo=[3, 4];
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
+        $arraygroup=$repo->createGroup($groups);
+        $results = $repo->createTest($idalgo, $label, $mode, $groups, $arraygroup);
         if($results){ 
           $view->setStatusCode(200)->setData($results);      
         }else{ 
@@ -79,6 +125,8 @@ class AlgorithmController extends Controller{
 
  
 }
+
+
 
 
 
