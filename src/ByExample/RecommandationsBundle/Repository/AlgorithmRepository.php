@@ -16,7 +16,7 @@ use \DateTime;
  */
 class AlgorithmRepository extends EntityRepository{
 
-	public function addAlgorithmUser($idAlgo, $position, $idUtilisateur){
+	public function addAlgorithmGroup($idAlgo, $position, $idUtilisateur){
         $repositoryAlgo = $this->_em->getRepository('ByExampleRecommandationsBundle:Algorithm');
         $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
         $algo = $repositoryAlgo->findOneById($idAlgo);

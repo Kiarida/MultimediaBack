@@ -44,13 +44,6 @@ class Algorithm
      */
     private $precalculated;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Test", mappedBy="idalgorithm")
-     */
-    private $idtest;
-
 
      /**
      * @var \Doctrine\Common\Collections\Collection
@@ -135,10 +128,10 @@ class Algorithm
      /**
      * Add idgroup
      *
-     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idgroup
+     * @param \ByExample\RecommandationsBundle\Entity\Group $idgroup
      * @return Group
      */
-    public function addIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idgroup)
+    public function addIdalgorithm(\ByExample\RecommandationsBundle\Entity\Group $idgroup)
     {
         $this->idgroup[] = $idgroup;
 
@@ -148,9 +141,9 @@ class Algorithm
     /**
      * Remove idgroup
      *
-     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idgroup
+     * @param \ByExample\RecommandationsBundle\Entity\Group $idgroup
      */
-    public function removeIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idgroup)
+    public function removeIdgroup(\ByExample\RecommandationsBundle\Entity\Group $idgroup)
     {
         $this->idgroup->removeElement($idgroup);
     }
@@ -160,7 +153,7 @@ class Algorithm
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getIdalgorithm()
+    public function getIdgroup()
     {
         return $this->idgroup;
     }

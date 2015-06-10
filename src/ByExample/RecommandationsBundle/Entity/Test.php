@@ -68,22 +68,6 @@ class Test
       private $idgroup;
 
 
-    /**
-     * @var Algorithm
-     *
-     * @ORM\ManyToMany(targetEntity="Algorithm", inversedBy="idtest")
-     * @ORM\JoinTable(name="testalgorithm",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="idTest", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idAlgorithm", referencedColumnName="id")
-     *   }
-     * )
-     */
-    private $idalgorithm;
-
-
 
     /**
      * Get id
@@ -148,29 +132,6 @@ class Test
         return $this->idgroup;
     }
 
-
-    /**
-     * Add idalgorithm
-     *
-     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm
-     * @return Test
-     */
-    public function addIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm)
-    {
-        $this->idalgorithm[] = $idalgorithm;
-
-        return $this;
-    }
-
-    /**
-     * Remove idalgorithm
-     *
-     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm
-     */
-    public function removeIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm)
-    {
-        $this->idalgorithm->removeElement($idalgorithm);
-    }
 
     /**
      * Get mode
