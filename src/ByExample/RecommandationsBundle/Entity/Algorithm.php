@@ -52,6 +52,12 @@ class Algorithm
     private $idtest;
 
 
+     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Group", mappedBy="idalgorithm")
+     */
+    private $idgroup;
 
   
 

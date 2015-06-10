@@ -6,14 +6,22 @@ use Doctrine\ORM\Mapping as ORM;
 use ByExample\DemoBundle\Entity\Utilisateur;
 
 /**
- * TestUser
+ * Group
  *
- * @ORM\Table(name="testutilisateur")
+ * @ORM\Table(name="group")
  * @ORM\Entity
  */
-class TestUser
+class Group
 {
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
 
      /**
      * @var \Utilisateur
@@ -40,9 +48,17 @@ class TestUser
       /**
      * @var integer
      *
-     * @ORM\Column(name="groupe", type="string", length=25, nullable=false)
+     * @ORM\Column(name="numero", type="string", length=25, nullable=false)
      */
-    private $groupe;
+    private $numero;
+
+
+     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Algorithm", mappedBy="idgroup")
+     */
+    private $idalgorithm;
 
 
     /**
@@ -104,25 +120,58 @@ class TestUser
     }
 
     /**
-     * Set groupe
+     * Set numero
      *
-     * @param string $groupe
+     * @param string $numero
      * @return TestUser
      */
-    public function setGroupe($groupe)
+    public function setNumero($numero)
     {
-        $this->groupe = $groupe;
+        $this->numero = $numero;
 
         return $this;
     }
     /**
-     * Get groupe
+     * Get numero
      *
      * @return string
      */
-    public function getGroupe()
+    public function getNumero()
     {
-        return $this->groupe;
+        return $this->numero;
+    }
+
+     /**
+     * Add idalgorithm
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm
+     * @return Group
+     */
+    public function addIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm)
+    {
+        $this->idalgorithm[] = $idalgorithm;
+
+        return $this;
+    }
+
+    /**
+     * Remove idalgorithm
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm
+     */
+    public function removeIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idalgorithm)
+    {
+        $this->idalgorithm->removeElement($idalgorithm);
+    }
+
+    /**
+     * Get idalgorithm
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIdalgorithm()
+    {
+        return $this->idalgorithm;
     }
 
 

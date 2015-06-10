@@ -72,7 +72,7 @@ class Utilisateur
       /**
          * @var \Doctrine\Common\Collections\Collection
          *
-         * @ORM\OneToMany(targetEntity="ByExample\RecommandationsBundle\Entity\TestUser", mappedBy="idutilisateur", fetch="EXTRA_LAZY")
+         * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Group", mappedBy="idutilisateur", fetch="EXTRA_LAZY")
          *
          */
         private $idtestuser;
