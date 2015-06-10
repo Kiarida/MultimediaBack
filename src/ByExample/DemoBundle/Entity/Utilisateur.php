@@ -72,10 +72,13 @@ class Utilisateur
       /**
          * @var \Doctrine\Common\Collections\Collection
          *
-         * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Group", mappedBy="idutilisateur", fetch="EXTRA_LAZY")
-         *
+         * * @ORM\Id
+        * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Group")
+        * @ORM\JoinColumns({
+        *   @ORM\JoinColumn(name="idUtilisateur", referencedColumnName="id")
+        * })
          */
-        private $idtestuser;
+        private $idgroup;
 
 
     /**
@@ -233,37 +236,28 @@ class Utilisateur
         return $this->idutilisateurami;
     }
 
-
     /**
-     * Add idtestuser
+     * Set idgroup
      *
-     * @param \ByExample\RecommandationsBundle\Entity\TestUser $idtestuser
+     * @param string $idgroup
      * @return Utilisateur
      */
-    public function addIdtestuser(\ByExample\RecommandationsBundle\Entity\TestUser $idtestuser)
+    public function setIdgroup($idgroup)
     {
-        $this->idtestuser[] = $idtestuser;
-
+        $this->idgroup = $idgroup;
+    
         return $this;
     }
 
     /**
-     * Remove idtestuser
+     * Get idgroup
      *
-     * @param \ByExample\RecommandationsBundle\Entity\TestUser $idtestuser
+     * @return string 
      */
-    public function removeIdtestuser(\ByExample\RecommandationsBundle\Entity\TestUser $idtestuser)
+    public function getIdgroup()
     {
-        $this->idtestuser->removeElement($idtestuser);
+        return $this->idgroup;
     }
 
-    /**
-     * Get idtestuser
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getIdtestuser()
-    {
-        return $this->idtestuser;
-    }
+  
 }

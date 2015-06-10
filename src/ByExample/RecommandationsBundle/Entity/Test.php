@@ -59,14 +59,14 @@ class Test
     private $groups;
 
 
+      /**
+      * @var \Doctrine\Common\Collections\Collection
+      *
+      * @ORM\OneToMany(targetEntity="Group", mappedBy="idtest")
+      *
+      */
+      private $idgroup;
 
-   /**
-         * @var \Doctrine\Common\Collections\Collection
-         *
-         * @ORM\OneToMany(targetEntity="ByExample\RecommandationsBundle\Entity\TestUser", mappedBy="idtest", fetch="EXTRA_LAZY")
-         *
-         */
-        private $idtestuser;
 
     /**
      * @var Algorithm
@@ -117,35 +117,35 @@ class Test
     }
 
      /**
-     * Add idtestuser
+     * Add idgroup
      *
-     * @param \ByExample\RecommandationsBundle\Entity\TestUser $idtestuser
+     * @param \ByExample\RecommandationsBundle\Entity\Group $idgroup
      * @return Test
      */
-    public function addIdtestuser(\ByExample\RecommandationsBundle\Entity\TestUser $idtestuser)
+    public function addIdgroup(\ByExample\RecommandationsBundle\Entity\Group $idgroup)
     {
-        $this->idtestuser[] = $idtestuser;
+        $this->idgroup[] = $idgroup;
 
         return $this;
     }
 
     /**
-     * Remove idtestuser
+     * Remove idgroup
      *
-     * @param \ByExample\RecommandationsBundle\Entity\TestUser $idtestuser
+     * @param \ByExample\RecommandationsBundle\Entity\Group $idgroup
      */
-    public function removeIdtestuser(\ByExample\RecommandationsBundle\Entity\TestUser $idtestuser)
+    public function removeIdgroup(\ByExample\RecommandationsBundle\Entity\Group $idgroup)
     {
-        $this->idtestuser->removeElement($idtestuser);
+        $this->idgroup->removeElement($idgroup);
     }
 
     /**
-     * Get idtestuser
+     * Get idgroup
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getIdtestuser(){
-        return $this->idtestuser;
+    public function getIdgroup(){
+        return $this->idgroup;
     }
 
 

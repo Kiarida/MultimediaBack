@@ -26,7 +26,7 @@ class Group
      /**
      * @var \Utilisateur
      *
-     * @ORM\Id
+     * 
      * @ORM\ManyToOne(targetEntity="ByExample\DemoBundle\Entity\Utilisateur")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="idUtilisateur", referencedColumnName="id")
@@ -36,7 +36,7 @@ class Group
 
     /**
      * @var \Algorithm
-     * @ORM\Id
+     * 
      * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Test")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="idTest", referencedColumnName="id")
@@ -76,7 +76,7 @@ class Group
      * Set idutilisateur
      *
      * @param \ByExample\DemoBundle\Entity\Utilisateur $idutilisateur
-     * @return TestUser
+     * @return Group
      */
     public function setIdutilisateur(\ByExample\DemoBundle\Entity\Utilisateur $idutilisateur = null)
     {
@@ -100,7 +100,7 @@ class Group
      * Set idtest
      *
      * @param \ByExample\RecommandationsBundle\Entity\Test $idtest
-     * @return TestUser
+     * @return Group
      */
     public function setIdtest(\ByExample\RecommandationsBundle\Entity\Test $idtest = null)
     {
@@ -123,7 +123,7 @@ class Group
      * Set numero
      *
      * @param string $numero
-     * @return TestUser
+     * @return Group
      */
     public function setNumero($numero)
     {

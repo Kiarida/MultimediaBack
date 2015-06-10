@@ -132,4 +132,37 @@ class Algorithm
         $this->precalculated = $precalculated;
     }
 
+     /**
+     * Add idgroup
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idgroup
+     * @return Group
+     */
+    public function addIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idgroup)
+    {
+        $this->idgroup[] = $idgroup;
+
+        return $this;
+    }
+
+    /**
+     * Remove idgroup
+     *
+     * @param \ByExample\RecommandationsBundle\Entity\Algorithm $idgroup
+     */
+    public function removeIdalgorithm(\ByExample\RecommandationsBundle\Entity\Algorithm $idgroup)
+    {
+        $this->idgroup->removeElement($idgroup);
+    }
+
+    /**
+     * Get idgroup
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIdalgorithm()
+    {
+        return $this->idgroup;
+    }
+
 }
