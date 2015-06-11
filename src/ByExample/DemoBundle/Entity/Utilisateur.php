@@ -69,16 +69,18 @@ class Utilisateur
     private $idutilisateurami;
 
 
-      /**
-         * @var \Doctrine\Common\Collections\Collection
-         *
-         * * @ORM\Id
-        * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Group")
-        * @ORM\JoinColumns({
-        *   @ORM\JoinColumn(name="idUtilisateur", referencedColumnName="id")
-        * })
-         */
-        private $idgroup;
+
+        /**
+     * @var \Group
+     *
+     * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Group")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idGroupe", referencedColumnName="id")
+     * })
+     */
+    private $idgroup;
+
+    
 
 
     /**
@@ -236,28 +238,6 @@ class Utilisateur
         return $this->idutilisateurami;
     }
 
-    /**
-     * Set idgroup
-     *
-     * @param string $idgroup
-     * @return Utilisateur
-     */
-    public function setIdgroup($idgroup)
-    {
-        $this->idgroup = $idgroup;
-    
-        return $this;
-    }
-
-    /**
-     * Get idgroup
-     *
-     * @return string 
-     */
-    public function getIdgroup()
-    {
-        return $this->idgroup;
-    }
-
+  
   
 }

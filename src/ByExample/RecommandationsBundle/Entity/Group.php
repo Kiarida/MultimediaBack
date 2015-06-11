@@ -8,8 +8,8 @@ use ByExample\DemoBundle\Entity\Utilisateur;
 /**
  * Group
  *
- * @ORM\Table(name="group")
- * @ORM\Entity
+ * @ORM\Table(name="groupe")
+ * @ORM\Entity(repositoryClass="ByExample\RecommandationsBundle\Repository\GroupRepository")
  */
 class Group
 {
@@ -24,26 +24,24 @@ class Group
     private $id;
 
      /**
-     * @var \Utilisateur
-     *
-     * 
-     * @ORM\ManyToOne(targetEntity="ByExample\DemoBundle\Entity\Utilisateur")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idUtilisateur", referencedColumnName="id")
-     * })
-     */
+      * @var \Doctrine\Common\Collections\Collection
+      *
+      * @ORM\OneToMany(targetEntity="Test", mappedBy="idgroup")
+      *
+      */
     private $idutilisateur;
 
     /**
-     * @var \Algorithm
-     * 
-     * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Test")
+     * @var \Test
+     *
+     * @ORM\ManyToOne(targetEntity="Test")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="idTest", referencedColumnName="id")
      * })
      */
-    private $idtest;
 
+    
+    private $idtest;
 
       /**
      * @var integer
@@ -72,28 +70,6 @@ class Group
     }
 
 
-    /**
-     * Set idutilisateur
-     *
-     * @param \ByExample\DemoBundle\Entity\Utilisateur $idutilisateur
-     * @return Group
-     */
-    public function setIdutilisateur(\ByExample\DemoBundle\Entity\Utilisateur $idutilisateur = null)
-    {
-        $this->idutilisateur = $idutilisateur;
-    
-        return $this;
-    }
-
-    /**
-     * Get idutilisateur
-     *
-     * @return \ByExample\DemoBundle\Entity\Utilisateur 
-     */
-    public function getIdutilisateur()
-    {
-        return $this->idutilisateur;
-    }
 
 
      /**
@@ -173,6 +149,40 @@ class Group
     {
         return $this->idalgorithm;
     }
+
+        /**
+     * Add idutilisateur
+     *
+     * @param \ByExample\DemoBundle\Entity\Utilisateur $idutilisateur
+     * @return Utilisateur
+     */
+    public function addIdutilisateur(\ByExample\DemoBundle\Entity\Utilisateur $idutilisateur)
+    {
+        $this->idutilisateur[] = $idutilisateur;
+    
+        return $this;
+    }
+
+    /**
+     * Remove idutilisateur
+     *
+     * @param \ByExample\DemoBundle\Entity\Utilisateur $idutilisateur
+     */
+    public function removeIdutilisateur(\ByExample\DemoBundle\Entity\Utilisateur $idutilisateur)
+    {
+        $this->idutilisateur->removeElement($idutilisateur);
+    }
+
+    /**
+     * Get idutilisateur
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIdutilisateur()
+    {
+        return $this->idutilisateur;
+    }
+
 
 
 }

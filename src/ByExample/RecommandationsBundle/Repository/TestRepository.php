@@ -18,26 +18,27 @@ use \DateTime;
  */
 class TestRepository extends EntityRepository{
 
-	public function createTest($arrayAlgo, $label, $mode, $groups, $arraygroups){
+	public function createTest($label, $mode, $groups, $arrayAlgo){
 		$this->closeTest();
 		
-        $test = new Test();
-        $test->setDatedebut(new DateTime());
-        $test->setLabel($label);
-        $test->setMode($mode);
-        $test->setGroups($groups);
-        $repositoryAlgo = $this->_em->getRepository('ByExampleRecommandationsBundle:Algorithm');
-        foreach ($arrayAlgo as $idAlgo) {
-        	$algo = $repositoryAlgo->findOneById($idAlgo);
-        	$test->addIdalgorithm($algo);
-        }
-        
-		$this->_em->persist($test);
+                $test = new Test();
+                $test->setDatedebut(new DateTime());
+                $test->setLabel($label);
+                $test->setMode($mode);
+                $test->setGroups($groups);
+                $repositoryGroup = $this->_em->getRepository('ByExampleRecommandationsBundle:Group');
+                $arraygroups = $repositoryGroup->createGroup($groups);
+                foreach ($arraygroups as $groupe => $users) {
+
+                       $setgroupe=$repositoryGroup->attributionGroup($test, $groupe, $users, $arrayAlgo[$groupe]);
+                       $test->addIdgroup($setgroupe);
+                }
+
+        	$this->_em->persist($test);
 		$this->_em->flush();
-		$this->addGroups($test, $arraygroups);
 		$idTest = $test->getId();
 
-	    return $idTest;
+	    return $test;
 	    //return $currentTest->getId();
 	}
 

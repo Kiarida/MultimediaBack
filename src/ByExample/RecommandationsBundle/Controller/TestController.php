@@ -59,13 +59,13 @@ class TestController extends Controller{
 }
 
 /**
-    * Permet de lister les associations Algorithme pour un utilisateur
+    * Test création groupes
     * @Get("tests/count/")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function getTestAction(){
+  public function getTestCountAction(){
         $view = FOSView::create();    
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
@@ -99,7 +99,7 @@ class TestController extends Controller{
 }
 
 /**
-    * Créer une association entre des utilisateurs et des algorithmes
+    * Créer un test
     * @Post("tests")
     * @ApiDoc()
     * @return FOSView
@@ -111,13 +111,15 @@ class TestController extends Controller{
         //$idalgo = $this->get('request')->request->get('idAlgo');
         $mode = $this->get('request')->request->get('mode');
         $groups = $this->get('request')->request->get('groups');
-        $idalgo=[3, 4];
+        $idalgo=array(1 => [3, 4], 2 => [3], 3=>[4]);
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
-        $arraygroup=$repo->createGroup($groups);
-        $results = $repo->createTest($idalgo, $label, $mode, $groups, $arraygroup);
-        if($results){ 
-          $view->setStatusCode(200)->setData($results);      
+        $repoGroup = $em->getRepository('ByExampleRecommandationsBundle:Group');
+        //$arraygroup=$repo->createGroup($groups);
+        $result = $repo->createTest($label, $mode, $groups);
+        //$results = $repoGroup->attributionGroup($result, $groups, $idalgo);
+        if($result){ 
+          $view->setStatusCode(200)->setData($result);      
         }else{ 
           $view->setStatusCode(404);
         }
