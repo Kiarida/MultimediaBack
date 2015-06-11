@@ -28,9 +28,10 @@ class TestRepository extends EntityRepository{
                 $test->setGroups($groups);
                 $repositoryGroup = $this->_em->getRepository('ByExampleRecommandationsBundle:Group');
                 $arraygroups = $repositoryGroup->createGroup($groups);
-                foreach ($arraygroups as $groupe => $users) {
-
+                foreach ($arraygroups as $groupe => $users) { 
+                    //return $arrayAlgo;
                        $setgroupe=$repositoryGroup->attributionGroup($test, $groupe, $users, $arrayAlgo[$groupe]);
+                       //return $setgroupe;
                        $test->addIdgroup($setgroupe);
                 }
 

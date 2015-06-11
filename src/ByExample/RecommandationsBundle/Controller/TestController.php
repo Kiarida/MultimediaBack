@@ -116,7 +116,7 @@ class TestController extends Controller{
         $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
         $repoGroup = $em->getRepository('ByExampleRecommandationsBundle:Group');
         //$arraygroup=$repo->createGroup($groups);
-        $result = $repo->createTest($label, $mode, $groups);
+        $result = $repo->createTest($label, $mode, $groups, $idalgo);
         //$results = $repoGroup->attributionGroup($result, $groups, $idalgo);
         if($result){ 
           $view->setStatusCode(200)->setData($result);      

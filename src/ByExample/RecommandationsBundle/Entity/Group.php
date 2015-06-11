@@ -23,25 +23,32 @@ class Group
      */
     private $id;
 
-     /**
-      * @var \Doctrine\Common\Collections\Collection
-      *
-      * @ORM\OneToMany(targetEntity="Test", mappedBy="idgroup")
-      *
-      */
-    private $idutilisateur;
+
+
 
     /**
-     * @var \Test
-     *
-     * @ORM\ManyToOne(targetEntity="Test")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idTest", referencedColumnName="id")
-     * })
-     */
+      * @var \Doctrine\Common\Collections\Collection
+      *
+      * @ORM\OneToMany(targetEntity="ByExample\DemoBundle\Entity\Utilisateur", mappedBy="idgroup")
+      *
+      */
 
-    
-    private $idtest;
+     /**
+     * @var ByExample\DemoBundle\Entity\Utilisateur
+     *
+     * @ORM\ManyToMany(targetEntity="ByExample\DemoBundle\Entity\Utilisateur", inversedBy="idgroup")
+     * @ORM\JoinTable(name="groupeutilisateur",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idGroupe", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idUtilisateur", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $idutilisateur;
+
+
 
       /**
      * @var integer
@@ -51,10 +58,19 @@ class Group
     private $numero;
 
 
-     /**
-     * @var \Doctrine\Common\Collections\Collection
+
+    /**
+     * @var ByExample\RecommandationsBundle\Entity\Algorithm
      *
-     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Algorithm", mappedBy="idgroup")
+     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Algorithm", inversedBy="idgroup")
+     * @ORM\JoinTable(name="groupealgo",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idGroupe", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idAlgorithme", referencedColumnName="id")
+     *   }
+     * )
      */
     private $idalgorithm;
 

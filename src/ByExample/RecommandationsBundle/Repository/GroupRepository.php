@@ -67,11 +67,12 @@ class GroupRepository extends EntityRepository{
                 $newgroup = new Group();
                 $newgroup->setNumero($groupe);
                 foreach($users as $user){
+                        //return $repositoryUtil->findOneById($user["id"]);
                         $newgroup->addIdutilisateur($repositoryUtil->findOneById($user["id"])); 
                 }
                         
                 foreach ($algos as $idalgo) {
-                        $newgroup->addIdAlgorithm($repositoryAlgo->findOneBy($idalgo));
+                        $newgroup->addIdAlgorithm($repositoryAlgo->findOneById($idalgo));
                 }
                         //$newgroup->setIdtest($test);
                         $this->_em->persist($newgroup);

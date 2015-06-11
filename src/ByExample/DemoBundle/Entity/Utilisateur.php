@@ -69,18 +69,14 @@ class Utilisateur
     private $idutilisateurami;
 
 
-
-        /**
-     * @var \Group
+    /**
+     * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Group")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idGroupe", referencedColumnName="id")
-     * })
+     * @ORM\ManyToMany(targetEntity="ByExample\RecommandationsBundle\Entity\Group", mappedBy="idutilisateur")
      */
+
     private $idgroup;
 
-    
 
 
     /**
