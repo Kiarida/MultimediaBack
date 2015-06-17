@@ -70,15 +70,40 @@ class GroupRepository extends EntityRepository{
                         //return $repositoryUtil->findOneById($user["id"]);
                         $newgroup->addIdutilisateur($repositoryUtil->findOneById($user["id"])); 
                 }
-                        
-                foreach ($algos as $idalgo) {
-                        $newgroup->addIdAlgorithm($repositoryAlgo->findOneById($idalgo));
+                    
+               for($i = 0; $i < count($algos); $i++)  {  
+                //foreach ($algos as $idalgo) {
+                        $newgroup->addIdAlgorithm($repositoryAlgo->findOneById($algos[$i]));
                 }
-                        //$newgroup->setIdtest($test);
+                        $newgroup->setIdtest($test);
                         $this->_em->persist($newgroup);
                         $this->_em->flush();
                 
                 return $newgroup;
+        }
+
+        public function getGroup($idtest){
+                $query = $this->_em->createQuery('SELECT g
+                     FROM ByExampleRecommandationsBundle:Group g
+                     WHERE g.idtest = :key')
+                ->setParameter('key', $idtest);
+                $groupe = $query->getResult(Query::HYDRATE_ARRAY);
+                return $groupe;
+        }
+
+        public function verifyGroups($nbgroups, $allowedGroups){
+
+         $query = $this->_em->createQuery('SELECT COUNT(u.id)
+                     FROM ByExampleDemoBundle:Utilisateur u');
+                $users = $query->getResult(Query::HYDRATE_ARRAY);
+                $count = $users[0][1]/$nbgroups;
+                if($count >= $allowedGroups){
+                  return true;
+                }
+                else{
+                  return false;
+                }
+                return false;
         }
 
 	

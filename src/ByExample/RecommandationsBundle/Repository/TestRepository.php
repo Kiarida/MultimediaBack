@@ -20,7 +20,6 @@ class TestRepository extends EntityRepository{
 
 	public function createTest($label, $mode, $groups, $arrayAlgo){
 		$this->closeTest();
-		
                 $test = new Test();
                 $test->setDatedebut(new DateTime());
                 $test->setLabel($label);
@@ -28,6 +27,8 @@ class TestRepository extends EntityRepository{
                 $test->setGroups($groups);
                 $repositoryGroup = $this->_em->getRepository('ByExampleRecommandationsBundle:Group');
                 $arraygroups = $repositoryGroup->createGroup($groups);
+                $this->_em->persist($test);
+                $this->_em->flush();
                 foreach ($arraygroups as $groupe => $users) { 
                     //return $arrayAlgo;
                        $setgroupe=$repositoryGroup->attributionGroup($test, $groupe, $users, $arrayAlgo[$groupe]);
@@ -102,18 +103,20 @@ class TestRepository extends EntityRepository{
 				$this->_em->persist($testUser);
 				$this->_em->flush();
 				$test->addIdtestuser($testUser);
-				$this->_em->persist($test);
-				$this->_em->flush();
+				
 				//array_push($arrayTestUser, $testUser);
 			}
 		}
+        $this->_em->persist($test);
+        $this->_em->flush();
 	}
 
 	public function currentTest(){
 		$query = $this->_em->createQuery(
-                'SELECT t, a
+                'SELECT t, g, a
                 FROM ByExampleRecommandationsBundle:Test t
-                LEFT JOIN t.idalgorithm a
+                LEFT JOIN t.idgroup g
+                LEFT JOIN g.idalgorithm a
                 WHERE t.datefin is NULL
                 ');
                 $test = $query->getResult(Query::HYDRATE_ARRAY);
@@ -121,13 +124,21 @@ class TestRepository extends EntityRepository{
         return $test;
 	}
 
-	public function closeTest(){
-		$test = $this->findOneBy(array("datefin"=>null));
+	public function closeTest($idtest = false){
+        if($idtest){
+            $test = $this->findOneById($idtest);
+        }
+        else{
+            $test = $this->findOneBy(array("datefin"=>null));
+        }
+		
 		if($test){
 			$test->setDatefin(new DateTime());
-		$this->_em->persist($test);
-		$this->_em->flush();
+		  $this->_em->persist($test);
+		  $this->_em->flush();
+        return true;
 		}
+        return false;
 		
 	}
 

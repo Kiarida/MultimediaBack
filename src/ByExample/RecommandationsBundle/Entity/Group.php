@@ -57,7 +57,15 @@ class Group
      */
     private $numero;
 
-
+     /**
+     * @var \Test
+     *
+     * @ORM\ManyToOne(targetEntity="Test", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idTest", referencedColumnName="id")
+     * })
+     */
+    private $idtest;
 
     /**
      * @var ByExample\RecommandationsBundle\Entity\Algorithm

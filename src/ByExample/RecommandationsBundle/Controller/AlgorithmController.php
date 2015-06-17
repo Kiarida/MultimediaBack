@@ -58,27 +58,6 @@ class AlgorithmController extends Controller{
 }
 
 
-/**
-    * Créer une association entre des utilisateurs et des algorithmes
-    * @Post("algorithms")
-    * @ApiDoc()
-    * @return FOSView
-   */
-
-  public function postAlgorithmsUserAction($iduser){
-        $view = FOSView::create();    
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ByExampleRecommandationsBundle:Algorithmuser');
-        $results=$repo->findByIdutilisateur($iduser);
-        if($results){ 
-          $view->setStatusCode(200)->setData($results);      
-        }else{ 
-          $view->setStatusCode(404);
-        }
-        return $view;
-
- 
-}
 
 
 

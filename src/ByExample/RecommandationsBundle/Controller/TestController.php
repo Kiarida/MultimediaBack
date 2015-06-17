@@ -59,28 +59,8 @@ class TestController extends Controller{
 }
 
 /**
-    * Test création groupes
-    * @Get("tests/count/")
-    * @ApiDoc()
-    * @return FOSView
-   */
-
-  public function getTestCountAction(){
-        $view = FOSView::create();    
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
-        $results=$repo->createGroup(3);
-        if($results){ 
-          $view->setStatusCode(200)->setData($results);      
-        }else{ 
-          $view->setStatusCode(404);
-        }
-        return $view;
-}
-
-/**
     * Permet de récupérer le test courant
-    * @Get("tests/current/")
+    * @Get("tests/current")
     * @ApiDoc()
     * @return FOSView
    */
@@ -99,6 +79,30 @@ class TestController extends Controller{
 }
 
 /**
+    * Vérifie s'il y a assez d'utilisateurs dans chaque groups
+    * @Get("groups/verify")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+  public function getVerifyGroupAction(){
+        $view = FOSView::create();    
+        $em = $this->getDoctrine()->getManager();
+
+        $nbgroups = $this->get('request')->query->get('nbgroups');
+        $repo = $em->getRepository('ByExampleRecommandationsBundle:Group');
+        $allowedGroups = $this->container->getParameter('allowed_groups');
+        $results=$repo->verifyGroups($nbgroups, $allowedGroups);
+        if($results){ 
+          $view->setStatusCode(200)->setData($results);      
+        }else{ 
+          $view->setStatusCode(404);
+        }
+        return $view;
+}
+
+
+/**
     * Créer un test
     * @Post("tests")
     * @ApiDoc()
@@ -108,10 +112,10 @@ class TestController extends Controller{
   public function postTestAction(){
         $view = FOSView::create();    
         $label = $this->get('request')->request->get('label');
-        //$idalgo = $this->get('request')->request->get('idAlgo');
+        $idalgo = $this->get('request')->request->get('idAlgo');
         $mode = $this->get('request')->request->get('mode');
         $groups = $this->get('request')->request->get('groups');
-        $idalgo=array(1 => [3, 4], 2 => [3], 3=>[4]);
+        //$idalgo=array(1 => [3, 4], 2 => [3], 3=>[4]);
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
         $repoGroup = $em->getRepository('ByExampleRecommandationsBundle:Group');
@@ -127,6 +131,34 @@ class TestController extends Controller{
 
  
 }
+
+
+/**
+    * Termine un test
+    * @Get("tests/{idtest}/end")
+    * @ApiDoc()
+    * @return FOSView
+   */
+
+  public function getEndTestAction($idtest){
+        $view = FOSView::create();    
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
+      
+        //$arraygroup=$repo->createGroup($groups);
+        $result = $repo->closeTest($idtest);
+        //$results = $repoGroup->attributionGroup($result, $groups, $idalgo);
+        if($result){ 
+          $view->setStatusCode(200)->setData($result);      
+        }else{ 
+          $view->setStatusCode(404);
+        }
+        return $view;
+
+ 
+}
+
+
 
 
 

@@ -77,7 +77,14 @@ class SecurityController extends Controller
         $auth = 'WSSE profile="'.$username.'"';
         $view->setHeader("Authorization", 'WSSE profile="UsernameToken"');
         $view->setHeader("X-WSSE", "UsernameToken Username=\"{$username}\", PasswordDigest=\"{$passwordDigest}\", Nonce=\"{$nonceHigh}\", Created=\"{$created}\"");
-        $data = array('WSSE' => $header, "auth" => $auth, "email" => $user->getEmail(), "country"=> $utilisateur->getPays(), "id"=>$user->getId(), "username" => $user->getUsername(), "role" => $user->getRoles());
+        if($utilisateur){
+            $data = array('WSSE' => $header, "auth" => $auth, "email" => $user->getEmail(), "country"=> $utilisateur->getPays(), "id"=>$user->getId(), "username" => $user->getUsername(), "role" => $user->getRoles());
+
+        }
+        else{
+            $data = array('WSSE' => $header, "auth" => $auth, "email" => $user->getEmail(), "id"=>$user->getId(), "username" => $user->getUsername(), "role" => $user->getRoles());
+
+        }
         $view->setStatusCode(200)->setData($data);
         return $view;
     }
