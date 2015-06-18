@@ -60,16 +60,16 @@ class TestController extends Controller{
 
 /**
     * Permet de récupérer le test courant
-    * @Get("tests/current")
+    * @Get("tests/current/{iduser}")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function getCurrentTestAction(){
+  public function getCurrentTestAction($iduser){
         $view = FOSView::create();    
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ByExampleRecommandationsBundle:Test');
-        $results=$repo->currentTest();
+        $results=$repo->currentTest($iduser);
         if($results){ 
           $view->setStatusCode(200)->setData($results);      
         }else{ 

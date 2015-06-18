@@ -33,6 +33,15 @@ class AlgorithmRepository extends EntityRepository{
 	    return $idAlgo;
 	}
 
+	public function findAllAlgo(){
+		$query = $this->_em->createQuery(
+			'SELECT a
+			FROM ByExampleRecommandationsBundle:Algorithm a
+			');
+		$algos = $query->getResult(Query::HYDRATE_ARRAY);
+		return $algos;
+	}
+
 
 
 

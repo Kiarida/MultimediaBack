@@ -51,7 +51,7 @@ class ItemRepository extends EntityRepository
     }
 
     public function findRandomItemByGenre($idGenre){
-        $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idgenre g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idGenre)->getSingleScalarResult(); 
+        $rows = $this->_em->createQuery('SELECT COUNT(i.id) FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN a.idgenre g WHERE i.typeitem=1 AND g.id=:key')->setParameter('key', $idGenre)->getSingleScalarResult(); 
         $offset = max(0, rand(0, $rows - 1));
         $query = $this->_em->createQuery('SELECT partial i.{id,url,titre,note,duree,typeitem, urlCover}, partial a.{id,nom}, partial alb.{id,titre}
                                             FROM ByExampleDemoBundle:Item i LEFT JOIN i.idartiste a LEFT JOIN i.idalbum alb LEFT JOIN a.idgenre g

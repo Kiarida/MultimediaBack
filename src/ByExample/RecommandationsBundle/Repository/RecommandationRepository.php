@@ -4,7 +4,7 @@ namespace ByExample\RecommandationsBundle\Repository;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
-use ByExample\RecommandationsBundle\Entity\Algorithm;
+use ByExample\RecommandationsBundle\Entity\Recommandation;
 use Doctrine\ORM\Query;
 use \DateTime;
 
@@ -16,28 +16,43 @@ use \DateTime;
  */
 class RecommandationRepository extends EntityRepository{
 
-	public function addRecommandation(idalgo, $idutil, $arrayItem){
-        $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
-        $user = $repository->findOneById($idUtilisateur);
+	public function addRecommandation($idalgo, $idutil, $item){
 
-        $recom = new Recommandation();
-        $recom->setDate(new DateTime());
-        $recom->setIdalgorithm($idalgo);
-        $recom->setIdutilisateur($idutil);
-        foreach ($arrayItem as $item) {
-        	 $repository = $this->_em->getRepository('ByExampleDemoBundle:Item');
-        	 $recom->addIditem($repository->findOneById($item["id"]));
-        }
+                         $repository = $this->_em->getRepository('ByExampleDemoBundle:Utilisateur');
+                        $user = $repository->findOneById($idutil);
+                        $repositoryItem = $this->_em->getRepository('ByExampleDemoBundle:Item');
+                         $repositoryAlgo = $this->_em->getRepository('ByExampleRecommandationsBundle:Algorithm');
+                        $algo = $repositoryAlgo->findOneById($idalgo);
+                        $recom = new Recommandation();
+                        $recom->setDate(new DateTime());
+                        $recom->setIdalgorithm($idalgo);
+                        $recom->setIdutilisateur($user);
+                        $recom->setIditem($repositoryItem->findOneById($item));
 
-		$this->_em->persist($recom);
-		$this->_em->flush();
+                        $this->_em->persist($recom);
+                        $this->_em->flush();
+                        $idRecom = $recom->getId();
+                        return $idRecom;
 
-		$idRecom = $recom->getId();
+       
 
-	    return $idRecom;
+	    
 	}
 
-	
+        public function searchRecommandation($idalgo, $idutilisateur, $iditem){
+
+        	$query = $this->_em->createQuery(
+                        'SELECT r
+                        FROM ByExampleRecommandationsBundle:Recommandation r
+                        WHERE r.idalgorithm = :idalgo
+                        AND r.idutilisateur = :idutil
+                        AND r.iditem = :iditem
+                        ')->setParameters(array('idalgo'=>$idalgo, 'idutil'=>$idutilisateur, 'iditem'=>$iditem));
+
+                $reco = $query->getResult(Query::HYDRATE_ARRAY);
+
+                return $reco;
+        }
 
 
 

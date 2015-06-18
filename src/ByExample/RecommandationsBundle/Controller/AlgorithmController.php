@@ -46,8 +46,8 @@ class AlgorithmController extends Controller{
         $view = FOSView::create();    
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ByExampleRecommandationsBundle:Algorithm');
-        $results=$repo->findAll();
-        if($results){ //s'il y a une action sur l'item
+        $results=$repo->findAllAlgo();
+        if($results){ //
           $view->setStatusCode(200)->setData($results);      
         }else{ 
           $view->setStatusCode(404);

@@ -111,7 +111,19 @@ class TestRepository extends EntityRepository{
         $this->_em->flush();
 	}
 
-	public function currentTest(){
+	public function currentTest($iduser){
+        if($iduser != "false"){
+            $query =$this->_em->createQuery(
+                'SELECT t, g, a
+                FROM ByExampleRecommandationsBundle:Test t
+                LEFT JOIN t.idgroup g
+                LEFT JOIN g.idalgorithm a
+                LEFT JOIN g.idutilisateur u
+                WHERE t.datefin is NULL 
+                AND u.id= :key
+                ')->setParameter("key", $iduser);
+        }
+        else{
 		$query = $this->_em->createQuery(
                 'SELECT t, g, a
                 FROM ByExampleRecommandationsBundle:Test t
@@ -119,7 +131,8 @@ class TestRepository extends EntityRepository{
                 LEFT JOIN g.idalgorithm a
                 WHERE t.datefin is NULL
                 ');
-                $test = $query->getResult(Query::HYDRATE_ARRAY);
+        }
+        $test = $query->getResult(Query::HYDRATE_ARRAY);
 
         return $test;
 	}

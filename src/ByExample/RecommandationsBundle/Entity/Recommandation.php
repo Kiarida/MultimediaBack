@@ -7,7 +7,7 @@ use ByExample\DemoBundle\Entity\Utilisateur;
 
 /**
  * Recommandation
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ByExample\RecommandationsBundle\Repository\RecommandationRepository")
  * @ORM\Table(name="recommandation")
  */
 class Recommandation
@@ -29,11 +29,13 @@ class Recommandation
      */
     private $date;
 
-
-   /**
-     * @var \Doctrine\Common\Collections\Collection
+/**
+     * @var \ByExample\RecommandationsBundle\Entity\Algorithm
      *
-     * @ORM\ManyToMany(targetEntity="Algorithm", mappedBy="idrecommandation")
+     * @ORM\ManyToOne(targetEntity="ByExample\RecommandationsBundle\Entity\Algorithm")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idAlgorithme", referencedColumnName="id")
+     * })
      */
     private $idalgorithm;
 
@@ -49,18 +51,13 @@ class Recommandation
     private $idutilisateur;
 
 
-      /**
-     * @var \Doctrine\Common\Collections\Collection
+     /**
+     * @var \ByExample\DemoBundle\Entity\Item
      *
-     * @ORM\ManyToMany(targetEntity="ByExample\DemoBundle\Entity\Item", inversedBy="idrecommandation")
-     * @ORM\JoinTable(name="itemrecommandation",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="idRecommandation", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idItem", referencedColumnName="id")
-     *   }
-     * )
+     * @ORM\ManyToOne(targetEntity="ByExample\DemoBundle\Entity\Item")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idItem", referencedColumnName="id")
+     * })
      */
     private $iditem;
 
@@ -139,6 +136,32 @@ class Recommandation
     public function getIdutilisateur()
     {
         return $this->idutilisateur;
+    }
+
+
+    /**
+     * Set iditem
+     *
+     * @param \ByExample\DemoBundle\Entity\Item $iditem
+     * @return Recommandation
+     */
+    public function setIditem(\ByExample\DemoBundle\Entity\Item $iditem = null)
+    {
+        $this->iditem = $iditem;
+    
+        return $this;
+    }
+
+
+
+    /**
+     * Get iditem
+     *
+     * @return \ByExample\DemoBundle\Entity\Item  
+     */
+    public function getIditem()
+    {
+        return $this->iditem;
     }
 
     

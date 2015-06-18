@@ -37,12 +37,12 @@ class RecommandationController extends Controller{
 
     /**
     * Récupère une recommandation
-    * @Get("users/{iduser}/recommandations/{algorithm}")
+    * @Get("users/{iduser}/recommandations")
     * @ApiDoc()
     * @return FOSView
    */
 
-  public function getRecommandationAction($iduser, $algorithm){
+  public function getRecommandationAction($iduser){
     $view = FOSView::create();  
         //$params = array("track" => $key, "api_key" => $api_key_last, "format" => "json", "limit" => "30");
       
@@ -52,7 +52,8 @@ class RecommandationController extends Controller{
       $repo = $em->getRepository('ByExampleDemoBundle:Item');
       $repoAlgo = $em->getRepository('ByExampleRecommandationsBundle:Algorithm');
       $repoReco = $em->getRepository('ByExampleRecommandationsBundle:Recommandation');
-      $idAlgo=$repoAlgo->findOneByLabel($algorithm);
+      $algorithm=$this->get('request')->query->get('algorithm');
+      $idAlgo=$repoAlgo->findOneByNom($algorithm);
       //Si l'algorithme a l'attribut precalculated, on va chercher les recommandations des utilisateurs dans la BDD
       if($idAlgo->getPrecalculated() == true){
         $results=$repoRec->findByIdalgorithm($idAlgo->getId());
@@ -69,10 +70,14 @@ class RecommandationController extends Controller{
         $infodecode = json_decode($info, true);
         
         foreach ($infodecode as $key) {
+          $searchReco = $repoReco->searchRecommandation($idAlgo, $iduser, $key);
+          if(!$searchReco){
+             $newReco = $repoReco->addRecommandation($idAlgo, $iduser, $key);
+          }
           $item = $repo->findFormatItems($key);
           array_push($results, $item);
         }
-        $newReco = $repoReco->addRecommandation($idAlgo, $iduser, $results);
+        
       }
        
 
