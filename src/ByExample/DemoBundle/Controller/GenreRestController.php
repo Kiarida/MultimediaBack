@@ -10,6 +10,7 @@ use FOS\RestBundle\View\View AS FOSView;
 use ByExample\DemoBundle\Repository\GenreRepository;
 
 use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\Annotations\Rest;
@@ -41,6 +42,23 @@ class GenreRestController extends Controller
     $view = FOSView::create();
   	$genres = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->findAll();
   	if ($genres) {
+      $view->setStatusCode(200)->setData($genres);
+    } else {
+      $view->setStatusCode(404);
+    }
+
+    return $view;
+  }
+
+  /**
+  * Recherche un genre selon un mot-clé
+  * @Get("genres/{key}")
+  * @ApiDoc()
+  */
+  public function getSearchGenresAction($key){
+    $view = FOSView::create();
+    $genres = $this->getDoctrine()->getRepository('ByExampleDemoBundle:Genre')->findGenreByKey($key);
+    if ($genres) {
       $view->setStatusCode(200)->setData($genres);
     } else {
       $view->setStatusCode(404);

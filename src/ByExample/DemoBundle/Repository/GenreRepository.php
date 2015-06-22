@@ -69,4 +69,13 @@ class GenreRepository extends EntityRepository
 				}	
 			}
 	}
+
+		public function findGenreByKey($key){
+			 $key = "%".$key."%";
+			$query=$this->_em->createQuery("SELECT g.id, g.libelle FROM ByExampleDemoBundle:Genre g 
+				WHERE g.libelle LIKE :key
+				")->setParameter("key",$key);
+			$genres=$query->getResult(Query::HYDRATE_ARRAY);
+			return $genres;
+		}
 }
